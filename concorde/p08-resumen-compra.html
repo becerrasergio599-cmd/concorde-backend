@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resumen de compra – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .layout { display:grid;grid-template-columns:1fr 320px;gap:1.8rem;padding:2rem 2.5rem;max-width:1160px;margin:0 auto; }
+    .resumen-fila { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;font-size:0.9rem; }
+    .resumen-fila span:first-child { color:var(--gris-texto); }
+    .resumen-total { border-top:2px solid var(--gris-medio);padding-top:1rem;margin-top:1rem; }
+    .linea-detalle { display:flex;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid var(--gris-medio);font-size:0.9rem; }
+    .linea-detalle:last-child { border-bottom:none; }
+    .resumen-lateral { position:sticky;top:80px; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+</nav>
+<main id="contenido-principal" role="main">
+<h1 class="sr-only">Resumen de compra</h1>
+
+<header class="stepper-header" aria-label="Progreso de compra"><div style="background:var(--blanco);border-bottom:1px solid var(--gris-medio);padding:1rem 2.5rem;">
+  <div class="stepper">
+    <div class="step hecho"><div class="step-num">&#10003;</div> Buscar</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Detalle</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Pasajero</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Asientos</div><div class="step-linea"></div>
+    <div class="step activo"><div class="step-num">5</div> Resumen</div><div class="step-linea"></div>
+    <div class="step"><div class="step-num">6</div> Pago</div><div class="step-linea"></div>
+    <div class="step"><div class="step-num">7</div> Confirmación</div>
+  </div>
+</div>
+</header>
+
+<section aria-label="Contenido principal"><div class="layout">
+  <div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:1.2rem;">Resumen de tu compra</h2>
+
+      <div style="background:var(--azul-claro);border-radius:var(--radio-btn);padding:1.2rem;margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <p style="font-weight:700;font-size:1.1rem;color:var(--azul);">Bogotá → Medellín</p>
+          <p style="font-size:0.85rem;color:var(--gris-texto);">Viernes, 15 de agosto de 2025</p>
+        </div>
+        <div style="text-align:right;">
+          <p style="font-size:1.5rem;font-weight:700;color:var(--azul);">06:00 → 14:30</p>
+          <p style="font-size:0.8rem;color:var(--gris-texto);">8h 30min · Directo</p>
+        </div>
+      </div>
+
+      <h3 style="font-size:0.85rem;font-weight:600;color:var(--gris-texto);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem;">Pasajero</h3>
+      <div class="linea-detalle"><span style="color:var(--gris-texto);">Nombre</span><span>Carlos Andrés González</span></div>
+      <div class="linea-detalle"><span style="color:var(--gris-texto);">Documento</span><span>C.C. 1030456789</span></div>
+      <div class="linea-detalle"><span style="color:var(--gris-texto);">Asiento</span><span>5C · Ventana</span></div>
+      <div class="linea-detalle"><span style="color:var(--gris-texto);">Tarifa</span><span><span class="badge badge-amarillo">Ejecutiva</span></span></div>
+    </div>
+
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;color:var(--gris-texto);text-transform:uppercase;letter-spacing:1px;margin-bottom:1rem;">Desglose de precios</h3>
+      <div class="linea-detalle"><span>Tiquete base</span><span>$78.000</span></div>
+      <div class="linea-detalle"><span>Seguro de viaje</span><span>$2.500</span></div>
+      <div class="linea-detalle"><span>IVA (19%)</span><span>$14.820</span></div>
+      <div class="linea-detalle" style="font-weight:700;font-size:1rem;"><span>Total a pagar</span><span style="color:var(--azul);">$95.320</span></div>
+      <div style="display:flex;gap:1rem;margin-top:1.5rem;">
+        <a href="p06-pasajero.html" class="btn-secundario" style="flex:1;text-align:center;">&#8592; Modificar datos</a>
+        <a href="p09-pago.html" class="btn-primario" style="flex:2;text-align:center;">Proceder al pago &#8594;</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="resumen-lateral">
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:1rem;">Condiciones</h3>
+      <p style="font-size:0.82rem;color:var(--gris-texto);margin-bottom:0.6rem;">&#10003; Cancelación gratuita hasta 24h antes</p>
+      <p style="font-size:0.82rem;color:var(--gris-texto);margin-bottom:0.6rem;">&#10003; Tiquete electrónico por correo</p>
+      <p style="font-size:0.82rem;color:var(--gris-texto);margin-bottom:0.6rem;">&#10003; Equipaje incluido (tarifa ejecutiva)</p>
+      <p style="font-size:0.82rem;color:var(--gris-texto);">&#10003; Seguro de viaje incluido</p>
+    </div>
+    <div class="alerta alerta-info" style="margin-top:1rem;font-size:0.82rem;">
+      &#128274; Pago 100% seguro con cifrado SSL
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+</body>
+</html>

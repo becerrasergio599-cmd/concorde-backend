@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Atención al cliente – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .layout { display:grid;grid-template-columns:1fr 340px;gap:1.8rem;padding:2.5rem;max-width:1100px;margin:0 auto; }
+    .tipo-pqrs { display:grid;grid-template-columns:repeat(2,1fr);gap:0.8rem;margin-bottom:1.5rem; }
+    .tipo-card {
+      border:2px solid var(--gris-medio);border-radius:var(--radio);padding:1rem;text-align:center;
+      cursor:pointer;transition:border-color 0.2s,background 0.2s;
+    }
+    .tipo-card:hover { border-color:var(--azul); }
+    .tipo-card.activo { border-color:var(--azul);background:var(--azul-claro); }
+    .tipo-card .tipo-icon { font-size:1.5rem;margin-bottom:0.3rem; }
+    .tipo-card .tipo-nombre { font-size:0.88rem;font-weight:600;color:var(--negro); }
+    .tipo-card .tipo-desc { font-size:0.75rem;color:var(--gris-texto); }
+    .info-contacto { display:flex;flex-direction:column;gap:1rem; }
+    .contacto-item { display:flex;gap:1rem;align-items:flex-start; }
+    .contacto-icon { font-size:1.2rem;min-width:28px;text-align:center; }
+    .contacto-texto p:first-child { font-weight:600;font-size:0.9rem;margin-bottom:0.1rem; }
+    .contacto-texto p:last-child  { font-size:0.85rem;color:var(--gris-texto); }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="p12-atencion.html" class="active" aria-current="page">Contacto</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<div style="background:linear-gradient(135deg,var(--negro),var(--azul-oscuro));padding:3rem 2.5rem;text-align:center;color:var(--blanco);">
+  <h1 style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;margin-bottom:0.5rem;">Atención al cliente</h1>
+  <p style="font-size:0.95rem;color:rgba(255,255,255,0.7);">Estamos aquí para ayudarte. Radica tu solicitud y te responderemos en menos de 24 horas.</p>
+</div>
+
+<div class="layout">
+  <div>
+    <div class="card">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Radicar solicitud PQRS</h2>
+      <p style="font-size:0.85rem;color:var(--gris-texto);margin-bottom:1.5rem;">Petición · Queja · Reclamo · Sugerencia</p>
+
+      <div class="tipo-pqrs">
+        <div class="tipo-card activo" onclick="selTipo(this)">
+          <div class="tipo-icon">&#128203;</div>
+          <div class="tipo-nombre">Petición</div>
+          <div class="tipo-desc">Solicitud de información o servicio</div>
+        </div>
+        <div class="tipo-card" onclick="selTipo(this)">
+          <div class="tipo-icon">&#128545;</div>
+          <div class="tipo-nombre">Queja</div>
+          <div class="tipo-desc">Inconformidad con el servicio</div>
+        </div>
+        <div class="tipo-card" onclick="selTipo(this)">
+          <div class="tipo-icon">&#9888;</div>
+          <div class="tipo-nombre">Reclamo</div>
+          <div class="tipo-desc">Exigencia de una situación incumplida</div>
+        </div>
+        <div class="tipo-card" onclick="selTipo(this)">
+          <div class="tipo-icon">&#128161;</div>
+          <div class="tipo-nombre">Sugerencia</div>
+          <div class="tipo-desc">Propuesta de mejora</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Nombre completo *</label>
+          <input type="text" class="form-input" placeholder="Tu nombre"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico *</label>
+          <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com"/>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" class="form-input" placeholder="3001234567"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de reserva (opcional)</label>
+          <input type="text" class="form-input" placeholder="Ej. CON-84921"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Asunto *</label>
+        <input type="text" class="form-input" placeholder="Resumen breve de tu solicitud"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Descripción detallada *</label>
+        <textarea class="form-input form-textarea" placeholder="Describe tu solicitud con el mayor detalle posible. Incluye fechas, lugares y cualquier información relevante."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Adjuntar archivos (opcional)</label>
+        <input type="file" class="form-input" style="padding:0.5rem;"/>
+        <p style="font-size:0.75rem;color:var(--gris-texto);margin-top:0.3rem;">PDF, JPG, PNG · Máximo 5MB</p>
+      </div>
+
+      <a href="p17-confirmacion-mensaje.html" class="btn-primario btn-bloque">Enviar solicitud</a>
+    </div>
+  </div>
+
+  <!-- CONTACTO INFO -->
+  <div>
+    <div class="card" style="margin-bottom:1.2rem;">
+      <h3 style="font-size:0.9rem;font-weight:600;margin-bottom:1.2rem;">Canales de contacto</h3>
+      <div class="info-contacto">
+        <div class="contacto-item">
+          <div class="contacto-icon">&#128222;</div>
+          <div class="contacto-texto">
+            <p>Línea de atención</p>
+            <p>01 8000 123 456 · Lun–Sáb 6am–10pm</p>
+          </div>
+        </div>
+        <div class="contacto-item">
+          <div class="contacto-icon">&#128140;</div>
+          <div class="contacto-texto">
+            <p>WhatsApp</p>
+            <p>+57 310 456 7890 · Disponible 24/7</p>
+          </div>
+        </div>
+        <div class="contacto-item">
+          <div class="contacto-icon">&#128231;</div>
+          <div class="contacto-texto">
+            <p>Correo electrónico</p>
+            <p>atencion@concorde.com.co</p>
+          </div>
+        </div>
+        <div class="contacto-item">
+          <div class="contacto-icon">&#128205;</div>
+          <div class="contacto-texto">
+            <p>Oficina principal</p>
+            <p>Calle 13 No. 31-45, Tunja, Boyacá</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="background:var(--azul-claro);border-color:#93c5fd;">
+      <h3 style="font-size:0.88rem;font-weight:600;color:var(--azul);margin-bottom:0.8rem;">Tiempo de respuesta</h3>
+      <p style="font-size:0.82rem;color:var(--azul-oscuro);">&#128337; Peticiones: hasta 15 días hábiles</p>
+      <p style="font-size:0.82rem;color:var(--azul-oscuro);margin-top:0.4rem;">&#9889; Quejas urgentes: 24–48 horas</p>
+      <p style="font-size:0.82rem;color:var(--azul-oscuro);margin-top:0.4rem;">&#128176; Reclamos de pago: 5 días hábiles</p>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="p02-resultados.html">Rutas</a>
+    <a href="p12-atencion.html">Contacto</a>
+  </div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+
+<script>
+function selTipo(el) {
+  document.querySelectorAll('.tipo-card').forEach(c => c.classList.remove('activo'));
+  el.classList.add('activo');
+}
+</script>
+</body>
+</html>

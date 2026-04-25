@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pago – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .layout { display:grid;grid-template-columns:1fr 300px;gap:1.8rem;padding:2rem 2.5rem;max-width:1100px;margin:0 auto; }
+    .metodo-pago {
+      border:2px solid var(--gris-medio); border-radius:var(--radio);
+      padding:1.2rem 1.4rem; cursor:pointer; display:flex; align-items:center; gap:1rem;
+      transition:border-color 0.2s,background 0.2s; margin-bottom:0.8rem;
+    }
+    .metodo-pago.activo { border-color:var(--azul);background:var(--azul-claro); }
+    .metodo-pago .metodo-icon { font-size:1.6rem;min-width:36px;text-align:center; }
+    .metodo-pago .metodo-nombre { font-weight:600;font-size:0.95rem; }
+    .metodo-pago .metodo-desc { font-size:0.8rem;color:var(--gris-texto); }
+    .tarjeta-form { background:var(--gris-claro);border-radius:var(--radio-btn);padding:1.4rem;margin-top:1rem; }
+    .resumen-fila { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;font-size:0.9rem; }
+    .resumen-fila span:first-child { color:var(--gris-texto); }
+    .resumen-total { border-top:2px solid var(--gris-medio);padding-top:1rem;margin-top:1rem; }
+    .input-tarjeta { font-family:'Courier New',monospace;letter-spacing:2px; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+</nav>
+<main id="contenido-principal" role="main">
+<h1 class="sr-only">Pago</h1>
+
+<header class="stepper-header" aria-label="Progreso de compra"><div style="background:var(--blanco);border-bottom:1px solid var(--gris-medio);padding:1rem 2.5rem;">
+  <div class="stepper">
+    <div class="step hecho"><div class="step-num">&#10003;</div> Buscar</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Detalle</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Pasajero</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Asientos</div><div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Resumen</div><div class="step-linea"></div>
+    <div class="step activo"><div class="step-num">6</div> Pago</div><div class="step-linea"></div>
+    <div class="step"><div class="step-num">7</div> Confirmación</div>
+  </div>
+</div>
+</header>
+
+<section aria-label="Contenido principal"><div class="layout">
+  <div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Método de pago</h2>
+      <p style="font-size:0.88rem;color:var(--gris-texto);margin-bottom:1.5rem;">Selecciona cómo quieres pagar tu tiquete.</p>
+
+      <!-- MÉTODOS -->
+      <div class="metodo-pago activo" onclick="seleccionarMetodo(this,'tarjeta')">
+        <div class="metodo-icon">&#128179;</div>
+        <div><div class="metodo-nombre">Tarjeta débito / crédito</div><div class="metodo-desc">Visa, Mastercard, American Express</div></div>
+      </div>
+      <div class="metodo-pago" onclick="seleccionarMetodo(this,'pse')">
+        <div class="metodo-icon">&#127968;</div>
+        <div><div class="metodo-nombre">PSE – Débito bancario</div><div class="metodo-desc">Pago directo desde tu cuenta bancaria</div></div>
+      </div>
+      <div class="metodo-pago" onclick="seleccionarMetodo(this,'efectivo')">
+        <div class="metodo-icon">&#128176;</div>
+        <div><div class="metodo-nombre">Efectivo en punto de pago</div><div class="metodo-desc">Efecty, Baloto, Su Red</div></div>
+      </div>
+
+      <!-- FORM TARJETA -->
+      <div id="form-tarjeta" class="tarjeta-form">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div class="form-group" style="grid-column:1/-1;">
+            <label class="form-label">Número de tarjeta</label>
+            <input type="text" class="form-input input-tarjeta" placeholder="0000 0000 0000 0000" maxlength="19"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nombre en la tarjeta</label>
+            <input type="text" class="form-input" placeholder="Como aparece en la tarjeta"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cuotas</label>
+            <select class="form-input form-select">
+              <option>1 cuota (sin intereses)</option>
+              <option>3 cuotas</option>
+              <option>6 cuotas</option>
+              <option>12 cuotas</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fecha de vencimiento</label>
+            <input type="text" class="form-input" placeholder="MM/AA" maxlength="5"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">CVV</label>
+            <input type="text" class="form-input" placeholder="000" maxlength="4"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM PSE -->
+      <div id="form-pse" class="tarjeta-form" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">Selecciona tu banco</label>
+          <select class="form-input form-select">
+            <option value="">Elige tu banco</option>
+            <option>Bancolombia</option><option>Banco de Bogotá</option>
+            <option>Davivienda</option><option>BBVA</option>
+            <option>Banco Popular</option><option>AV Villas</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de persona</label>
+          <select class="form-input form-select">
+            <option>Persona natural</option>
+            <option>Persona jurídica</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- FORM EFECTIVO -->
+      <div id="form-efectivo" class="tarjeta-form" style="display:none;">
+        <div class="alerta alerta-info">
+          Se generará un código de pago que podrás usar en cualquier punto Efecty, Baloto o Su Red. Tienes 24 horas para pagar.
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTA ERROR (simular rechazo) -->
+    <div class="alerta alerta-error" id="alerta-rechazo" style="display:none;">
+      &#9888; Pago rechazado. Verifica los datos de tu tarjeta e intenta de nuevo.
+    </div>
+
+    <div style="display:flex;gap:1rem;">
+      <a href="p08-resumen-compra.html" class="btn-secundario" style="flex:1;text-align:center;">&#8592; Volver</a>
+      <a href="p10-confirmacion.html" class="btn-primario" style="flex:2;text-align:center;">&#128274; Pagar $95.320</a>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div>
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:1rem;">Tu pedido</h3>
+      <div class="resumen-fila"><span>BOG → MDE</span><span>15 ago 2025</span></div>
+      <div class="resumen-fila"><span>Asiento</span><span>5C</span></div>
+      <div class="resumen-fila"><span>Tarifa</span><span>Ejecutiva</span></div>
+      <div class="resumen-total">
+        <div class="resumen-fila"><span>Base</span><span>$78.000</span></div>
+        <div class="resumen-fila"><span>Seguro</span><span>$2.500</span></div>
+        <div class="resumen-fila"><span>IVA</span><span>$14.820</span></div>
+        <div class="resumen-fila" style="font-weight:700;"><span>Total</span><span style="color:var(--azul);font-size:1.15rem;">$95.320</span></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:1rem;">
+      <p style="font-size:0.75rem;color:var(--gris-texto);">&#128274; Cifrado SSL 256-bit</p>
+      <p style="font-size:0.75rem;color:var(--gris-texto);">&#9989; Transacción segura</p>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+
+<script>
+function seleccionarMetodo(el, tipo) {
+  document.querySelectorAll('.metodo-pago').forEach(m => m.classList.remove('activo'));
+  el.classList.add('activo');
+  document.getElementById('form-tarjeta').style.display = tipo === 'tarjeta' ? 'block' : 'none';
+  document.getElementById('form-pse').style.display     = tipo === 'pse'     ? 'block' : 'none';
+  document.getElementById('form-efectivo').style.display= tipo === 'efectivo'? 'block' : 'none';
+}
+</script>
+</body>
+</html>

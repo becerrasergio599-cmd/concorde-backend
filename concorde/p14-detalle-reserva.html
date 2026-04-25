@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Detalle de reserva – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .fila { display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--gris-medio);font-size:0.9rem; }
+    .fila:last-child { border-bottom:none; }
+    .fila label { color:var(--gris-texto); }
+    .fila span   { font-weight:500;color:var(--negro); }
+    .ruta-banner {
+      background:linear-gradient(135deg,var(--negro),var(--azul-oscuro));
+      border-radius:var(--radio);padding:1.8rem 2rem;color:var(--blanco);
+      margin-bottom:1.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;
+    }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <div class="nav-cta">
+    <a href="p11-reservas.html" class="btn-nav-login">&#8592; Mis reservas</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<div class="pagina-interior" style="max-width:780px;">
+  <h1 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;margin-bottom:0.3rem;">Detalle de reserva</h1>
+  <p style="font-size:0.88rem;color:var(--gris-texto);margin-bottom:1.8rem;">Código: <strong>CON-84921</strong> &nbsp;<span class="badge badge-ok">Confirmado</span></p>
+
+  <!-- RUTA -->
+  <div class="ruta-banner">
+    <div>
+      <p style="font-size:1.5rem;font-weight:700;font-family:'Playfair Display',serif;">Bogotá → Medellín</p>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.6);">Viernes, 15 de agosto de 2025</p>
+    </div>
+    <div style="text-align:right;">
+      <p style="font-size:1.8rem;font-weight:700;">06:00 → 14:30</p>
+      <p style="font-size:0.8rem;color:rgba(255,255,255,0.6);">8h 30min · Directo</p>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:0.8rem;">Pasajero</h3>
+      <div class="fila"><label>Nombre</label><span>Carlos Andrés González</span></div>
+      <div class="fila"><label>Documento</label><span>C.C. 1030456789</span></div>
+      <div class="fila"><label>Correo</label><span>carlos@correo.com</span></div>
+      <div class="fila"><label>Teléfono</label><span>3001234567</span></div>
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:0.8rem;">Viaje</h3>
+      <div class="fila"><label>Bus</label><span>Concorde Express 101</span></div>
+      <div class="fila"><label>Placa</label><span>TYK-895</span></div>
+      <div class="fila"><label>Asiento</label><span>5C · Ventana</span></div>
+      <div class="fila"><label>Tarifa</label><span>Ejecutiva</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:0.8rem;">Pago</h3>
+    <div class="fila"><label>Método</label><span>Tarjeta Mastercard ****4521</span></div>
+    <div class="fila"><label>Fecha de compra</label><span>15 jul 2025 · 10:34 h</span></div>
+    <div class="fila"><label>Estado</label><span><span class="badge badge-ok">Aprobado</span></span></div>
+    <div class="fila"><label>Total pagado</label><span style="color:var(--azul);font-weight:700;font-size:1.05rem;">$95.320</span></div>
+  </div>
+
+  <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+    <button onclick="window.print()" class="btn-secundario" style="flex:1;">&#128438; Descargar tiquete</button>
+    <a href="p15-cancelacion.html" class="btn-peligro" style="flex:1;text-align:center;">Cancelar reserva</a>
+    <a href="p11-reservas.html" class="btn-primario" style="flex:1;text-align:center;">&#8592; Volver</a>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+</body>
+</html>

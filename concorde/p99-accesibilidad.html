@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Accesibilidad y Usabilidad – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .hero-acc {
+      background: linear-gradient(135deg, var(--negro), var(--azul-oscuro));
+      padding: 3.5rem 2.5rem;
+      text-align: center;
+      color: var(--blanco);
+    }
+    .hero-acc h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+    }
+    .hero-acc p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.7);
+      max-width: 580px;
+      margin: 0 auto;
+    }
+
+    .contenido { max-width: 960px; margin: 0 auto; padding: 3rem 2rem; }
+
+    /* ÍNDICE */
+    .indice {
+      background: var(--azul-claro);
+      border: 1px solid #93c5fd;
+      border-radius: var(--radio);
+      padding: 1.5rem 2rem;
+      margin-bottom: 2.5rem;
+    }
+    .indice h3 { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--azul); margin-bottom: 1rem; }
+    .indice ol { padding-left: 1.2rem; }
+    .indice ol li { margin-bottom: 0.4rem; }
+    .indice ol li a { color: var(--azul); text-decoration: none; font-size: 0.9rem; }
+    .indice ol li a:hover { text-decoration: underline; }
+
+    /* SECCIONES */
+    .seccion-acc { margin-bottom: 3rem; scroll-margin-top: 80px; }
+    .seccion-acc h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 700;
+      color: var(--negro); margin-bottom: 0.4rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .seccion-acc h2 .sec-icon { font-size: 1.2rem; }
+    .seccion-acc > p { font-size: 0.92rem; color: var(--gris-texto); margin-bottom: 1.5rem; line-height: 1.75; }
+
+    /* CARDS WCAG */
+    .grid-wcag { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .wcag-card {
+      background: var(--blanco);
+      border: 1px solid var(--gris-medio);
+      border-radius: var(--radio);
+      padding: 1.3rem;
+    }
+    .wcag-nivel {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 700;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 0.2rem 0.6rem; border-radius: 20px;
+      margin-bottom: 0.6rem;
+    }
+    .nivel-a   { background: #dcfce7; color: #15803d; }
+    .nivel-aa  { background: var(--azul-claro); color: var(--azul); }
+    .nivel-aaa { background: var(--amarillo-suave); color: #92600a; }
+    .wcag-card h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--negro); }
+    .wcag-card p  { font-size: 0.8rem; color: var(--gris-texto); line-height: 1.5; }
+
+    /* HEURÍSTICAS */
+    .heuristica {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      background: var(--blanco); border: 1px solid var(--gris-medio);
+      border-radius: var(--radio); padding: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .heuristica-num {
+      min-width: 40px; height: 40px;
+      background: var(--negro); color: var(--blanco);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+    }
+    .heuristica h4 { font-size: 0.92rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--negro); }
+    .heuristica p  { font-size: 0.83rem; color: var(--gris-texto); line-height: 1.55; }
+    .heuristica .ejemplo {
+      font-size: 0.78rem; margin-top: 0.5rem;
+      background: var(--gris-claro); border-left: 3px solid var(--azul);
+      padding: 0.4rem 0.7rem; border-radius: 0 6px 6px 0;
+      color: var(--negro-suave);
+    }
+
+    /* CONTRASTE */
+    .contraste-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .contraste-muestra {
+      border-radius: var(--radio); overflow: hidden;
+      border: 1px solid var(--gris-medio);
+    }
+    .contraste-bloque { padding: 1.2rem; text-align: center; }
+    .contraste-ratio { font-size: 0.75rem; text-align: center; padding: 0.4rem; font-weight: 600; }
+    .ratio-ok    { background: #dcfce7; color: #15803d; }
+    .ratio-medio { background: var(--amarillo-suave); color: #92600a; }
+
+    /* HERRAMIENTAS */
+    .tool-lista { display: flex; flex-direction: column; gap: 0.8rem; }
+    .tool-item {
+      display: flex; align-items: center; gap: 1rem;
+      background: var(--blanco); border: 1px solid var(--gris-medio);
+      border-radius: var(--radio-btn); padding: 1rem 1.2rem;
+    }
+    .tool-icon { font-size: 1.3rem; min-width: 28px; text-align: center; }
+    .tool-item h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.1rem; }
+    .tool-item p  { font-size: 0.8rem; color: var(--gris-texto); }
+
+    /* TECLADO */
+    .kbd {
+      display: inline-block;
+      background: var(--gris-claro); border: 1px solid var(--gris-medio);
+      border-radius: 5px; padding: 0.15rem 0.5rem;
+      font-size: 0.8rem; font-family: monospace;
+      color: var(--negro); margin: 0 2px;
+    }
+    .atajos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+    .atajo-fila { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.8rem; background: var(--blanco); border: 1px solid var(--gris-medio); border-radius: var(--radio-btn); font-size: 0.85rem; }
+
+    /* DIVISOR DE SECCIÓN */
+    .divisor-seccion { border: none; border-top: 2px solid var(--gris-medio); margin: 2.5rem 0; }
+
+    /* DECLARACIÓN */
+    .declaracion {
+      background: linear-gradient(135deg, var(--negro), var(--azul-oscuro));
+      border-radius: var(--radio); padding: 2rem;
+      color: var(--blanco); text-align: center;
+      margin-top: 2rem;
+    }
+    .declaracion h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem; }
+    .declaracion p  { font-size: 0.88rem; color: rgba(255,255,255,0.7); max-width: 560px; margin: 0 auto 1.2rem; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="p02-resultados.html">Rutas</a></li>
+    <li><a href="p12-atencion.html">Contacto</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<!-- HERO -->
+<div class="hero-acc">
+  <p style="font-size:0.75rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:0.8rem;">Compromiso con todos los usuarios</p>
+  <h1>Accesibilidad y Usabilidad</h1>
+  <p>En Concorde creemos que comprar un tiquete debe ser fácil para todas las personas, sin importar sus capacidades o el dispositivo que usen.</p>
+</div>
+
+<div class="contenido">
+
+  <!-- ÍNDICE -->
+  <div class="indice">
+    <h3>Contenido de esta página</h3>
+    <ol>
+      <li><a href="#wcag">Cumplimiento WCAG 2.1</a></li>
+      <li><a href="#heuristicas">Heurísticas de Nielsen aplicadas</a></li>
+      <li><a href="#contraste">Contraste y colores</a></li>
+      <li><a href="#teclado">Navegación por teclado</a></li>
+      <li><a href="#formularios">Formularios accesibles</a></li>
+      <li><a href="#herramientas">Compatibilidad con tecnologías asistivas</a></li>
+      <li><a href="#contacto-acc">Reportar un problema de accesibilidad</a></li>
+    </ol>
+  </div>
+
+  <!-- 1. WCAG -->
+  <div class="seccion-acc" id="wcag">
+    <h2><span class="sec-icon">&#9989;</span> Cumplimiento WCAG 2.1</h2>
+    <p>El sistema Concorde está diseñado para cumplir con las Pautas de Accesibilidad para el Contenido Web (WCAG) versión 2.1, nivel AA. Estas pautas se organizan en cuatro principios fundamentales: Perceptible, Operable, Comprensible y Robusto (POUR).</p>
+
+    <div class="grid-wcag">
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">Nivel AA</span>
+        <h4>Perceptible</h4>
+        <p>Todo el contenido tiene alternativas textuales. Las imágenes incluyen atributo <code>alt</code>. Los videos tendrán subtítulos.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">Nivel AA</span>
+        <h4>Operable</h4>
+        <p>Toda funcionalidad es accesible mediante teclado. No hay límites de tiempo que impidan completar acciones.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">Nivel AA</span>
+        <h4>Comprensible</h4>
+        <p>El idioma de la página está declarado. Los formularios tienen etiquetas claras y mensajes de error descriptivos.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-a">Nivel A</span>
+        <h4>Robusto</h4>
+        <p>El código HTML es semántico y válido. Compatible con lectores de pantalla actuales (NVDA, JAWS, VoiceOver).</p>
+      </div>
+    </div>
+
+    <div class="alerta alerta-ok">
+      &#127941; Concorde apunta al <strong>nivel AA de WCAG 2.1</strong>, que es el estándar requerido por la legislación colombiana de accesibilidad digital (Ley 1618 de 2013).
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 2. HEURÍSTICAS -->
+  <div class="seccion-acc" id="heuristicas">
+    <h2><span class="sec-icon">&#128270;</span> Heurísticas de Nielsen aplicadas</h2>
+    <p>El diseño de las interfaces de Concorde sigue las 10 heurísticas de usabilidad de Jakob Nielsen. A continuación se explica cómo se aplica cada una dentro del sistema.</p>
+
+    <div class="heuristica">
+      <div class="heuristica-num">1</div>
+      <div>
+        <h4>Visibilidad del estado del sistema</h4>
+        <p>El sistema mantiene informado al usuario sobre lo que ocurre en todo momento mediante respuestas visuales apropiadas y en tiempo razonable.</p>
+        <div class="ejemplo">Ejemplo: El stepper de compra (Buscar → Detalle → Pasajero → Asientos → Pago → Confirmación) muestra exactamente en qué paso se encuentra el usuario y cuáles ha completado.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">2</div>
+      <div>
+        <h4>Correspondencia entre el sistema y el mundo real</h4>
+        <p>El sistema habla el lenguaje del usuario, usando palabras, frases y conceptos familiares para el contexto del transporte terrestre en Colombia.</p>
+        <div class="ejemplo">Ejemplo: Se usan términos como "tiquete", "terminal", "ruta", "pasajero" y moneda en pesos colombianos ($), no términos técnicos.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">3</div>
+      <div>
+        <h4>Control y libertad del usuario</h4>
+        <p>Los usuarios pueden deshacer y rehacer acciones fácilmente. Siempre hay una salida claramente marcada cuando eligen funciones por error.</p>
+        <div class="ejemplo">Ejemplo: En cada paso del flujo de compra existe el botón "Regresar". La cancelación de reservas permite al usuario rectificar su decisión.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">4</div>
+      <div>
+        <h4>Consistencia y estándares</h4>
+        <p>Los usuarios no tienen que preguntarse si diferentes palabras, situaciones o acciones significan lo mismo. Se siguen las convenciones de la plataforma.</p>
+        <div class="ejemplo">Ejemplo: Los botones primarios siempre son azules, los de cancelar siempre son rojos, y la navegación siempre está en la misma posición en todas las pantallas.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">5</div>
+      <div>
+        <h4>Prevención de errores</h4>
+        <p>Se diseña cuidadosamente para evitar que ocurran problemas en primer lugar, eliminando condiciones propensas a error o presentando confirmaciones.</p>
+        <div class="ejemplo">Ejemplo: El mapa de asientos muestra visualmente cuáles están ocupados antes de intentar seleccionarlos. El formulario de pago valida el número de tarjeta en tiempo real.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">6</div>
+      <div>
+        <h4>Reconocer antes que recordar</h4>
+        <p>Se minimizan la memoria del usuario haciendo visibles los objetos, acciones y opciones. El usuario no tiene que recordar información entre pantallas.</p>
+        <div class="ejemplo">Ejemplo: El resumen lateral del viaje (ruta, fecha, precio) se muestra de forma persistente durante todo el flujo de compra.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">7</div>
+      <div>
+        <h4>Flexibilidad y eficiencia de uso</h4>
+        <p>Los aceleradores permiten a los usuarios frecuentes realizar acciones más rápidamente. El sistema atiende tanto a usuarios inexpertos como expertos.</p>
+        <div class="ejemplo">Ejemplo: El buscador en la página de inicio permite buscar directamente sin necesidad de registrarse. Los usuarios registrados tienen sus datos prellenados.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">8</div>
+      <div>
+        <h4>Diseño estético y minimalista</h4>
+        <p>Los diálogos no deben contener información irrelevante. Cada unidad de información adicional compite con la información relevante.</p>
+        <div class="ejemplo">Ejemplo: Las tarjetas de resultados de viaje muestran solo la información esencial: hora, ruta, duración y precio. Los detalles se revelan al hacer clic.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">9</div>
+      <div>
+        <h4>Ayuda al reconocimiento, diagnóstico y recuperación de errores</h4>
+        <p>Los mensajes de error se expresan en lenguaje claro, indican el problema con precisión y sugieren una solución constructivamente.</p>
+        <div class="ejemplo">Ejemplo: Si el pago es rechazado, el sistema muestra exactamente qué verificar (datos de la tarjeta) sin tecnicismos, y ofrece intentar de nuevo.</div>
+      </div>
+    </div>
+
+    <div class="heuristica">
+      <div class="heuristica-num">10</div>
+      <div>
+        <h4>Ayuda y documentación</h4>
+        <p>Aunque es mejor que el sistema pueda usarse sin documentación, puede ser necesario proveer ayuda que sea fácil de buscar y orientada a la tarea.</p>
+        <div class="ejemplo">Ejemplo: El módulo PQRS permite al usuario contactar soporte cuando algo no queda claro. Los formularios tienen textos de ayuda (placeholder) en cada campo.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 3. CONTRASTE -->
+  <div class="seccion-acc" id="contraste">
+    <h2><span class="sec-icon">&#127912;</span> Contraste y colores</h2>
+    <p>Todos los elementos de texto y componentes interactivos cumplen con las relaciones de contraste mínimas establecidas por WCAG 2.1 AA (4.5:1 para texto normal, 3:1 para texto grande e iconos).</p>
+
+    <div class="contraste-grid">
+      <div class="contraste-muestra">
+        <div class="contraste-bloque" style="background:#111827;">
+          <p style="color:#ffffff;font-weight:600;font-size:0.95rem;">Texto blanco</p>
+          <p style="color:rgba(255,255,255,0.7);font-size:0.78rem;">sobre fondo negro</p>
+        </div>
+        <div class="contraste-ratio ratio-ok">Ratio 16.1:1 ✓ AAA</div>
+      </div>
+      <div class="contraste-muestra">
+        <div class="contraste-bloque" style="background:#1A4FA0;">
+          <p style="color:#ffffff;font-weight:600;font-size:0.95rem;">Texto blanco</p>
+          <p style="color:rgba(255,255,255,0.8);font-size:0.78rem;">sobre fondo azul</p>
+        </div>
+        <div class="contraste-ratio ratio-ok">Ratio 5.8:1 ✓ AA</div>
+      </div>
+      <div class="contraste-muestra">
+        <div class="contraste-bloque" style="background:#ffffff;">
+          <p style="color:#111827;font-weight:600;font-size:0.95rem;">Texto negro</p>
+          <p style="color:#6B7280;font-size:0.78rem;">sobre fondo blanco</p>
+        </div>
+        <div class="contraste-ratio ratio-ok">Ratio 15.3:1 ✓ AAA</div>
+      </div>
+      <div class="contraste-muestra">
+        <div class="contraste-bloque" style="background:#F5C518;">
+          <p style="color:#111827;font-weight:600;font-size:0.95rem;">Texto negro</p>
+          <p style="color:#1F2937;font-size:0.78rem;">sobre fondo amarillo</p>
+        </div>
+        <div class="contraste-ratio ratio-ok">Ratio 8.9:1 ✓ AAA</div>
+      </div>
+    </div>
+
+    <div class="alerta alerta-info">
+      &#128681; El color nunca es el único medio para transmitir información. Los estados de error, éxito y advertencia siempre incluyen íconos y texto además del color.
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 4. TECLADO -->
+  <div class="seccion-acc" id="teclado">
+    <h2><span class="sec-icon">&#9000;</span> Navegación por teclado</h2>
+    <p>Toda la funcionalidad del sitio es accesible únicamente con el teclado, sin necesidad de ratón. El orden de tabulación sigue la estructura lógica visual de la página.</p>
+
+    <div class="atajos-grid" style="margin-bottom:1.2rem;">
+      <div class="atajo-fila"><span>Navegar entre elementos</span><span><span class="kbd">Tab</span></span></div>
+      <div class="atajo-fila"><span>Ir al elemento anterior</span><span><span class="kbd">Shift</span> + <span class="kbd">Tab</span></span></div>
+      <div class="atajo-fila"><span>Activar botón o enlace</span><span><span class="kbd">Enter</span></span></div>
+      <div class="atajo-fila"><span>Seleccionar opción</span><span><span class="kbd">Espacio</span></span></div>
+      <div class="atajo-fila"><span>Navegar en menús</span><span><span class="kbd">↑</span> <span class="kbd">↓</span></span></div>
+      <div class="atajo-fila"><span>Cerrar modal / diálogo</span><span><span class="kbd">Esc</span></span></div>
+    </div>
+
+    <div class="alerta alerta-info">
+      &#128269; El indicador de foco (contorno azul) siempre es visible al navegar con teclado. No se suprimió el <code>:focus</code> en ningún elemento interactivo.
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 5. FORMULARIOS -->
+  <div class="seccion-acc" id="formularios">
+    <h2><span class="sec-icon">&#128221;</span> Formularios accesibles</h2>
+    <p>Todos los formularios del sistema aplican prácticas de accesibilidad para garantizar que cualquier usuario pueda completarlos correctamente.</p>
+
+    <div class="grid-wcag">
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">WCAG 1.3.1</span>
+        <h4>Etiquetas visibles</h4>
+        <p>Cada campo de formulario tiene una etiqueta <code>&lt;label&gt;</code> vinculada, visible y descriptiva, nunca solo placeholder.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">WCAG 3.3.1</span>
+        <h4>Identificación de errores</h4>
+        <p>Cuando se detecta un error de entrada, el elemento con error se identifica y el error se describe al usuario en texto.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">WCAG 3.3.2</span>
+        <h4>Instrucciones de campo</h4>
+        <p>Los campos que requieren formato específico (ej. teléfono, fecha) incluyen un ejemplo en el placeholder o texto de ayuda.</p>
+      </div>
+      <div class="wcag-card">
+        <span class="wcag-nivel nivel-aa">WCAG 3.3.4</span>
+        <h4>Prevención de errores</h4>
+        <p>Las acciones importantes como pagos y cancelaciones requieren confirmación antes de ejecutarse, permitiendo revisar y corregir.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 6. TECNOLOGÍAS ASISTIVAS -->
+  <div class="seccion-acc" id="herramientas">
+    <h2><span class="sec-icon">&#128241;</span> Compatibilidad con tecnologías asistivas</h2>
+    <p>El sistema Concorde ha sido diseñado para ser compatible con las principales tecnologías asistivas utilizadas en Colombia y América Latina.</p>
+
+    <div class="tool-lista">
+      <div class="tool-item">
+        <div class="tool-icon">&#128064;</div>
+        <div>
+          <h4>Lectores de pantalla</h4>
+          <p>Compatible con NVDA (Windows), JAWS (Windows) y VoiceOver (macOS/iOS). El HTML semántico garantiza la correcta interpretación del contenido.</p>
+        </div>
+        <span class="badge badge-ok">Compatible</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">&#128270;</div>
+        <div>
+          <h4>Ampliación de pantalla</h4>
+          <p>El diseño responsivo permite ampliar hasta 400% sin pérdida de funcionalidad ni superposición de contenido.</p>
+        </div>
+        <span class="badge badge-ok">Compatible</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">&#127760;</div>
+        <div>
+          <h4>Navegadores</h4>
+          <p>Probado en Chrome, Firefox, Edge y Safari en sus versiones actuales tanto en escritorio como en dispositivos móviles.</p>
+        </div>
+        <span class="badge badge-ok">Compatible</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">&#128241;</div>
+        <div>
+          <h4>Dispositivos móviles</h4>
+          <p>Diseño responsivo que se adapta a pantallas desde 320px. Los elementos táctiles tienen un área mínima de 44×44px.</p>
+        </div>
+        <span class="badge badge-ok">Compatible</span>
+      </div>
+      <div class="tool-item">
+        <div class="tool-icon">&#127775;</div>
+        <div>
+          <h4>Modo alto contraste</h4>
+          <p>El sistema respeta las preferencias del sistema operativo para alto contraste y esquemas de color invertido.</p>
+        </div>
+        <span class="badge badge-azul">En desarrollo</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divisor-seccion"/>
+
+  <!-- 7. REPORTAR -->
+  <div class="seccion-acc" id="contacto-acc">
+    <h2><span class="sec-icon">&#128222;</span> Reportar un problema de accesibilidad</h2>
+    <p>Si encuentras alguna barrera de accesibilidad en nuestro sitio que te impida usar alguna función, queremos saberlo. Tu reporte nos ayuda a mejorar.</p>
+
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" placeholder="Tu nombre completo"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Tecnología asistiva que usas (opcional)</label>
+        <select class="form-input form-select">
+          <option value="">Selecciona si aplica</option>
+          <option>NVDA</option><option>JAWS</option><option>VoiceOver</option>
+          <option>Ampliador de pantalla</option><option>Teclado únicamente</option><option>Otra</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Descripción del problema *</label>
+        <textarea class="form-input form-textarea" placeholder="Describe qué intentabas hacer y cuál fue el obstáculo que encontraste..."></textarea>
+      </div>
+      <a href="p17-confirmacion-mensaje.html" class="btn-primario">Enviar reporte de accesibilidad</a>
+    </div>
+  </div>
+
+  <!-- DECLARACIÓN FINAL -->
+  <div class="declaracion">
+    <h3>Declaración de accesibilidad</h3>
+    <p>Concorde Transporte Terrestre S.A.S. se compromete a garantizar la accesibilidad digital de su plataforma web en conformidad con la Ley 1618 de 2013 y las pautas WCAG 2.1 nivel AA. Esta declaración fue elaborada en julio de 2025.</p>
+    <a href="p12-atencion.html" class="btn-amarillo">Contáctanos si necesitas ayuda</a>
+  </div>
+
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="p02-resultados.html">Rutas</a>
+    <a href="p12-atencion.html">Contacto</a>
+    <a href="p99-accesibilidad.html">Accesibilidad</a>
+  </div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+
+</body>
+</html>

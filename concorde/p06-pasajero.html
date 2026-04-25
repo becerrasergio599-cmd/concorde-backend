@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Datos del pasajero – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .layout-form { display:grid;grid-template-columns:1fr 320px;gap:1.8rem;padding:2rem 2.5rem;max-width:1160px;margin:0 auto; }
+    .resumen-lateral { position:sticky;top:80px; }
+    .resumen-fila { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;font-size:0.9rem; }
+    .resumen-fila span:first-child { color:var(--gris-texto); }
+    .resumen-total { border-top:2px solid var(--gris-medio);padding-top:1rem;margin-top:1rem; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+</nav>
+<main id="contenido-principal" role="main">
+<h1 class="sr-only">Datos del pasajero</h1>
+
+<header class="stepper-header" aria-label="Progreso de compra"><div style="background:var(--blanco);border-bottom:1px solid var(--gris-medio);padding:1rem 2.5rem;">
+  <div class="stepper">
+    <div class="step hecho"><div class="step-num">&#10003;</div> Buscar</div>
+    <div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Detalle</div>
+    <div class="step-linea"></div>
+    <div class="step activo"><div class="step-num">3</div> Pasajero</div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-num">4</div> Asientos</div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-num">5</div> Pago</div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-num">6</div> Confirmación</div>
+  </div>
+</div>
+</header>
+
+<section aria-label="Contenido principal"><div class="layout-form">
+  <div>
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Datos del pasajero</h2>
+      <p style="font-size:0.88rem;color:var(--gris-texto);margin-bottom:1.5rem;">Ingresa los datos exactamente como aparecen en tu documento de identidad.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Nombre(s) *</label>
+          <input type="text" class="form-input" placeholder="Ej. Carlos Andrés"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido(s) *</label>
+          <input type="text" class="form-input" placeholder="Ej. González Ruiz"/>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Tipo de documento *</label>
+          <select class="form-input form-select">
+            <option>Cédula de ciudadanía</option>
+            <option>Tarjeta de identidad</option>
+            <option>Pasaporte</option>
+            <option>Cédula de extranjería</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de documento *</label>
+          <input type="text" class="form-input" placeholder="Ej. 1030456789"/>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico *</label>
+          <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono *</label>
+          <input type="tel" class="form-input" placeholder="Ej. 3001234567"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha de nacimiento</label>
+        <input type="date" class="form-input"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">¿Requiere asistencia especial?</label>
+        <select class="form-input form-select">
+          <option value="">Ninguna</option>
+          <option>Movilidad reducida</option>
+          <option>Discapacidad visual</option>
+          <option>Discapacidad auditiva</option>
+          <option>Adulto mayor</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- EQUIPAJE -->
+    <div class="card" style="margin-bottom:1.5rem;">
+      <h3 style="font-size:1rem;font-weight:600;margin-bottom:0.4rem;">Equipaje adicional</h3>
+      <p style="font-size:0.85rem;color:var(--gris-texto);margin-bottom:1rem;">Tu tarifa incluye equipaje de mano (10 kg). Agrega maleta si necesitas.</p>
+      <div style="display:flex;gap:1rem;align-items:center;">
+        <div style="border:1.5px solid var(--gris-medio);border-radius:var(--radio-btn);padding:1rem;flex:1;text-align:center;cursor:pointer;" onclick="this.style.borderColor='var(--azul)';this.style.background='var(--azul-claro)'">
+          <p style="font-weight:600;font-size:0.9rem;">Sin equipaje adicional</p>
+          <p style="font-size:0.8rem;color:var(--gris-texto);">Solo equipaje de mano</p>
+          <p style="color:var(--azul);font-weight:600;margin-top:0.3rem;">Gratis</p>
+        </div>
+        <div style="border:1.5px solid var(--gris-medio);border-radius:var(--radio-btn);padding:1rem;flex:1;text-align:center;cursor:pointer;" onclick="this.style.borderColor='var(--azul)';this.style.background='var(--azul-claro)'">
+          <p style="font-weight:600;font-size:0.9rem;">Maleta 20 kg</p>
+          <p style="font-size:0.8rem;color:var(--gris-texto);">Una maleta de bodega</p>
+          <p style="color:var(--azul);font-weight:600;margin-top:0.3rem;">+ $15.000</p>
+        </div>
+        <div style="border:1.5px solid var(--gris-medio);border-radius:var(--radio-btn);padding:1rem;flex:1;text-align:center;cursor:pointer;" onclick="this.style.borderColor='var(--azul)';this.style.background='var(--azul-claro)'">
+          <p style="font-weight:600;font-size:0.9rem;">Maleta 30 kg</p>
+          <p style="font-size:0.8rem;color:var(--gris-texto);">Una maleta grande</p>
+          <p style="color:var(--azul);font-weight:600;margin-top:0.3rem;">+ $25.000</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:1rem;">
+      <a href="p05-detalle-viaje.html" class="btn-secundario" style="flex:1;text-align:center;">&#8592; Regresar</a>
+      <a href="p07-asientos.html" class="btn-primario" style="flex:2;text-align:center;">Continuar &#8594;</a>
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-lateral">
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:1.2rem;">Resumen</h3>
+      <div class="resumen-fila"><span>Ruta</span><span>BOG → MDE</span></div>
+      <div class="resumen-fila"><span>Fecha</span><span>15 ago 2025</span></div>
+      <div class="resumen-fila"><span>Horario</span><span>06:00 – 14:30</span></div>
+      <div class="resumen-fila"><span>Tarifa</span><span>Ejecutiva</span></div>
+      <div class="resumen-total">
+        <div class="resumen-fila"><span>Subtotal</span><span>$78.000</span></div>
+        <div class="resumen-fila"><span>IVA (19%)</span><span>$14.820</span></div>
+        <div class="resumen-fila" style="font-weight:700;"><span>Total</span><span style="font-size:1.15rem;color:var(--azul);">$92.820</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+</body>
+</html>

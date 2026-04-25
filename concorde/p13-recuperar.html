@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recuperar contraseña – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+</nav>
+<main id="contenido-principal" role="main">
+
+<div class="pagina-centrada">
+  <div class="contenedor-auth">
+
+    <!-- PASO 1: ingresar correo -->
+    <div id="paso1">
+      <div class="auth-header">
+        <div class="auth-logo" style="background:var(--azul-oscuro);font-size:1.3rem;">&#128274;</div>
+        <h1 class="auth-titulo">Recuperar contraseña</h1>
+        <p class="auth-sub">Ingresa tu correo y te enviaremos un código de verificación</p>
+      </div>
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Correo electrónico registrado</label>
+          <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com" id="correo-recuperar"/>
+        </div>
+        <button class="btn-primario btn-bloque" onclick="irPaso2()">Enviar código</button>
+        <div class="divider-texto"></div>
+        <a href="p03-login.html" class="btn-secundario btn-bloque">&#8592; Volver al login</a>
+      </div>
+    </div>
+
+    <!-- PASO 2: validar código y nueva contraseña -->
+    <div id="paso2" style="display:none;">
+      <div class="auth-header">
+        <div class="auth-logo" style="background:var(--azul-oscuro);font-size:1.3rem;">&#9993;</div>
+        <h2 class="auth-titulo">Verifica tu correo</h2>
+        <p class="auth-sub">Ingresa el código que enviamos a tu correo y elige una nueva contraseña</p>
+      </div>
+      <div class="card">
+        <div class="alerta alerta-info">
+          Código enviado a <strong id="correo-mostrado"></strong>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Código de verificación</label>
+          <input type="text" class="form-input" placeholder="Ej. 482910" maxlength="6" style="letter-spacing:4px;text-align:center;font-size:1.2rem;"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nueva contraseña</label>
+          <input type="password" class="form-input" placeholder="Mínimo 8 caracteres"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar nueva contraseña</label>
+          <input type="password" class="form-input" placeholder="Repite la contraseña"/>
+        </div>
+        <a href="p03-login.html" class="btn-primario btn-bloque">Guardar nueva contraseña</a>
+        <div class="divider-texto"></div>
+        <button class="btn-secundario btn-bloque" onclick="document.getElementById('paso1').style.display='block';document.getElementById('paso2').style.display='none';">&#8592; Volver</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function irPaso2() {
+  const correo = document.getElementById('correo-recuperar').value;
+  if (!correo) { alert('Por favor ingresa tu correo.'); return; }
+  document.getElementById('correo-mostrado').textContent = correo;
+  document.getElementById('paso1').style.display = 'none';
+  document.getElementById('paso2').style.display = 'block';
+}
+</script>
+</main>
+</body>
+</html>

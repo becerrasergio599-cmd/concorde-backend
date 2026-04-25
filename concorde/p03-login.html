@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iniciar sesión – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="p02-resultados.html">Rutas</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<div class="pagina-centrada">
+  <div class="contenedor-auth">
+    <div class="auth-header">
+      <div class="auth-logo">C</div>
+      <h1 class="auth-titulo">Bienvenido de nuevo</h1>
+      <p class="auth-sub">Ingresa tus datos para acceder a tu cuenta</p>
+    </div>
+
+    <!-- Alerta de error (visible solo cuando hay error) -->
+    <div class="alerta alerta-error" id="alerta-error" style="display:none;">
+      &#9888; Correo o contraseña incorrectos. Intenta de nuevo.
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com" id="correo" autocomplete="email"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input type="password" class="form-input" placeholder="••••••••" id="password" autocomplete="current-password"/>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:1.2rem;">
+        <a href="p13-recuperar.html" style="font-size:0.85rem;color:var(--azul);text-decoration:none;">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <a href="p11-reservas.html" class="btn-primario btn-bloque" onclick="return validarLogin()">Ingresar</a>
+
+      <div class="divider-texto">o</div>
+
+      <p style="text-align:center;font-size:0.88rem;color:var(--gris-texto);">
+        ¿No tienes cuenta? <a href="p04-registro.html" style="color:var(--azul);font-weight:500;text-decoration:none;">Regístrate aquí</a>
+      </p>
+    </div>
+
+    <p style="text-align:center;margin-top:1.5rem;">
+      <a href="index.html" style="font-size:0.85rem;color:var(--gris-texto);text-decoration:none;">&#8592; Volver al inicio</a>
+    </p>
+  </div>
+</div>
+
+<script>
+function validarLogin() {
+  const c = document.getElementById('correo').value;
+  const p = document.getElementById('password').value;
+  if (!c || !p) {
+    document.getElementById('alerta-error').style.display = 'flex';
+    return false;
+  }
+  return true;
+}
+</script>
+</main>
+</body>
+</html>

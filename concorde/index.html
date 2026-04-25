@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Concorde – Transporte Terrestre</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, var(--negro) 0%, var(--azul-oscuro) 60%, var(--azul) 100%);
+      color: var(--blanco);
+      padding: 5rem 2.5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(245,197,24,0.15);
+      border: 1px solid rgba(245,197,24,0.4);
+      color: var(--amarillo);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.18;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 540px;
+      margin: 0 auto 2.5rem;
+      position: relative;
+    }
+    /* BUSCADOR HERO */
+    .buscador-hero {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      padding: 1.8rem 2rem;
+      max-width: 780px;
+      margin: 0 auto;
+      box-shadow: var(--sombra-fuerte);
+      position: relative;
+    }
+    .buscador-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 1rem;
+      align-items: end;
+    }
+    .buscador-hero label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--gris-texto);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.4rem;
+    }
+    .buscador-hero .form-input {
+      border-color: var(--gris-medio);
+      font-size: 0.95rem;
+    }
+    /* STATS */
+    .stats {
+      background: var(--azul-oscuro);
+      padding: 1.5rem 2.5rem;
+      display: flex;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+    }
+    .stat-item { text-align: center; color: var(--blanco); }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 700;
+      color: var(--amarillo);
+    }
+    .stat-label { font-size: 0.82rem; color: rgba(255,255,255,0.65); margin-top: 0.1rem; }
+    /* SECCIÓN */
+    .seccion { padding: 4rem 2.5rem; }
+    .seccion-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem; font-weight: 700;
+      color: var(--negro); margin-bottom: 0.5rem;
+    }
+    .seccion-sub { font-size: 0.95rem; color: var(--gris-texto); margin-bottom: 2.5rem; }
+    /* DESTINOS */
+    .grid-destinos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .card-destino {
+      background: var(--negro);
+      border-radius: var(--radio);
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform var(--transicion), box-shadow var(--transicion);
+      text-decoration: none;
+    }
+    .card-destino:hover { transform: translateY(-4px); box-shadow: var(--sombra-fuerte); }
+    .destino-imagen {
+      height: 130px;
+      display: flex; align-items: flex-end;
+      padding: 1rem;
+      position: relative;
+    }
+    .dest-bogota  { background: linear-gradient(160deg,#0D2F66,#1A4FA0); }
+    .dest-medellin{ background: linear-gradient(160deg,#1a1a2e,#16213e); }
+    .dest-cali    { background: linear-gradient(160deg,#0a2a0a,#1b4332); }
+    .dest-cartagena{background: linear-gradient(160deg,#312e0a,#78350f); }
+    .dest-barranquilla{background: linear-gradient(160deg,#1a0a2e,#4c1d95);}
+    .dest-precio {
+      background: var(--amarillo);
+      color: var(--negro);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+    }
+    .destino-info { padding: 1rem; }
+    .destino-ciudad {
+      font-weight: 600; font-size: 1rem;
+      color: var(--blanco); margin-bottom: 0.2rem;
+    }
+    .destino-ruta { font-size: 0.8rem; color: rgba(255,255,255,0.5); }
+    /* BENEFICIOS */
+    .grid-beneficios {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .card-beneficio {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      border: 1px solid var(--gris-medio);
+      padding: 1.8rem 1.5rem;
+      text-align: center;
+    }
+    .ben-icono {
+      width: 52px; height: 52px;
+      background: var(--azul-claro);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      margin: 0 auto 1rem;
+    }
+    .ben-titulo { font-weight: 600; font-size: 1rem; margin-bottom: 0.4rem; color: var(--negro); }
+    .ben-texto { font-size: 0.88rem; color: var(--gris-texto); }
+    /* OFERTA BANNER */
+    .banner-oferta {
+      background: linear-gradient(90deg, var(--azul-oscuro), var(--azul));
+      border-radius: var(--radio);
+      padding: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      flex-wrap: wrap;
+      max-width: 1100px; margin: 0 auto;
+    }
+    .banner-oferta h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem; color: var(--blanco); margin-bottom: 0.4rem;
+    }
+    .banner-oferta p { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div>
+      <span class="logo-text">Concorde</span>
+      <span class="logo-sub">Transporte Terrestre</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active" aria-current="page">Inicio</a></li>
+    <li><a href="p02-resultados.html">Rutas</a></li>
+    <li><a href="p12-atencion.html">Contacto</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-titulo">
+  <div class="hero-badge">&#10003; Empresa colombiana de transporte</div>
+  <h1 id="hero-titulo">Viaja seguro y cómodo<br>con Concorde</h1>
+  <p>Compra tu tiquete en línea y viaja a los mejores destinos de Colombia con total comodidad y respaldo.</p>
+
+  <div class="buscador-hero">
+    <div class="buscador-grid">
+      <div>
+        <label>Origen</label>
+        <select class="form-input form-select">
+          <option value="">Selecciona ciudad</option>
+          <option>Bogotá</option><option>Medellín</option>
+          <option>Cali</option><option>Barranquilla</option>
+          <option>Bucaramanga</option><option>Tunja</option>
+        </select>
+      </div>
+      <div>
+        <label>Destino</label>
+        <select class="form-input form-select">
+          <option value="">Selecciona ciudad</option>
+          <option>Bogotá</option><option>Medellín</option>
+          <option>Cali</option><option>Barranquilla</option>
+          <option>Bucaramanga</option><option>Tunja</option>
+        </select>
+      </div>
+      <div>
+        <label>Fecha de viaje</label>
+        <input type="date" class="form-input"/>
+      </div>
+      <div>
+        <a href="p02-resultados.html" class="btn-amarillo" style="padding:0.7rem 1.6rem; white-space:nowrap;">Buscar viaje</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat-item">
+    <div class="stat-num">+120</div>
+    <div class="stat-label">Rutas disponibles</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">+500K</div>
+    <div class="stat-label">Pasajeros transportados</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">32</div>
+    <div class="stat-label">Ciudades destino</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">98%</div>
+    <div class="stat-label">Satisfacción del cliente</div>
+  </div>
+</div>
+
+<!-- DESTINOS POPULARES -->
+<section class="seccion" style="background:var(--gris-claro);">
+  <div style="max-width:1100px;margin:0 auto;">
+    <p class="seccion-sub" style="margin-bottom:0.2rem;">Explora Colombia</p>
+    <h2 class="seccion-titulo">Destinos populares</h2>
+    <p class="seccion-sub">Los trayectos más viajados con Concorde</p>
+  </div>
+  <div class="grid-destinos">
+    <a href="p02-resultados.html" class="card-destino">
+      <div class="destino-imagen dest-bogota" role="presentation" aria-hidden="true">
+        <span class="dest-precio">Desde $35.000</span>
+      </div>
+      <div class="destino-info">
+        <div class="destino-ciudad">Bogotá</div>
+        <div class="destino-ruta">Tunja → Bogotá · 2h 30min</div>
+      </div>
+    </a>
+    <a href="p02-resultados.html" class="card-destino">
+      <div class="destino-imagen dest-medellin" role="presentation" aria-hidden="true">
+        <span class="dest-precio">Desde $65.000</span>
+      </div>
+      <div class="destino-info">
+        <div class="destino-ciudad">Medellín</div>
+        <div class="destino-ruta">Bogotá → Medellín · 8h</div>
+      </div>
+    </a>
+    <a href="p02-resultados.html" class="card-destino">
+      <div class="destino-imagen dest-cali" role="presentation" aria-hidden="true">
+        <span class="dest-precio">Desde $72.000</span>
+      </div>
+      <div class="destino-info">
+        <div class="destino-ciudad">Cali</div>
+        <div class="destino-ruta">Bogotá → Cali · 10h</div>
+      </div>
+    </a>
+    <a href="p02-resultados.html" class="card-destino">
+      <div class="destino-imagen dest-cartagena" role="presentation" aria-hidden="true">
+        <span class="dest-precio">Desde $95.000</span>
+      </div>
+      <div class="destino-info">
+        <div class="destino-ciudad">Cartagena</div>
+        <div class="destino-ruta">Bogotá → Cartagena · 13h</div>
+      </div>
+    </a>
+    <a href="p02-resultados.html" class="card-destino">
+      <div class="destino-imagen dest-barranquilla" role="presentation" aria-hidden="true">
+        <span class="dest-precio">Desde $88.000</span>
+      </div>
+      <div class="destino-info">
+        <div class="destino-ciudad">Barranquilla</div>
+        <div class="destino-ruta">Bogotá → Barranquilla · 12h</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- BENEFICIOS -->
+<section class="seccion" style="background:var(--blanco);">
+  <div style="max-width:1100px;margin:0 auto;">
+    <h2 class="seccion-titulo" style="text-align:center;">¿Por qué viajar con Concorde?</h2>
+    <p class="seccion-sub" style="text-align:center;">Comodidad, seguridad y puntualidad en cada trayecto</p>
+  </div>
+  <div class="grid-beneficios">
+    <div class="card-beneficio">
+      <div class="ben-icono">&#128664;</div>
+      <div class="ben-titulo">Flota moderna</div>
+      <div class="ben-texto">Buses de última generación con aire acondicionado, WiFi y asientos reclinables.</div>
+    </div>
+    <div class="card-beneficio">
+      <div class="ben-icono">&#128274;</div>
+      <div class="ben-titulo">Compra segura</div>
+      <div class="ben-texto">Pago en línea con cifrado SSL. Tus datos y transacciones siempre protegidos.</div>
+    </div>
+    <div class="card-beneficio">
+      <div class="ben-icono">&#128197;</div>
+      <div class="ben-titulo">Gestión de reservas</div>
+      <div class="ben-texto">Cancela o modifica tu tiquete desde tu cuenta en cualquier momento.</div>
+    </div>
+    <div class="card-beneficio">
+      <div class="ben-icono">&#9201;</div>
+      <div class="ben-titulo">Puntualidad garantizada</div>
+      <div class="ben-texto">Rutas optimizadas y conductores certificados para llegar siempre a tiempo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER OFERTA -->
+<section class="seccion" style="background:var(--gris-claro);">
+  <div class="banner-oferta">
+    <div>
+      <h3>&#128293; Oferta de temporada</h3>
+      <p>Viaja a Bogotá por solo $29.900 los martes y miércoles. ¡Plazas limitadas!</p>
+    </div>
+    <a href="p02-resultados.html" class="btn-amarillo">Ver oferta</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <div class="footer-links">
+    <a href="index.html">Inicio</a>
+    <a href="p02-resultados.html">Rutas</a>
+    <a href="p03-login.html">Mi cuenta</a>
+    <a href="p12-atencion.html">Contacto</a>
+    <a href="p99-accesibilidad.html">Accesibilidad</a>
+    <a href="#">Términos y condiciones</a>
+  </div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S. &nbsp;|&nbsp; Todos los derechos reservados.</p>
+</footer>
+
+</body>
+</html>

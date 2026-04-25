@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Selección de asientos – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .layout-asientos { display:grid;grid-template-columns:1fr 320px;gap:1.8rem;padding:2rem 2.5rem;max-width:1160px;margin:0 auto; }
+    .bus-wrapper { background:var(--blanco);border:1px solid var(--gris-medio);border-radius:var(--radio);padding:2rem; }
+    .bus-cabina {
+      background:var(--negro);
+      border-radius:var(--radio) var(--radio) 0 0;
+      padding:1rem; text-align:center;
+      color:var(--blanco); font-size:0.8rem;
+      margin-bottom:1rem;
+      display:flex; align-items:center; justify-content:center; gap:0.5rem;
+    }
+    .leyenda { display:flex;gap:1.5rem;justify-content:center;margin-bottom:1.5rem;flex-wrap:wrap; }
+    .ley-item { display:flex;align-items:center;gap:0.4rem;font-size:0.8rem;color:var(--gris-texto); }
+    .ley-box { width:20px;height:20px;border-radius:5px; }
+    .ley-disponible { background:var(--gris-claro);border:1.5px solid var(--gris-medio); }
+    .ley-seleccionado{ background:var(--azul);border:1.5px solid var(--azul-oscuro); }
+    .ley-ocupado     { background:var(--gris-medio);border:1.5px solid #b0b8c1; }
+    .ley-prioritario { background:var(--amarillo-suave);border:1.5px solid #d4a90e; }
+
+    .fila-bus { display:flex;align-items:center;gap:0.5rem;justify-content:center;margin-bottom:0.5rem; }
+    .fila-num { width:24px;font-size:0.72rem;color:var(--gris-texto);text-align:center; }
+    .asiento {
+      width:34px;height:34px;border-radius:6px 6px 3px 3px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:0.7rem;font-weight:600;
+      cursor:pointer;transition:all 0.15s;
+      border:1.5px solid var(--gris-medio);
+      background:var(--gris-claro);color:var(--gris-texto);
+    }
+    .asiento:hover:not(.ocupado):not(.seleccionado) { border-color:var(--azul);color:var(--azul);background:var(--azul-claro); }
+    .asiento.seleccionado { background:var(--azul);border-color:var(--azul-oscuro);color:var(--blanco); }
+    .asiento.ocupado { background:var(--gris-medio);border-color:#b0b8c1;cursor:not-allowed;color:var(--gris-texto); }
+    .asiento.prioritario { background:var(--amarillo-suave);border-color:#d4a90e;color:#92600a; }
+    .asiento.prioritario:hover:not(.ocupado) { background:#fde68a; }
+    .pasillo { width:20px; }
+
+    .resumen-lateral { position:sticky;top:80px; }
+    .resumen-fila { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;font-size:0.9rem; }
+    .resumen-fila span:first-child { color:var(--gris-texto); }
+    .resumen-total { border-top:2px solid var(--gris-medio);padding-top:1rem;margin-top:1rem; }
+
+    .asiento-sel-info {
+      background:var(--azul-claro);
+      border:1px solid #93c5fd;
+      border-radius:var(--radio-btn);
+      padding:0.8rem 1rem;
+      margin-bottom:1rem;
+      font-size:0.88rem;
+      color:var(--azul-oscuro);
+    }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+</nav>
+<main id="contenido-principal" role="main">
+<h1 class="sr-only">Selección de asientos</h1>
+
+<header class="stepper-header" aria-label="Progreso de compra"><div style="background:var(--blanco);border-bottom:1px solid var(--gris-medio);padding:1rem 2.5rem;">
+  <div class="stepper">
+    <div class="step hecho"><div class="step-num">&#10003;</div> Buscar</div>
+    <div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Detalle</div>
+    <div class="step-linea"></div>
+    <div class="step hecho"><div class="step-num">&#10003;</div> Pasajero</div>
+    <div class="step-linea"></div>
+    <div class="step activo"><div class="step-num">4</div> Asientos</div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-num">5</div> Pago</div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-num">6</div> Confirmación</div>
+  </div>
+</div>
+</header>
+
+<section aria-label="Contenido principal"><div class="layout-asientos">
+  <div>
+    <div class="bus-wrapper">
+      <div class="bus-cabina">
+        <span>&#128664;</span>
+        <span>FRENTE DEL BUS · Conductor</span>
+      </div>
+
+      <div class="leyenda">
+        <div class="ley-item"><div class="ley-box ley-disponible"></div> Disponible</div>
+        <div class="ley-item"><div class="ley-box ley-seleccionado"></div> Tu asiento</div>
+        <div class="ley-item"><div class="ley-box ley-ocupado"></div> Ocupado</div>
+        <div class="ley-item"><div class="ley-box ley-prioritario"></div> Prioritario</div>
+      </div>
+
+      <div id="mapa-bus" role="group" aria-label="Mapa de asientos del bus. Usa las teclas para navegar y Enter para seleccionar."></div>
+    </div>
+
+    <p style="font-size:0.78rem;color:var(--gris-texto);margin-top:0.8rem;text-align:center;">
+      Los asientos <strong>1A, 1B, 1C, 1D</strong> están reservados para adultos mayores, mujeres embarazadas y personas con discapacidad.
+    </p>
+  </div>
+
+  <!-- RESUMEN -->
+  <div class="resumen-lateral">
+    <div class="asiento-sel-info" id="info-asiento">
+      Haz clic en un asiento disponible para seleccionarlo.
+    </div>
+    <div class="card">
+      <h3 style="font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:1.2rem;">Resumen</h3>
+      <div class="resumen-fila"><span>Ruta</span><span>BOG → MDE</span></div>
+      <div class="resumen-fila"><span>Fecha</span><span>15 ago 2025</span></div>
+      <div class="resumen-fila"><span>Asiento</span><span id="asiento-elegido">—</span></div>
+      <div class="resumen-fila"><span>Tarifa</span><span>Ejecutiva</span></div>
+      <div class="resumen-total">
+        <div class="resumen-fila" style="font-weight:700;"><span>Total</span><span style="font-size:1.15rem;color:var(--azul);">$92.820</span></div>
+      </div>
+      <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:0.7rem;">
+        <a href="p08-resumen-compra.html" class="btn-primario btn-bloque" id="btn-continuar" style="opacity:0.45;pointer-events:none;">Confirmar asiento &#8594;</a>
+        <a href="p06-pasajero.html" class="btn-secundario btn-bloque">&#8592; Regresar</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+
+<script>
+const ocupados = ['2A','3B','4C','5A','5D','7B','8A','9C','10D','11A','11B'];
+const prioritarios = ['1A','1B','1C','1D'];
+let seleccionado = null;
+
+const bus = document.getElementById('mapa-bus');
+
+for (let fila = 1; fila <= 11; fila++) {
+  const row = document.createElement('div');
+  row.className = 'fila-bus';
+  const num = document.createElement('div');
+  num.className = 'fila-num';
+  num.textContent = fila;
+  row.appendChild(num);
+
+  ['A','B'].forEach(letra => {
+    const a = crearAsiento(fila + letra);
+    row.appendChild(a);
+  });
+
+  const pasillo = document.createElement('div');
+  pasillo.className = 'pasillo';
+  row.appendChild(pasillo);
+
+  ['C','D'].forEach(letra => {
+    const a = crearAsiento(fila + letra);
+    row.appendChild(a);
+  });
+
+  bus.appendChild(row);
+}
+
+function crearAsiento(id) {
+  const a = document.createElement('div');
+  a.className = 'asiento';
+  a.textContent = id;
+  if (ocupados.includes(id)) { a.classList.add('ocupado'); }
+  else if (prioritarios.includes(id)) { a.classList.add('prioritario'); }
+  a.addEventListener('click', () => {
+    if (a.classList.contains('ocupado')) return;
+    if (seleccionado) seleccionado.classList.remove('seleccionado');
+    if (seleccionado === a) { seleccionado = null; actualizarPanel(null); return; }
+    a.classList.add('seleccionado');
+    seleccionado = a;
+    actualizarPanel(id);
+  });
+  return a;
+}
+
+function actualizarPanel(id) {
+  const info = document.getElementById('info-asiento');
+  const elegido = document.getElementById('asiento-elegido');
+  const btn = document.getElementById('btn-continuar');
+  if (id) {
+    info.textContent = '✓ Asiento ' + id + ' seleccionado.';
+    elegido.textContent = id;
+    btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+  } else {
+    info.textContent = 'Haz clic en un asiento disponible para seleccionarlo.';
+    elegido.textContent = '—';
+    btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none';
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resultados de viajes – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+  <style>
+    .barra-busqueda {
+      background: var(--negro);
+      padding: 1.4rem 2.5rem;
+      display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;
+    }
+    .barra-busqueda label { font-size:0.75rem;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:0.8px;display:block;margin-bottom:0.3rem; }
+    .barra-busqueda .form-input { background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:var(--blanco);padding:0.6rem 0.9rem;font-size:0.9rem; }
+    .barra-busqueda .form-input::placeholder { color:rgba(255,255,255,0.35); }
+    .layout-resultados { display:grid;grid-template-columns:260px 1fr;gap:1.5rem;padding:2rem 2.5rem;max-width:1200px;margin:0 auto; }
+    /* FILTROS */
+    .panel-filtros h3 { font-size:0.85rem;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);margin-bottom:1rem; }
+    .filtro-grupo { margin-bottom:1.5rem; }
+    .filtro-titulo { font-size:0.9rem;font-weight:600;color:var(--negro);margin-bottom:0.7rem; }
+    .filtro-opcion { display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;font-size:0.88rem;color:var(--negro-suave);cursor:pointer; }
+    .filtro-opcion input { accent-color:var(--azul); }
+    /* TARJETAS DE VIAJE */
+    .card-viaje {
+      background: var(--blanco);
+      border-radius: var(--radio);
+      border: 1px solid var(--gris-medio);
+      padding: 1.4rem 1.6rem;
+      margin-bottom: 1rem;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      align-items: center;
+      gap: 1.5rem;
+      transition: box-shadow var(--transicion), border-color var(--transicion);
+    }
+    .card-viaje:hover { box-shadow: var(--sombra); border-color: var(--azul-medio); }
+    .viaje-hora { font-size:1.5rem;font-weight:600;color:var(--negro); }
+    .viaje-ciudad { font-size:0.82rem;color:var(--gris-texto);margin-top:0.1rem; }
+    .viaje-duracion { text-align:center; }
+    .duracion-linea { display:flex;align-items:center;gap:6px;justify-content:center; }
+    .linea { flex:1;height:2px;background:var(--gris-medio); }
+    .duracion-texto { font-size:0.75rem;color:var(--gris-texto);margin-top:0.3rem;text-align:center; }
+    .viaje-precio-col { text-align:right; }
+    .precio-desde { font-size:0.72rem;color:var(--gris-texto);text-transform:uppercase;letter-spacing:0.5px; }
+    .precio-valor { font-size:1.4rem;font-weight:700;color:var(--azul); }
+    .precio-tags { display:flex;gap:0.4rem;justify-content:flex-end;margin:0.4rem 0; }
+    .viaje-info { grid-column:1/-1;display:flex;gap:1.5rem;font-size:0.82rem;color:var(--gris-texto);border-top:1px solid var(--gris-medio);padding-top:0.9rem;margin-top:0.2rem; }
+    .sin-resultados { text-align:center;padding:4rem 2rem;color:var(--gris-texto); }
+  </style>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="p02-resultados.html" class="active" aria-current="page">Rutas</a></li>
+    <li><a href="p12-atencion.html">Contacto</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+<h1 class="sr-only">Resultados de viajes</h1>
+
+<!-- BARRA BÚSQUEDA -->
+<div class="barra-busqueda">
+  <div>
+    <label>Origen</label>
+    <select class="form-input form-select" style="min-width:150px;">
+      <option>Bogotá</option><option>Tunja</option><option>Medellín</option>
+    </select>
+  </div>
+  <div>
+    <label>Destino</label>
+    <select class="form-input form-select" style="min-width:150px;">
+      <option>Medellín</option><option>Cali</option><option>Cartagena</option>
+    </select>
+  </div>
+  <div>
+    <label>Fecha</label>
+    <input type="date" class="form-input" value="2025-08-15"/>
+  </div>
+  <div>
+    <label>Pasajeros</label>
+    <select class="form-input form-select">
+      <option>1</option><option>2</option><option>3</option><option>4</option>
+    </select>
+  </div>
+  <button class="btn-amarillo" style="padding:0.62rem 1.5rem;">Actualizar búsqueda</button>
+</div>
+</header>
+
+<section aria-label="Contenido principal"><div class="layout-resultados">
+  <!-- FILTROS -->
+  <aside>
+    <div class="card">
+      <h3>Filtros</h3>
+
+      <div class="filtro-grupo">
+        <div class="filtro-titulo">Hora de salida</div>
+        <label class="filtro-opcion"><input type="checkbox" checked/> Mañana (06:00–12:00)</label>
+        <label class="filtro-opcion"><input type="checkbox" checked/> Tarde (12:00–18:00)</label>
+        <label class="filtro-opcion"><input type="checkbox"/> Noche (18:00–24:00)</label>
+      </div>
+
+      <div class="filtro-grupo">
+        <div class="filtro-titulo">Tipo de servicio</div>
+        <label class="filtro-opcion"><input type="checkbox" checked/> Económico</label>
+        <label class="filtro-opcion"><input type="checkbox" checked/> Ejecutivo</label>
+        <label class="filtro-opcion"><input type="checkbox"/> Especial</label>
+      </div>
+
+      <div class="filtro-grupo">
+        <div class="filtro-titulo">Precio máximo</div>
+        <input type="range" min="30000" max="200000" value="120000" style="width:100%;accent-color:var(--azul);"/>
+        <p style="font-size:0.82rem;color:var(--gris-texto);margin-top:0.3rem;">Hasta $120.000</p>
+      </div>
+
+      <button class="btn-secundario btn-bloque" style="font-size:0.85rem;padding:0.55rem;">Limpiar filtros</button>
+    </div>
+  </aside>
+
+  <!-- RESULTADOS -->
+  <div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;">
+      <p style="font-size:0.9rem;color:var(--gris-texto);"><strong style="color:var(--negro);">4 viajes disponibles</strong> · Bogotá → Medellín · 15 ago 2025</p>
+      <select class="form-input form-select" style="width:auto;font-size:0.85rem;padding:0.4rem 0.8rem;">
+        <option>Ordenar: Más temprano</option>
+        <option>Ordenar: Más barato</option>
+        <option>Ordenar: Más rápido</option>
+      </select>
+    </div>
+
+    <!-- Viaje 1 -->
+    <div class="card-viaje">
+      <div>
+        <div class="viaje-hora">06:00</div>
+        <div class="viaje-ciudad">Bogotá · Terminal Sur</div>
+      </div>
+      <div class="viaje-duracion">
+        <div class="duracion-linea">
+          <div class="linea"></div>
+          <span style="font-size:1rem;">&#9654;</span>
+          <div class="linea"></div>
+        </div>
+        <div class="duracion-texto">8h 30min · Directo</div>
+      </div>
+      <div>
+        <div class="viaje-hora">14:30</div>
+        <div class="viaje-ciudad">Medellín · Terminal Norte</div>
+      </div>
+      <div class="viaje-precio-col">
+        <div class="precio-desde">desde</div>
+        <div class="precio-valor">$65.000</div>
+        <div class="precio-tags">
+          <span class="badge badge-azul">Económico</span>
+          <span class="badge badge-ok">Disponible</span>
+        </div>
+        <a href="p05-detalle-viaje.html" class="btn-primario" style="padding:0.5rem 1.2rem;font-size:0.85rem;">Seleccionar</a>
+      </div>
+      <div class="viaje-info">
+        <span>&#128664; Bus Ejecutivo</span>
+        <span>&#128188; WiFi incluido</span>
+        <span>&#10052; A/C</span>
+        <span>&#128176; 23 asientos disponibles</span>
+      </div>
+    </div>
+
+    <!-- Viaje 2 -->
+    <div class="card-viaje">
+      <div>
+        <div class="viaje-hora">09:30</div>
+        <div class="viaje-ciudad">Bogotá · Terminal Sur</div>
+      </div>
+      <div class="viaje-duracion">
+        <div class="duracion-linea">
+          <div class="linea"></div>
+          <span style="font-size:1rem;">&#9654;</span>
+          <div class="linea"></div>
+        </div>
+        <div class="duracion-texto">8h 00min · Directo</div>
+      </div>
+      <div>
+        <div class="viaje-hora">17:30</div>
+        <div class="viaje-ciudad">Medellín · Terminal Norte</div>
+      </div>
+      <div class="viaje-precio-col">
+        <div class="precio-desde">desde</div>
+        <div class="precio-valor">$72.000</div>
+        <div class="precio-tags">
+          <span class="badge badge-amarillo">Ejecutivo</span>
+          <span class="badge badge-ok">Disponible</span>
+        </div>
+        <a href="p05-detalle-viaje.html" class="btn-primario" style="padding:0.5rem 1.2rem;font-size:0.85rem;">Seleccionar</a>
+      </div>
+      <div class="viaje-info">
+        <span>&#128664; Bus Especial</span>
+        <span>&#128188; WiFi incluido</span>
+        <span>&#10052; A/C</span>
+        <span>&#128176; 15 asientos disponibles</span>
+      </div>
+    </div>
+
+    <!-- Viaje 3 -->
+    <div class="card-viaje">
+      <div>
+        <div class="viaje-hora">14:00</div>
+        <div class="viaje-ciudad">Bogotá · Terminal Norte</div>
+      </div>
+      <div class="viaje-duracion">
+        <div class="duracion-linea">
+          <div class="linea"></div>
+          <span style="font-size:1rem;">&#9654;</span>
+          <div class="linea"></div>
+        </div>
+        <div class="duracion-texto">9h 00min · Directo</div>
+      </div>
+      <div>
+        <div class="viaje-hora">23:00</div>
+        <div class="viaje-ciudad">Medellín · Terminal Norte</div>
+      </div>
+      <div class="viaje-precio-col">
+        <div class="precio-desde">desde</div>
+        <div class="precio-valor">$58.000</div>
+        <div class="precio-tags">
+          <span class="badge badge-azul">Económico</span>
+          <span class="badge badge-gris">Pocos asientos</span>
+        </div>
+        <a href="p05-detalle-viaje.html" class="btn-primario" style="padding:0.5rem 1.2rem;font-size:0.85rem;">Seleccionar</a>
+      </div>
+      <div class="viaje-info">
+        <span>&#128664; Bus Económico</span>
+        <span>&#10052; A/C</span>
+        <span>&#128176; 4 asientos disponibles</span>
+      </div>
+    </div>
+
+    <!-- Viaje 4 -->
+    <div class="card-viaje">
+      <div>
+        <div class="viaje-hora">22:00</div>
+        <div class="viaje-ciudad">Bogotá · Terminal Sur</div>
+      </div>
+      <div class="viaje-duracion">
+        <div class="duracion-linea">
+          <div class="linea"></div>
+          <span style="font-size:1rem;">&#9654;</span>
+          <div class="linea"></div>
+        </div>
+        <div class="duracion-texto">8h 30min · Nocturno</div>
+      </div>
+      <div>
+        <div class="viaje-hora">06:30</div>
+        <div class="viaje-ciudad">Medellín · Terminal Norte (+1 día)</div>
+      </div>
+      <div class="viaje-precio-col">
+        <div class="precio-desde">desde</div>
+        <div class="precio-valor">$68.000</div>
+        <div class="precio-tags">
+          <span class="badge badge-amarillo">Ejecutivo</span>
+          <span class="badge badge-ok">Disponible</span>
+        </div>
+        <a href="p05-detalle-viaje.html" class="btn-primario" style="padding:0.5rem 1.2rem;font-size:0.85rem;">Seleccionar</a>
+      </div>
+      <div class="viaje-info">
+        <span>&#128664; Bus Ejecutivo</span>
+        <span>&#128188; WiFi incluido</span>
+        <span>&#10052; A/C</span>
+        <span>&#128176; 30 asientos disponibles</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</main>
+<footer class="footer">
+  <div class="footer-logo">Concorde</div>
+  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
+</footer>
+</body>
+</html>

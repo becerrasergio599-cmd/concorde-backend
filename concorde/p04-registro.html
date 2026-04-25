@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro – Concorde</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a href="index.html" class="navbar-logo">
+    <div class="logo-mark" aria-hidden="true">C</div>
+    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+  </ul>
+  <div class="nav-cta">
+    <a href="p03-login.html" class="btn-nav-login">Iniciar sesión</a>
+    <a href="p04-registro.html" class="btn-nav-register">Registrarse</a>
+  </div>
+</nav>
+<main id="contenido-principal" role="main">
+
+<div class="pagina-centrada" style="align-items:flex-start;padding-top:3rem;">
+  <div class="contenedor-auth" style="max-width:520px;">
+    <div class="auth-header">
+      <div class="auth-logo">C</div>
+      <h1 class="auth-titulo">Crear cuenta</h1>
+      <p class="auth-sub">Regístrate para comprar tus tiquetes en línea</p>
+    </div>
+
+    <div class="card">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" placeholder="Ej. Carlos"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="form-input" placeholder="Ej. González"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo de documento</label>
+        <select class="form-input form-select">
+          <option>Cédula de ciudadanía</option>
+          <option>Tarjeta de identidad</option>
+          <option>Pasaporte</option>
+          <option>Cédula de extranjería</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Número de documento</label>
+        <input type="text" class="form-input" placeholder="Ej. 1234567890"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Correo electrónico</label>
+        <input type="email" class="form-input" placeholder="tucorreo@ejemplo.com"/>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Teléfono</label>
+        <input type="tel" class="form-input" placeholder="Ej. 3001234567"/>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+        <div class="form-group">
+          <label class="form-label">Contraseña</label>
+          <input type="password" class="form-input" placeholder="••••••••"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar contraseña</label>
+          <input type="password" class="form-input" placeholder="••••••••"/>
+        </div>
+      </div>
+
+      <div class="form-group" style="display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:1.5rem;">
+        <input type="checkbox" id="terminos" style="margin-top:3px;accent-color:var(--azul);width:16px;height:16px;"/>
+        <label for="terminos" style="font-size:0.85rem;color:var(--gris-texto);">
+          Acepto los <a href="#" style="color:var(--azul);text-decoration:none;">términos y condiciones</a> y la
+          <a href="#" style="color:var(--azul);text-decoration:none;">política de privacidad</a>
+        </label>
+      </div>
+
+      <a href="p04b-confirmacion-registro.html" class="btn-primario btn-bloque">Crear cuenta</a>
+
+      <div class="divider-texto">¿ya tienes cuenta?</div>
+
+      <a href="p03-login.html" class="btn-secundario btn-bloque">Iniciar sesión</a>
+    </div>
+
+    <p style="text-align:center;margin-top:1.5rem;">
+      <a href="index.html" style="font-size:0.85rem;color:var(--gris-texto);text-decoration:none;">&#8592; Volver al inicio</a>
+    </p>
+  </div>
+</div>
+</main>
+</body>
+</html>

@@ -1,139 +1,101 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Confirmación de compra – Concorde</title>
-  <link rel="stylesheet" href="css/styles.css"/>
-  <style>
-    .tiquete {
-      max-width:580px; margin:0 auto;
-      background:var(--blanco); border-radius:var(--radio);
-      border:1px solid var(--gris-medio); overflow:hidden;
-      box-shadow:var(--sombra-fuerte);
-    }
-    .tiquete-header {
-      background:linear-gradient(135deg,var(--negro),var(--azul-oscuro));
-      padding:2rem; color:var(--blanco);
-      display:flex; justify-content:space-between; align-items:center;
-    }
-    .tiquete-ruta { font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700; }
-    .tiquete-fecha { font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:0.2rem; }
-    .tiquete-codigo {
-      background:var(--amarillo); color:var(--negro);
-      font-size:1rem; font-weight:700; padding:0.5rem 1rem;
-      border-radius:8px; letter-spacing:2px;
-    }
-    .tiquete-cuerpo { padding:1.8rem; }
-    .tiquete-grid { display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;margin-bottom:1.5rem; }
-    .tiquete-campo label { font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--gris-texto);font-weight:600;display:block;margin-bottom:0.2rem; }
-    .tiquete-campo span  { font-size:0.95rem;font-weight:500;color:var(--negro); }
-    .tiquete-corte {
-      border-top:2px dashed var(--gris-medio);
-      margin:0; padding:1.5rem 1.8rem;
-      background:var(--gris-claro);
-      display:flex;justify-content:space-between;align-items:center;
-    }
-  </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reserva confirmada - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Confirmación de Compra</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-<a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
-<nav class="navbar" role="navigation" aria-label="Navegación principal">
-  <a href="index.html" class="navbar-logo">
-    <div class="logo-mark" aria-hidden="true">C</div>
-    <div><span class="logo-text">Concorde</span><span class="logo-sub">Transporte Terrestre</span></div>
-  </a>
-</nav>
-<main id="contenido-principal" role="main">
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-5">
+    <div class="container">
+      <section aria-label="Confirmación de compra"><div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9 text-center">
+          <div class="card-concorde p-5">
+            <div class="icono-exito" aria-hidden="true">✓</div>
+            <h1 class="h2 fw-bold texto-azul mb-2">¡Reserva Confirmada!</h1>
+            <p class="text-muted mb-1">Tu trayecto ha sido reservado exitosamente.</p>
+            <p class="text-muted mb-4">Hemos enviado el tiquete a tu correo electrónico.</p>
 
-<div style="background:var(--blanco);border-bottom:1px solid var(--gris-medio);padding:1rem 2.5rem;">
-  <div class="stepper">
-    <div class="step hecho"><div class="step-num">&#10003;</div> Buscar</div><div class="step-linea"></div>
-    <div class="step hecho"><div class="step-num">&#10003;</div> Detalle</div><div class="step-linea"></div>
-    <div class="step hecho"><div class="step-num">&#10003;</div> Pasajero</div><div class="step-linea"></div>
-    <div class="step hecho"><div class="step-num">&#10003;</div> Asientos</div><div class="step-linea"></div>
-    <div class="step hecho"><div class="step-num">&#10003;</div> Resumen</div><div class="step-linea"></div>
-    <div class="step hecho"><div class="step-num">&#10003;</div> Pago</div><div class="step-linea"></div>
-    <div class="step activo"><div class="step-num">7</div> Confirmación</div>
-  </div>
-</div>
+            <!-- Código de reserva con botón copiar -->
+            <div style="background:var(--gris-claro);border-radius:var(--radio-md);padding:1.5rem;margin-bottom:1.5rem" role="region" aria-label="Código de reserva">
+              <p class="text-muted small mb-1">Código de reserva</p>
+              <div style="font-family:monospace;font-size:2.2rem;font-weight:700;color:var(--azul-principal);letter-spacing:6px" id="codigoReserva">
+                CC-8472
+              </div>
+              <button type="button" onclick="copiarCodigo()" class="btn btn-outline-concorde btn-sm mt-2" aria-label="Copiar código de reserva">
+                <i class="bi bi-clipboard me-1" aria-hidden="true"></i>Copiar código
+              </button>
+            </div>
 
-<div style="padding:3rem 2rem;max-width:700px;margin:0 auto;">
-  <!-- Éxito -->
-  <div style="text-align:center;margin-bottom:2.5rem;">
-    <div style="width:70px;height:70px;background:#dcfce7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;color:#16a34a;">&#10003;</div>
-    <h1 style="font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:0.4rem;">¡Compra exitosa!</h1>
-    <p style="color:var(--gris-texto);font-size:0.95rem;">Tu tiquete ha sido generado. Recibirás una copia en tu correo electrónico.</p>
-  </div>
+            <!-- Resumen vuelo -->
+            <div class="row g-3 text-start mb-4">
+              <div class="col-6"><small class="text-muted d-block">Vuelo</small><strong>Tunja → Bogotá Salitre</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Fecha</small><strong>Jue, 2 Ene 2025</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Hora</small><strong>05:30 – 09:00</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Asiento</small><strong>12C · Económico</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Pasajero</small><strong>Juan C. García</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Total pagado</small><strong class="texto-azul">$22.000 COP</strong></div>
+            </div>
 
-  <!-- TIQUETE -->
-  <div class="tiquete" style="margin-bottom:2rem;">
-    <div class="tiquete-header">
-      <div>
-        <div class="tiquete-ruta">Bogotá → Medellín</div>
-        <div class="tiquete-fecha">Viernes, 15 de agosto de 2025 · 06:00 h</div>
-      </div>
-      <div class="tiquete-codigo">CON-84921</div>
-    </div>
-    <div class="tiquete-cuerpo">
-      <div class="tiquete-grid">
-        <div class="tiquete-campo">
-          <label>Pasajero</label>
-          <span>Carlos Andrés González</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Documento</label>
-          <span>C.C. 1030456789</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Asiento</label>
-          <span>5C · Ventana</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Tarifa</label>
-          <span>Ejecutiva</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Terminal salida</label>
-          <span>Terminal del Sur · Bogotá</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Terminal llegada</label>
-          <span>Terminal del Norte · Medellín</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Bus / Placa</label>
-          <span>Concorde Express 101 · TYK-895</span>
-        </div>
-        <div class="tiquete-campo">
-          <label>Total pagado</label>
-          <span style="color:var(--azul);font-weight:700;">$95.320</span>
+            <!-- Abordaje online -->
+            <div class="alerta-info alerta-concorde text-start mb-4">
+              <i class="bi bi-phone me-2" aria-hidden="true"></i>
+              <strong>Abordaje online disponible</strong> desde 24 horas antes del vuelo.
+              <div id="estadoCheckin" class="mt-2" aria-live="polite"></div>
+              <button type="button" onclick="hacerCheckin()" class="btn btn-sm btn-concorde-primario mt-2" id="btnCheckin">
+                <i class="bi bi-qr-code me-1" aria-hidden="true"></i>Hacer abordaje ahora
+              </button>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <button type="button" onclick="window.print()" class="btn btn-outline-concorde px-4">
+                <i class="bi bi-printer me-1" aria-hidden="true"></i>Imprimir tiquete
+              </button>
+              <a href="p11-reservas.html" class="btn btn-concorde-primario px-4">
+                <i class="bi bi-calendar-check me-1" aria-hidden="true"></i>Mis reservas
+              </a>
+              <a href="index.html" class="btn btn-concorde-dorado px-4">
+                <i class="bi bi-house me-1" aria-hidden="true"></i>Inicio
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    <div class="tiquete-corte">
-      <div>
-        <p style="font-size:0.78rem;color:var(--gris-texto);">Muestra este código al abordar</p>
-        <p style="font-size:1.3rem;font-weight:700;letter-spacing:4px;color:var(--negro);">CON-84921</p>
-      </div>
-      <div style="text-align:right;">
-        <p style="font-size:0.72rem;color:var(--gris-texto);">Fecha de compra</p>
-        <p style="font-size:0.85rem;font-weight:500;">15/07/2025 · 10:34 h</p>
-      </div>
-    </div>
-  </div>
+  </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>// Proteger: requiere sesión de cliente
+  (function(){ var u=Auth.getUsuario(); if(!u) window.location.href="p03-login.html"; else if(u.rol==="administrador") window.location.href="admin-panel.html"; })();
+  </script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    function copiarCodigo() {
+      const codigo = document.getElementById('codigoReserva').textContent.trim();
+      navigator.clipboard?.writeText(codigo).then(() => {
+        UI.mostrarToast('¡Código CC-8472 copiado!', 'success');
+      }).catch(() => UI.mostrarToast('Código: CC-8472', 'info'));
+    }
 
-  <!-- ACCIONES -->
-  <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-    <button onclick="window.print()" class="btn-secundario" style="flex:1;">&#128438; Descargar tiquete</button>
-    <a href="p11-reservas.html" class="btn-primario" style="flex:1;text-align:center;">Ver mis reservas</a>
-    <a href="index.html" class="btn-secundario" style="flex:1;text-align:center;">Volver al inicio</a>
-  </div>
-</div>
-
-</main>
-<footer class="footer">
-  <div class="footer-logo">Concorde</div>
-  <p class="footer-copy">&copy; 2025 Concorde Transporte Terrestre S.A.S.</p>
-</footer>
+    function hacerCheckin() {
+      const btn = document.getElementById('btnCheckin');
+      const estado = document.getElementById('estadoCheckin');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Procesando...';
+      setTimeout(() => {
+        btn.textContent = '✓ Abordaje completado';
+        estado.innerHTML = '<span class="text-success fw-bold">Abordaje exitoso.</span> Tu tiquete de viaje fue enviado al correo.';
+        UI.mostrarToast('¡Abordaje completado exitosamente!', 'success');
+      }, 2000);
+    }
+  </script>
 </body>
 </html>

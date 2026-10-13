@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de Administración — Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Panel de Administración</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── ADMIN VARS ─────────────────────── */
+    :root {
+      --admin-sidebar: #0d1b2a;
+      --admin-sidebar-hover: rgba(255,255,255,0.07);
+      --admin-accent: #f5a623;
+      --admin-verde: #2ecc71;
+      --admin-rojo: #e74c3c;
+      --admin-morado: #9b59b6;
+    }
+
+    body { background: #f0f2f7; }
+
+    /* ── LAYOUT ─────────────────────────── */
+    .admin-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ────────────────────────── */
+    .admin-sidebar {
+      width: 240px;
+      background: var(--admin-sidebar);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 1040;
+      transition: transform .3s ease;
+    }
+
+    .admin-sidebar.oculto { transform: translateX(-100%); }
+
+    .sidebar-logo {
+      padding: 1.4rem 1.2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-logo .logo-icono { color: var(--admin-accent); font-size: 1.6rem; }
+    .sidebar-logo .logo-texto { color: #fff; font-size: 1rem; font-family: var(--fuente-titulo); letter-spacing: 1px; }
+    .sidebar-logo .logo-subtexto { color: var(--admin-accent); font-size: .58rem; letter-spacing: 2px; display: block; }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+
+    .sidebar-section {
+      padding: .4rem 1rem .2rem;
+      font-size: .65rem;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,.3);
+      text-transform: uppercase;
+      margin-top: .8rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: .65rem 1.2rem;
+      color: rgba(255,255,255,.65);
+      font-size: .875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .sidebar-link i { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-link:hover,
+    .sidebar-link.activo {
+      background: var(--admin-sidebar-hover);
+      color: #fff;
+      border-left-color: var(--admin-accent);
+    }
+    .sidebar-link.activo { color: var(--admin-accent); }
+    .sidebar-link .badge-sidebar {
+      margin-left: auto;
+      background: var(--admin-accent);
+      color: var(--azul-oscuro);
+      font-size: .65rem;
+      padding: .15em .5em;
+      border-radius: 20px;
+    }
+
+    .sidebar-footer {
+      padding: 1rem 1.2rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    .sidebar-footer button {
+      background: rgba(231,76,60,.15);
+      border: 1px solid rgba(231,76,60,.3);
+      color: #e74c3c;
+      width: 100%;
+      padding: .5rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .sidebar-footer button:hover { background: #e74c3c; color: #fff; }
+
+    /* ── MAIN CONTENT ───────────────────── */
+    .admin-main {
+      margin-left: 240px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ── TOPBAR ─────────────────────────── */
+    .admin-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e8ecf1;
+      padding: .9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+
+    .topbar-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--azul-oscuro);
+    }
+
+    .topbar-acciones { display: flex; align-items: center; gap: .75rem; }
+
+    .topbar-notif {
+      position: relative;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--gris-claro);
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gris-texto);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .topbar-notif:hover { background: var(--azul-principal); color: #fff; }
+    .notif-dot {
+      position: absolute; top: 4px; right: 4px;
+      width: 8px; height: 8px;
+      background: var(--admin-rojo);
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .topbar-user {
+      display: flex; align-items: center; gap: .6rem;
+      background: var(--gris-claro);
+      border-radius: 40px;
+      padding: .35rem .9rem .35rem .35rem;
+    }
+    .topbar-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--admin-accent);
+      color: var(--azul-oscuro);
+      font-weight: 700; font-size: .72rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .topbar-user-info { line-height: 1.2; }
+    .topbar-user-nombre { font-size: .8rem; font-weight: 700; color: var(--negro); }
+    .topbar-user-rol { font-size: .65rem; color: var(--admin-accent); text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── CONTENIDO ──────────────────────── */
+    .admin-content { padding: 1.8rem; flex: 1; }
+
+    /* ── HERO BANNER ────────────────────── */
+    .admin-hero {
+      background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-principal) 70%, var(--azul-claro) 100%);
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      color: #fff;
+      margin-bottom: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .admin-hero::after {
+      content: '✈';
+      position: absolute;
+      right: 2rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 5rem;
+      opacity: .08;
+    }
+    .admin-hero h1 { font-family: var(--fuente-titulo); font-size: 1.6rem; margin-bottom: .3rem; }
+    .admin-hero p { opacity: .8; margin: 0; font-size: .9rem; }
+
+    /* ── STAT CARDS ─────────────────────── */
+    .stat-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.4rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,.06);
+      border: 1px solid #eef0f5;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,.1); }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-card.azul::before   { background: linear-gradient(90deg, var(--azul-principal), var(--azul-claro)); }
+    .stat-card.verde::before  { background: linear-gradient(90deg, #27ae60, var(--admin-verde)); }
+    .stat-card.dorado::before { background: linear-gradient(90deg, var(--admin-accent), #f39c12); }
+    .stat-card.morado::before { background: linear-gradient(90deg, var(--admin-morado), #8e44ad); }
+
+    .stat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: .8rem;
+    }
+    .stat-icon.azul   { background: rgba(0,87,183,.1);   color: var(--azul-claro); }
+    .stat-icon.verde  { background: rgba(46,204,113,.12); color: var(--admin-verde); }
+    .stat-icon.dorado { background: rgba(245,166,35,.12); color: var(--admin-accent); }
+    .stat-icon.morado { background: rgba(155,89,182,.12); color: var(--admin-morado); }
+
+    .stat-numero {
+      font-size: 2rem;
+      font-weight: 700;
+      font-family: var(--fuente-titulo);
+      color: var(--negro);
+      line-height: 1;
+      margin-bottom: .2rem;
+    }
+    .stat-label  { font-size: .82rem; color: var(--gris-texto); }
+    .stat-delta  { font-size: .75rem; margin-top: .4rem; }
+    .delta-pos   { color: var(--admin-verde); }
+    .delta-neg   { color: var(--admin-rojo); }
+
+    /* ── SECTION TITLES ─────────────────── */
+    .admin-section-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--azul-oscuro);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .admin-section-titulo::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, var(--gris-medio), transparent);
+    }
+
+    /* ── GESTIÓN CARDS ──────────────────── */
+    .gestion-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.5rem;
+      border: 1px solid #eef0f5;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+      transition: all .25s;
+      height: 100%;
+      cursor: pointer;
+    }
+    .gestion-card:hover { border-color: var(--azul-claro); transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,53,128,.12); }
+    .gestion-icon {
+      font-size: 2.2rem;
+      margin-bottom: .8rem;
+      display: block;
+    }
+    .gestion-card h3 { font-size: 1rem; font-weight: 700; color: var(--azul-oscuro); margin-bottom: .4rem; }
+    .gestion-card p  { font-size: .82rem; color: var(--gris-texto); margin-bottom: 1rem; line-height: 1.5; }
+
+    /* ── TABLA ACTIVIDAD ────────────────── */
+    .admin-tabla { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+    .admin-tabla table { margin: 0; }
+    .admin-tabla thead { background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-principal)); color: #fff; }
+    .admin-tabla thead th { font-weight: 600; font-size: .82rem; letter-spacing: .3px; padding: 1rem; border: none; }
+    .admin-tabla tbody tr { transition: background .2s; }
+    .admin-tabla tbody tr:hover { background: rgba(0,87,183,.04); }
+    .admin-tabla tbody td { padding: .85rem 1rem; vertical-align: middle; font-size: .875rem; border-color: #f0f2f7; }
+
+    /* ── BADGES DE ESTADO ───────────────── */
+    .estado-badge {
+      font-size: .72rem;
+      font-weight: 600;
+      padding: .28em .8em;
+      border-radius: 20px;
+      display: inline-block;
+    }
+    .eb-completada  { background: rgba(46,204,113,.15); color: #1a8a4a; }
+    .eb-cancelada   { background: rgba(231,76,60,.12);  color: #c0392b; }
+    .eb-registrado  { background: rgba(52,152,219,.12); color: #1a6fa8; }
+    .eb-exitoso     { background: rgba(46,204,113,.15); color: #1a8a4a; }
+    .eb-actualizado { background: rgba(155,89,182,.12); color: #7d3c98; }
+    .eb-pendiente   { background: rgba(241,196,15,.15); color: #9a7d0a; }
+
+    /* ── CONFIG FORM ────────────────────── */
+    .config-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.8rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+      border: 1px solid #eef0f5;
+    }
+
+    /* ── CHART PLACEHOLDER ──────────────── */
+    .chart-container {
+      background: #fff;
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,.05);
+      border: 1px solid #eef0f5;
+    }
+    .chart-bar {
+      background: linear-gradient(180deg, var(--azul-claro), var(--azul-principal));
+      border-radius: 4px 4px 0 0;
+      transition: all .4s ease;
+      cursor: pointer;
+    }
+    .chart-bar:hover { filter: brightness(1.15); }
+
+    /* ── TOGGLE SIDEBAR ─────────────────── */
+    .btn-sidebar-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--azul-oscuro);
+      cursor: pointer;
+    }
+
+    /* ── OVERLAY SIDEBAR MÓVIL ──────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 1039;
+    }
+    .sidebar-overlay.visible { display: block; }
+
+    /* ── SECCIÓN USUARIOS (tabla inline) ── */
+    .user-row { transition: background .15s; }
+    .user-row:hover { background: rgba(0,87,183,.03) !important; }
+
+    /* ── RESPONSIVE ─────────────────────── */
+    @media (max-width: 991px) {
+      .admin-main { margin-left: 0; }
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.visible { transform: translateX(0); }
+      .btn-sidebar-toggle { display: flex; align-items: center; }
+    }
+    @media (max-width: 576px) {
+      .admin-content { padding: 1rem; }
+      .admin-hero { padding: 1.2rem; }
+      .admin-hero h1 { font-size: 1.2rem; }
+      .stat-numero { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay sidebar móvil -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="cerrarSidebar()"></div>
+
+<div class="admin-layout">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="admin-sidebar" id="adminSidebar" role="navigation" aria-label="Menú de administración">
+
+    <div class="sidebar-logo">
+      <span class="logo-icono" aria-hidden="true"><img src="img/LogoConcorde.png" alt="Logo Concorde" style="height: 40px;"></span>
+      <div>
+        <span class="logo-texto">CONCORDE</span>
+        <span class="logo-subtexto">Admin Panel</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Secciones del panel">
+      <div class="sidebar-section">Principal</div>
+      <a class="sidebar-link activo" data-key="dashboard" onclick="mostrarSeccion('dashboard')" tabindex="0"
+        aria-current="page" aria-label="Ir al Dashboard">
+        <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+      </a>
+
+      <div class="sidebar-section">Personas</div>
+      <a class="sidebar-link" data-key="usuarios" onclick="mostrarSeccion('usuarios')" tabindex="0" aria-label="Gestión de usuarios">
+        <i class="bi bi-people-fill" aria-hidden="true"></i> Usuarios
+        <span class="badge-sidebar" id="badge-usuarios">–</span>
+      </a>
+      <a class="sidebar-link" data-key="conductores" onclick="mostrarSeccion('conductores')" tabindex="0" aria-label="Gestión de conductores">
+        <i class="bi bi-person-badge-fill" aria-hidden="true"></i> Conductores
+      </a>
+      <a class="sidebar-link" data-key="personas" onclick="mostrarSeccion('personas')" tabindex="0" aria-label="Gestión de personas">
+        <i class="bi bi-person-vcard-fill" aria-hidden="true"></i> Personas
+      </a>
+      <a class="sidebar-link" data-key="roles" onclick="mostrarSeccion('roles')" tabindex="0" aria-label="Gestión de roles">
+        <i class="bi bi-shield-lock-fill" aria-hidden="true"></i> Roles
+      </a>
+
+      <div class="sidebar-section">Operación</div>
+      <a class="sidebar-link" data-key="terminales" onclick="mostrarSeccion('terminales')" tabindex="0" aria-label="Gestión de terminales">
+        <i class="bi bi-signpost-2-fill" aria-hidden="true"></i> Terminales
+      </a>
+      <a class="sidebar-link" data-key="vehiculos" onclick="mostrarSeccion('vehiculos')" tabindex="0" aria-label="Gestión de vehículos">
+        <i class="bi bi-truck-front-fill" aria-hidden="true"></i> Vehículos
+      </a>
+      <a class="sidebar-link" data-key="rutas" onclick="mostrarSeccion('rutas')" tabindex="0" aria-label="Gestión de rutas">
+        <i class="bi bi-map-fill" aria-hidden="true"></i> Rutas
+      </a>
+      <a class="sidebar-link" data-key="viajes" onclick="mostrarSeccion('viajes')" tabindex="0" aria-label="Gestión de viajes">
+        <i class="bi bi-airplane-fill" aria-hidden="true"></i> Viajes
+      </a>
+      <a class="sidebar-link" data-key="asientos" onclick="mostrarSeccion('asientos')" tabindex="0" aria-label="Gestión de asientos">
+        <i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i> Asientos
+      </a>
+
+      <div class="sidebar-section">Comercial</div>
+      <a class="sidebar-link" data-key="reservas" onclick="mostrarSeccion('reservas')" tabindex="0" aria-label="Gestión de reservas">
+        <i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i> Reservas
+        <span class="badge-sidebar" id="badge-reservas">–</span>
+      </a>
+      <a class="sidebar-link" data-key="detalle-reservas" onclick="mostrarSeccion('detalle-reservas')" tabindex="0" aria-label="Gestión de detalle de reservas">
+        <i class="bi bi-list-check" aria-hidden="true"></i> Detalle Reservas
+      </a>
+      <a class="sidebar-link" data-key="pagos" onclick="mostrarSeccion('pagos')" tabindex="0" aria-label="Gestión de pagos">
+        <i class="bi bi-credit-card-fill" aria-hidden="true"></i> Pagos
+      </a>
+
+      <div class="sidebar-section">Sistema</div>
+      <a class="sidebar-link" data-key="reportes" onclick="mostrarSeccion('reportes')" tabindex="0" aria-label="Ver reportes">
+        <i class="bi bi-bar-chart-fill" aria-hidden="true"></i> Reportes
+      </a>
+      <a class="sidebar-link" data-key="configuracion" onclick="mostrarSeccion('configuracion')" tabindex="0" aria-label="Configuración del sistema">
+        <i class="bi bi-gear-fill" aria-hidden="true"></i> Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button onclick="Auth.logout()" aria-label="Cerrar sesión de administrador">
+        <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════════ -->
+  <div class="admin-main">
+
+    <!-- TOPBAR -->
+    <header class="admin-topbar" role="banner">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn-sidebar-toggle" onclick="toggleSidebar()" aria-label="Abrir menú lateral">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <div>
+          <div class="topbar-titulo" id="topbarTitulo">Dashboard</div>
+          <div style="font-size:.72rem;color:var(--gris-texto)" id="topbarBreadcrumb">
+            Panel de Administración › Dashboard
+          </div>
+        </div>
+      </div>
+      <div class="topbar-acciones">
+        <!-- Notificaciones -->
+        <button class="topbar-notif" id="btnNotif" aria-label="Ver notificaciones (3 nuevas)" onclick="toggleNotif()">
+          <i class="bi bi-bell-fill" aria-hidden="true"></i>
+          <span class="notif-dot" aria-hidden="true"></span>
+        </button>
+        <!-- Panel notificaciones -->
+        <div id="panelNotif" class="d-none position-absolute bg-white rounded-3 shadow p-3"
+          style="top:60px;right:80px;width:280px;z-index:200;border:1px solid #eef0f5" role="dialog" aria-label="Notificaciones">
+          <h2 class="h6 fw-bold mb-2">Notificaciones</h2>
+          <div class="d-flex flex-column gap-2">
+            <div class="p-2 rounded" style="background:rgba(0,87,183,.06);font-size:.82rem">
+              <strong>Nueva reserva</strong> — Juan Pérez<br>
+              <span class="text-muted">hace 5 min</span>
+            </div>
+            <div class="p-2 rounded" style="background:rgba(231,76,60,.06);font-size:.82rem">
+              <strong>Cancelación</strong> — María García<br>
+              <span class="text-muted">hace 20 min</span>
+            </div>
+            <div class="p-2 rounded" style="background:rgba(46,204,113,.08);font-size:.82rem">
+              <strong>Pago recibido</strong> — Ana Martínez<br>
+              <span class="text-muted">hace 45 min</span>
+            </div>
+          </div>
+          <button onclick="document.getElementById('panelNotif').classList.add('d-none')"
+            class="btn btn-sm btn-outline-secondary w-100 mt-2">Cerrar</button>
+        </div>
+        <!-- Usuario -->
+        <div class="topbar-user" id="topbarUser">
+          <div class="topbar-avatar" id="topbarAvatar" aria-hidden="true">CM</div>
+          <div class="topbar-user-info d-none d-sm-block">
+            <div class="topbar-user-nombre" id="topbarNombre">Carlos Mendoza</div>
+            <div class="topbar-user-rol">Administrador</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="admin-content" id="contenido-principal">
+
+      <!-- ══ SECCIÓN: DASHBOARD ══════════════════════════════════════ -->
+      <section id="sec-dashboard" aria-label="Dashboard principal">
+
+        <!-- Hero -->
+        <div class="admin-hero">
+          <h1><i class="bi bi-lock-fill me-2" style="font-size:1.4rem" aria-hidden="true"></i>Panel de Administración</h1>
+          <p>Bienvenido, <strong id="heroNombre">Carlos</strong>. Aquí puedes gestionar todas las operaciones de la plataforma.</p>
+        </div>
+
+        <!-- Stats -->
+        <h2 class="admin-section-titulo">
+          <i class="bi bi-bar-chart-line-fill" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Estadísticas Generales
+        </h2>
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card azul" tabindex="0" aria-label="1.245 usuarios activos, aumentó 8% esta semana">
+              <div class="stat-icon azul"><i class="bi bi-people-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statUsuarios">0</div>
+              <div class="stat-label">Usuarios Activos</div>
+              <div class="stat-delta delta-pos"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> +8% esta semana</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card verde" tabindex="0" aria-label="3.892 reservas totales, aumentó 12% este mes">
+              <div class="stat-icon verde"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statReservas">0</div>
+              <div class="stat-label">Reservas Totales</div>
+              <div class="stat-delta delta-pos"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> +12% este mes</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card dorado" tabindex="0" aria-label="2.5 millones de pesos en ingresos mensuales">
+              <div class="stat-icon dorado"><i class="bi bi-cash-stack" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statIngresos">$0</div>
+              <div class="stat-label">Ingresos Mensuales</div>
+              <div class="stat-delta delta-pos"><i class="bi bi-arrow-up-right" aria-hidden="true"></i> +5% vs mes anterior</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card morado" tabindex="0" aria-label="98.5% de satisfacción de clientes">
+              <div class="stat-icon morado"><i class="bi bi-star-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statSatisfaccion">0%</div>
+              <div class="stat-label">Satisfacción</div>
+              <div class="stat-delta delta-neg"><i class="bi bi-arrow-down-right" aria-hidden="true"></i> -0.3% vs anterior</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfica de barras + actividad reciente -->
+        <div class="row g-3 mb-4">
+          <div class="col-lg-6">
+            <div class="chart-container">
+              <h3 class="h6 fw-bold texto-azul mb-3">
+                <i class="bi bi-graph-up me-2" aria-hidden="true"></i>Reservas por mes (2025)
+              </h3>
+              <div class="d-flex align-items-end gap-2 justify-content-between" style="height:160px" role="img" aria-label="Gráfica de reservas por mes 2025">
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">240</span>
+                  <div class="chart-bar w-100" style="height:55%" data-bs-toggle="tooltip" title="Enero: 240 reservas"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">Ene</span>
+                </div>
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">310</span>
+                  <div class="chart-bar w-100" style="height:70%;background:linear-gradient(180deg,#27ae60,#2ecc71)" data-bs-toggle="tooltip" title="Febrero: 310 reservas"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">Feb</span>
+                </div>
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">285</span>
+                  <div class="chart-bar w-100" style="height:65%" data-bs-toggle="tooltip" title="Marzo: 285 reservas"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">Mar</span>
+                </div>
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">420</span>
+                  <div class="chart-bar w-100" style="height:95%;background:linear-gradient(180deg,var(--admin-accent),#f39c12)" data-bs-toggle="tooltip" title="Abril: 420 reservas"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">Abr</span>
+                </div>
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">390</span>
+                  <div class="chart-bar w-100" style="height:88%" data-bs-toggle="tooltip" title="Mayo: 390 reservas"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">May</span>
+                </div>
+                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
+                  <span style="font-size:.65rem;color:var(--gris-texto)">-- </span>
+                  <div class="chart-bar w-100" style="height:20%;background:rgba(0,87,183,.2)" data-bs-toggle="tooltip" title="Junio: en curso"></div>
+                  <span style="font-size:.62rem;color:var(--gris-texto)">Jun</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <!-- Distribución rápida -->
+            <div class="chart-container h-100">
+              <h3 class="h6 fw-bold texto-azul mb-3"><i class="bi bi-pie-chart-fill me-2" aria-hidden="true"></i>Estado de reservas</h3>
+              <div class="d-flex flex-column gap-2">
+                <div>
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Confirmadas</span><span class="fw-bold">72%</span>
+                  </div>
+                  <div class="progress" style="height:8px" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-label="72% de reservas confirmadas">
+                    <div class="progress-bar" style="width:72%;background:var(--admin-verde)"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Pendientes</span><span class="fw-bold">15%</span>
+                  </div>
+                  <div class="progress" style="height:8px" role="progressbar" aria-valuenow="15" aria-valuemin="0" aria-valuemax="100" aria-label="15% de reservas pendientes">
+                    <div class="progress-bar" style="width:15%;background:var(--admin-accent)"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span>Canceladas</span><span class="fw-bold">13%</span>
+                  </div>
+                  <div class="progress" style="height:8px" role="progressbar" aria-valuenow="13" aria-valuemin="0" aria-valuemax="100" aria-label="13% de reservas canceladas">
+                    <div class="progress-bar" style="width:13%;background:var(--admin-rojo)"></div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row g-2 text-center mt-1">
+                  <div class="col-4">
+                    <div class="fw-bold" style="color:var(--admin-verde)">2.803</div>
+                    <div class="small text-muted">Confirmadas</div>
+                  </div>
+                  <div class="col-4">
+                    <div class="fw-bold" style="color:var(--admin-accent)">584</div>
+                    <div class="small text-muted">Pendientes</div>
+                  </div>
+                  <div class="col-4">
+                    <div class="fw-bold" style="color:var(--admin-rojo)">505</div>
+                    <div class="small text-muted">Canceladas</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Opciones de gestión -->
+        <h2 class="admin-section-titulo">
+          <i class="bi bi-grid-3x3-gap-fill" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Opciones de Gestión
+        </h2>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('usuarios')" tabindex="0"
+              role="button" aria-label="Ir a Gestión de Usuarios" onkeydown="if(event.key==='Enter')mostrarSeccion('usuarios')">
+              <span class="gestion-icon" aria-hidden="true">👥</span>
+              <h3>Gestión de Usuarios</h3>
+              <p>Ver, editar y eliminar cuentas de usuarios. Gestionar permisos y roles.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ir a Usuarios</button>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('rutas')" tabindex="0"
+              role="button" aria-label="Ir a Gestión de Rutas" onkeydown="if(event.key==='Enter')mostrarSeccion('rutas')">
+              <span class="gestion-icon" aria-hidden="true">🗺️</span>
+              <h3>Gestión de Rutas</h3>
+              <p>Crear, editar y eliminar rutas de vuelo. Gestionar horarios y disponibilidad.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ir a Rutas</button>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('reservas')" tabindex="0"
+              role="button" aria-label="Ir a Gestión de Reservas" onkeydown="if(event.key==='Enter')mostrarSeccion('reservas')">
+              <span class="gestion-icon" aria-hidden="true">🎟️</span>
+              <h3>Gestión de Reservas</h3>
+              <p>Ver todas las reservas, cancelaciones y modificaciones. Generar reportes.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ir a Reservas</button>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('viajes')" tabindex="0"
+              role="button" aria-label="Ir a Gestión de Viajes" onkeydown="if(event.key==='Enter')mostrarSeccion('viajes')">
+              <span class="gestion-icon" aria-hidden="true">🚌</span>
+              <h3>Gestión de Viajes</h3>
+              <p>Programar horarios de salida, asignar vehículo y conductor a cada viaje.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ver Viajes</button>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('pagos')" tabindex="0"
+              role="button" aria-label="Ir a Gestión de Pagos" onkeydown="if(event.key==='Enter')mostrarSeccion('pagos')">
+              <span class="gestion-icon" aria-hidden="true">💳</span>
+              <h3>Gestión de Pagos</h3>
+              <p>Ver transacciones, reembolsos y reportes financieros en tiempo real.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ir a Pagos</button>
+            </div>
+          </div>
+          <div class="col-md-6 col-lg-4">
+            <div class="gestion-card" onclick="mostrarSeccion('reportes')" tabindex="0"
+              role="button" aria-label="Ir a Reportes" onkeydown="if(event.key==='Enter')mostrarSeccion('reportes')">
+              <span class="gestion-icon" aria-hidden="true">📊</span>
+              <h3>Reportes</h3>
+              <p>Generar reportes de ventas, ocupación y análisis de datos exportables.</p>
+              <button class="btn btn-concorde-primario btn-sm px-3">Ir a Reportes</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actividad reciente -->
+        <h2 class="admin-section-titulo" id="actividad">
+          <i class="bi bi-clock-history" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Actividad Reciente
+        </h2>
+        <div class="admin-tabla mb-4" role="region" aria-label="Tabla de actividad reciente">
+          <table class="table" aria-label="Actividad reciente del sistema">
+            <thead>
+              <tr>
+                <th scope="col">Tipo de Evento</th>
+                <th scope="col">Usuario</th>
+                <th scope="col">Fecha y Hora</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nueva Reserva</td>
+                <td>Juan Pérez</td>
+                <td><time datetime="2025-05-31T14:32">31/05/2025 – 14:32</time></td>
+                <td><span class="estado-badge eb-completada">Completada</span></td>
+                <td><button class="btn btn-sm btn-outline-primary" onclick="verDetalle('CC-9001')" aria-label="Ver detalle reserva CC-9001">Ver</button></td>
+              </tr>
+              <tr>
+                <td>Cancelación de Reserva</td>
+                <td>María García</td>
+                <td><time datetime="2025-05-31T13:15">31/05/2025 – 13:15</time></td>
+                <td><span class="estado-badge eb-cancelada">Cancelada</span></td>
+                <td><button class="btn btn-sm btn-outline-secondary" aria-label="Ver detalle cancelación">Ver</button></td>
+              </tr>
+              <tr>
+                <td>Nuevo Usuario</td>
+                <td>Carlos López</td>
+                <td><time datetime="2025-05-31T12:45">31/05/2025 – 12:45</time></td>
+                <td><span class="estado-badge eb-registrado">Registrado</span></td>
+                <td><button class="btn btn-sm btn-outline-secondary" aria-label="Ver perfil Carlos López">Ver</button></td>
+              </tr>
+              <tr>
+                <td>Pago Recibido</td>
+                <td>Ana Martínez</td>
+                <td><time datetime="2025-05-31T11:20">31/05/2025 – 11:20</time></td>
+                <td><span class="estado-badge eb-exitoso">Exitoso</span></td>
+                <td><button class="btn btn-sm btn-outline-secondary" aria-label="Ver pago Ana Martínez">Ver</button></td>
+              </tr>
+              <tr>
+                <td>Modificación de Ruta</td>
+                <td>Sistema</td>
+                <td><time datetime="2025-05-31T10:00">31/05/2025 – 10:00</time></td>
+                <td><span class="estado-badge eb-actualizado">Actualizado</span></td>
+                <td><button class="btn btn-sm btn-outline-secondary" aria-label="Ver modificación de ruta">Ver</button></td>
+              </tr>
+              <tr>
+                <td>Nueva Reserva</td>
+                <td>Pedro Ruiz</td>
+                <td><time datetime="2025-05-31T09:30">31/05/2025 – 09:30</time></td>
+                <td><span class="estado-badge eb-pendiente">Pendiente</span></td>
+                <td><button class="btn btn-sm btn-outline-warning" aria-label="Ver reserva pendiente Pedro Ruiz">Ver</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Configuración del sistema -->
+        <h2 class="admin-section-titulo" id="configuracion-titulo">
+          <i class="bi bi-gear-fill" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Configuración del Sistema
+        </h2>
+        <div class="config-card mb-4">
+          <form class="form-concorde" id="formConfig" aria-label="Formulario de configuración del sistema">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label" for="cfgEmpresa">Nombre de la Empresa</label>
+                <input type="text" class="form-control" id="cfgEmpresa" value="Concorde Transporte Terrestre S.A.S.">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cfgTelefono">Teléfono</label>
+                <input type="tel" class="form-control" id="cfgTelefono" value="+57 1 2345678">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cfgEmail">Email de Contacto</label>
+                <input type="email" class="form-control" id="cfgEmail" value="admin@concordetransporte.co">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label" for="cfgUbicacion">Ubicación</label>
+                <input type="text" class="form-control" id="cfgUbicacion" value="Bogotá, Colombia">
+              </div>
+              <div class="col-12 d-flex gap-2 flex-wrap">
+                <button type="button" onclick="guardarConfig()" class="btn btn-concorde-primario px-4">
+                  <i class="bi bi-floppy-fill me-1" aria-hidden="true"></i>Guardar configuración
+                </button>
+                <button type="button" onclick="exportarDatos()" class="btn btn-outline-concorde px-4">
+                  <i class="bi bi-download me-1" aria-hidden="true"></i>Exportar datos
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Info de seguridad -->
+        <h2 class="admin-section-titulo">
+          <i class="bi bi-shield-lock-fill" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Información de Seguridad
+        </h2>
+        <div class="config-card">
+          <div class="row g-2 small text-muted">
+            <div class="col-md-3"><strong class="d-block texto-azul">Última actividad</strong><span id="ultimaActividad">31/05/2025 a las 14:45</span></div>
+            <div class="col-md-3"><strong class="d-block texto-azul">Sesión activa desde</strong><span id="sesionDesde">Cargando...</span></div>
+            <div class="col-md-3"><strong class="d-block texto-azul">Dirección IP</strong>192.168.1.100</div>
+            <div class="col-md-3"><strong class="d-block texto-azul">Navegador</strong>Chrome 125.0</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SECCIONES PLACEHOLDER ══════════════════════════════════ -->
+      <!-- Cada sección se muestra dinámicamente con JS -->
+      <!-- ══ SECCIONES CRUD — conectadas a la API real (puerto 8082) ══ -->
+      <section id="sec-usuarios" class="d-none" aria-label="Gestión de usuarios">
+        <h2 class="admin-section-titulo"><i class="bi bi-people-fill" aria-hidden="true"></i>Gestión de Usuarios</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar usuario" oninput="filtrarTabla('usuarios', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('usuarios')"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Nuevo usuario</button>
+          </div>
+          <div id="form-usuarios" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-usuarios">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-conductores" class="d-none" aria-label="Gestión de conductores">
+        <h2 class="admin-section-titulo"><i class="bi bi-person-badge-fill" aria-hidden="true"></i>Gestión de Conductores</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar conductor" oninput="filtrarTabla('conductores', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('conductores')"><i class="bi bi-plus-lg me-1"></i>Nuevo conductor</button>
+          </div>
+          <p class="text-muted small">Los datos personales (nombre, teléfono) del conductor se administran en la sección <strong>Personas</strong>; aquí solo se asigna cuál persona es conductor.</p>
+          <div id="form-conductores" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-conductores">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-personas" class="d-none" aria-label="Gestión de personas">
+        <h2 class="admin-section-titulo"><i class="bi bi-person-vcard-fill" aria-hidden="true"></i>Gestión de Personas</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar persona" oninput="filtrarTabla('personas', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('personas')"><i class="bi bi-plus-lg me-1"></i>Nueva persona</button>
+          </div>
+          <div id="form-personas" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-personas">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-roles" class="d-none" aria-label="Gestión de roles">
+        <h2 class="admin-section-titulo"><i class="bi bi-shield-lock-fill" aria-hidden="true"></i>Gestión de Roles</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Roles disponibles para asignar a los usuarios. Se pueden crear roles adicionales a los 3 iniciales (CLIENTE, AGENTE, ADMIN) si se necesitan.</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('roles')"><i class="bi bi-plus-lg me-1"></i>Nuevo rol</button>
+          </div>
+          <div id="form-roles" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-roles">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-terminales" class="d-none" aria-label="Gestión de terminales">
+        <h2 class="admin-section-titulo"><i class="bi bi-signpost-2-fill" aria-hidden="true"></i>Gestión de Terminales</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar terminal" oninput="filtrarTabla('terminales', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('terminales')"><i class="bi bi-plus-lg me-1"></i>Nueva terminal</button>
+          </div>
+          <div id="form-terminales" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-terminales">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-vehiculos" class="d-none" aria-label="Gestión de vehículos">
+        <h2 class="admin-section-titulo"><i class="bi bi-truck-front-fill" aria-hidden="true"></i>Gestión de Vehículos</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar vehículo" oninput="filtrarTabla('vehiculos', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('vehiculos')"><i class="bi bi-plus-lg me-1"></i>Nuevo vehículo</button>
+          </div>
+          <div id="form-vehiculos" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-vehiculos">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-rutas" class="d-none" aria-label="Gestión de rutas">
+        <h2 class="admin-section-titulo"><i class="bi bi-map-fill" aria-hidden="true"></i>Gestión de Rutas</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Administra las rutas activas de la empresa de transporte</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('rutas')"><i class="bi bi-plus-lg me-1"></i>Nueva ruta</button>
+          </div>
+          <div id="form-rutas" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-rutas">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-viajes" class="d-none" aria-label="Gestión de viajes">
+        <h2 class="admin-section-titulo"><i class="bi bi-airplane-fill" aria-hidden="true"></i>Gestión de Viajes</h2>
+        <div id="aviso-viajes-agotados"></div>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Programa la salida de un viaje: ruta, vehículo, conductor y horario</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('viajes')"><i class="bi bi-plus-lg me-1"></i>Nuevo viaje</button>
+          </div>
+          <div id="form-viajes" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-viajes">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-asientos" class="d-none" aria-label="Gestión de asientos">
+        <h2 class="admin-section-titulo"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>Gestión de Asientos</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar asiento" oninput="filtrarTabla('asientos', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
+          </div>
+          <div id="form-asientos" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-reservas" class="d-none" aria-label="Gestión de reservas">
+        <h2 class="admin-section-titulo"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i>Gestión de Reservas</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar reserva" oninput="filtrarTabla('reservas', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('reservas')"><i class="bi bi-plus-lg me-1"></i>Nueva reserva</button>
+          </div>
+          <div id="form-reservas" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-reservas">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-detalle-reservas" class="d-none" aria-label="Gestión de detalle de reservas">
+        <h2 class="admin-section-titulo"><i class="bi bi-list-check" aria-hidden="true"></i>Detalle de Reservas</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Asigna qué asiento corresponde a cada reserva</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('detalle-reservas')"><i class="bi bi-plus-lg me-1"></i>Nuevo detalle</button>
+          </div>
+          <div id="form-detalle-reservas" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-detalle-reservas">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-pagos" class="d-none" aria-label="Gestión de pagos">
+        <h2 class="admin-section-titulo"><i class="bi bi-credit-card-fill" aria-hidden="true"></i>Gestión de Pagos</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Transacciones asociadas a reservas</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('pagos')"><i class="bi bi-plus-lg me-1"></i>Nuevo pago</button>
+          </div>
+          <div id="form-pagos" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-pagos">Cargando…</div></div>
+        </div>
+      </section>
+
+      <section id="sec-reportes" class="d-none" aria-label="Reportes">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+          <h2 class="admin-section-titulo mb-0"><i class="bi bi-bar-chart-fill" aria-hidden="true"></i>Reportes</h2>
+          <button class="btn btn-concorde-dorado btn-sm" onclick="exportarReportesPDF()">
+            <i class="bi bi-file-earmark-pdf me-1" aria-hidden="true"></i>Exportar PDF
+          </button>
+        </div>
+
+        <div id="aviso-reportes-agotados"></div>
+
+        <div id="contenido-reportes">
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <div class="config-card text-center py-3">
+              <div class="text-muted small">Ingresos totales (procesados)</div>
+              <div class="fs-3 fw-bold texto-azul" id="repIngresosTotales">—</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="config-card text-center py-3">
+              <div class="text-muted small">Viajes agotados</div>
+              <div class="fs-3 fw-bold" style="color:var(--dorado)" id="repViajesAgotados">—</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="config-card text-center py-3">
+              <div class="text-muted small">Reservas confirmadas</div>
+              <div class="fs-3 fw-bold texto-azul" id="repReservasConfirmadas">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3"><i class="bi bi-cash-coin me-1"></i>Ingresos por ruta</h6>
+              <div class="admin-tabla"><div id="rep-ingresos-ruta">Cargando…</div></div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3"><i class="bi bi-graph-up me-1"></i>Rutas más vendidas</h6>
+              <div class="admin-tabla"><div id="rep-rutas-vendidas">Cargando…</div></div>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3"><i class="bi bi-calendar2-check me-1"></i>Ocupación de viajes</h6>
+              <div class="admin-tabla"><div id="rep-ocupacion">Cargando…</div></div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3">Viajes por estado</h6>
+              <div id="rep-viajes-estado">Cargando…</div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3">Reservas por estado</h6>
+              <div id="rep-reservas-estado">Cargando…</div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="config-card">
+              <h6 class="fw-bold mb-3">Usuarios por rol</h6>
+              <div id="rep-usuarios-rol">Cargando…</div>
+            </div>
+          </div>
+        </div>
+        </div><!-- /contenido-reportes -->
+      </section>
+
+      <section id="sec-configuracion" class="d-none" aria-label="Configuración del sistema">
+        <h2 class="admin-section-titulo"><i class="bi bi-gear-fill" aria-hidden="true"></i>Configuración del Sistema</h2>
+        <div class="config-card">
+          <form class="form-concorde" aria-label="Configuración del sistema">
+            <div class="row g-3">
+              <div class="col-md-6"><label class="form-label" for="cfg2Empresa">Nombre de la Empresa</label><input type="text" class="form-control" id="cfg2Empresa" value="Concorde Transporte Terrestre S.A.S."></div>
+              <div class="col-md-6"><label class="form-label" for="cfg2Tel">Teléfono</label><input type="tel" class="form-control" id="cfg2Tel" value="+57 1 2345678"></div>
+              <div class="col-md-6"><label class="form-label" for="cfg2Email">Email de Contacto</label><input type="email" class="form-control" id="cfg2Email" value="admin@concordetransporte.co"></div>
+              <div class="col-md-6"><label class="form-label" for="cfg2Ub">Ubicación</label><input type="text" class="form-control" id="cfg2Ub" value="Bogotá, Colombia"></div>
+              <div class="col-12 d-flex gap-2"><button type="button" onclick="guardarConfig()" class="btn btn-concorde-primario"><i class="bi bi-floppy me-1"></i>Guardar</button><button type="button" onclick="exportarDatos()" class="btn btn-outline-concorde"><i class="bi bi-download me-1"></i>Exportar datos</button></div>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<!-- Toast admin -->
+<div id="adminToast" class="position-fixed bottom-0 end-0 m-3 p-3 rounded-3 text-white shadow-lg d-none"
+  style="background:var(--azul-principal);z-index:9999;max-width:300px" role="alert" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Proteger página: solo administrador
+  if (!Auth.requiereRol('administrador')) { /* redirigido */ }
+
+  const user = Auth.getUsuario();
+
+  // Rellenar datos de usuario en topbar y hero
+  if (user) {
+    document.getElementById('topbarNombre').textContent = user.nombre;
+    document.getElementById('topbarAvatar').textContent = user.avatar;
+    document.getElementById('heroNombre').textContent = user.nombre.split(' ')[0];
+    document.getElementById('sesionDesde').textContent = new Date().toLocaleString('es-CO', {hour:'2-digit',minute:'2-digit', day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+
+  // ── Animación de contadores ──────────────
+  function animarContador(id, destino, prefijo='', sufijo='') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let actual = 0;
+    const dur = 1200, pasos = 50, inc = destino / pasos;
+    const t = setInterval(() => {
+      actual = Math.min(actual + inc, destino);
+      el.textContent = prefijo + Math.round(actual).toLocaleString('es-CO') + sufijo;
+      if (actual >= destino) clearInterval(t);
+    }, dur / pasos);
+  }
+
+  // ── Estadísticas reales del Dashboard (API Spring Boot) ──
+  async function cargarStatsDashboard() {
+    try {
+      const [usuarios, reservas, pagos, vehiculos] = await Promise.all([
+        fetch(`${API}/usuarios`).then(r => r.json()),
+        fetch(`${API}/reservas`).then(r => r.json()),
+        fetch(`${API}/pagos`).then(r => r.json()),
+        fetch(`${API}/vehiculos`).then(r => r.json())
+      ]);
+      animarContador('statUsuarios', usuarios.length);
+      animarContador('statReservas', reservas.length);
+      const totalIngresos = pagos
+        .filter(p => p.estado === 'PROCESADO')
+        .reduce((sum, p) => sum + (p.valorPagado || 0), 0);
+      animarContador('statIngresos', totalIngresos, '$', '');
+      // Cambiamos "Satisfacción" (no hay ese dato en el backend) por Vehículos activos
+      const elLabel = document.querySelector('#statSatisfaccion')?.closest('.stat-card')?.querySelector('.stat-label');
+      if (elLabel) elLabel.textContent = 'Vehículos Registrados';
+      const elDelta = document.querySelector('#statSatisfaccion')?.closest('.stat-card')?.querySelector('.stat-delta');
+      if (elDelta) elDelta.style.display = 'none';
+      animarContador('statSatisfaccion', vehiculos.length);
+      document.getElementById('badge-usuarios').textContent = usuarios.length;
+      document.getElementById('badge-reservas').textContent = reservas.length;
+    } catch (e) {
+      mostrarToastAdmin('No se pudo conectar a la API (puerto 8082). Verifica que el backend esté corriendo.', 'danger');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Tooltips Bootstrap
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+    cargarStatsDashboard();
+  });
+
+  // ── Navegación entre secciones ───────────
+  const secciones = ['dashboard','usuarios','conductores','personas','roles','terminales','vehiculos','rutas','viajes','asientos','reservas','detalle-reservas','pagos','reportes','configuracion'];
+  const titulosSec = {
+    dashboard: 'Dashboard', usuarios: 'Usuarios', conductores: 'Conductores',
+    personas: 'Personas', roles: 'Roles',
+    terminales: 'Terminales', vehiculos: 'Vehículos', rutas: 'Rutas', viajes: 'Viajes',
+    asientos: 'Asientos', reservas: 'Reservas', 'detalle-reservas': 'Detalle Reservas',
+    pagos: 'Pagos', reportes: 'Reportes', configuracion: 'Configuración'
+  };
+  const entityKeys = ['usuarios','conductores','personas','roles','terminales','vehiculos','rutas','viajes','asientos','reservas','detalle-reservas','pagos'];
+
+  function mostrarSeccion(nombre) {
+    secciones.forEach(s => {
+      const el = document.getElementById('sec-' + s);
+      if (el) el.classList.toggle('d-none', s !== nombre);
+    });
+    // Actualizar sidebar activo
+    document.querySelectorAll('.sidebar-link').forEach(l => {
+      l.classList.remove('activo');
+      l.removeAttribute('aria-current');
+    });
+    const linkActivo = document.querySelector(`.sidebar-link[data-key="${nombre}"]`);
+    if (linkActivo) { linkActivo.classList.add('activo'); linkActivo.setAttribute('aria-current','page'); }
+
+    document.getElementById('topbarTitulo').textContent = titulosSec[nombre];
+    document.getElementById('topbarBreadcrumb').textContent = `Panel de Administración › ${titulosSec[nombre]}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    cerrarSidebar();
+
+    if (entityKeys.includes(nombre)) cargarEntidad(nombre);
+    if (nombre === 'dashboard') cargarStatsDashboard();
+    if (nombre === 'reportes') cargarReportes();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // MOTOR CRUD GENÉRICO — conecta cada sección a /api/... (8082)
+  // ════════════════════════════════════════════════════════
+  const API = 'http://localhost:8082/api';
+
+  const badgeMap = {
+    CLIENTE:'eb-registrado', AGENTE:'eb-actualizado', ADMIN:'eb-pendiente',
+    PROGRAMADO:'eb-registrado', EN_CURSO:'eb-pendiente', FINALIZADO:'eb-completada', CANCELADO:'eb-cancelada',
+    PENDIENTE:'eb-pendiente', CONFIRMADA:'eb-completada', CANCELADA:'eb-cancelada',
+    PROCESADO:'eb-exitoso', REEMBOLSADO:'eb-actualizado', FALLIDO:'eb-cancelada'
+  };
+
+  const entities = {
+    usuarios: { idField:'idUsuario', fields:[
+      {name:'nombreCompleto', label:'Nombre completo', type:'text', required:true},
+      {name:'numeroDocumento', label:'N° Documento', type:'text', required:true},
+      {name:'telefono', label:'Teléfono', type:'text'},
+      {name:'correoElectronico', label:'Correo', type:'email', required:true},
+      {name:'contrasenaHash', label:'Contraseña', type:'text', required:true},
+      {name:'rol', label:'Rol', type:'fk', fk:'roles', fkIdField:'idRol', fkLabelFn:r=>r.nombreRol}
+    ], columns:['idUsuario','nombreCompleto','correoElectronico','rol']},
+
+    roles: { idField:'idRol', fields:[
+      {name:'nombreRol', label:'Nombre del rol', type:'text', required:true}
+    ], columns:['idRol','nombreRol']},
+
+    personas: { idField:'idPersona', fields:[
+      {name:'nombre', label:'Nombre completo', type:'text', required:true},
+      {name:'numeroDocumento', label:'N° Documento', type:'text'},
+      {name:'telefono', label:'Teléfono', type:'text'},
+      {name:'correoElectronico', label:'Correo', type:'email'},
+      {name:'direccion', label:'Dirección', type:'text'}
+    ], columns:['idPersona','nombre','numeroDocumento','telefono']},
+
+    terminales: { idField:'idTerminal', fields:[
+      {name:'nombre', label:'Nombre', type:'text', required:true},
+      {name:'ciudad', label:'Ciudad', type:'text', required:true},
+      {name:'direccion', label:'Dirección', type:'text'}
+    ], columns:['idTerminal','nombre','ciudad','direccion']},
+
+    conductores: { idField:'idConductor', fields:[
+      {name:'persona', label:'Persona', type:'fk', fk:'personas', fkIdField:'idPersona', fkLabelFn:p=>p.nombre},
+      {name:'numeroLicencia', label:'N° Licencia', type:'text', required:true},
+      {name:'fechaVencimientoLicencia', label:'Vence licencia', type:'date'}
+    ], columns:['idConductor','persona','numeroLicencia','fechaVencimientoLicencia']},
+
+    vehiculos: { idField:'idVehiculo', fields:[
+      {name:'placa', label:'Placa', type:'text', required:true},
+      {name:'capacidad', label:'Capacidad', type:'number', required:true},
+      {name:'modelo', label:'Modelo', type:'text'}
+    ], columns:['idVehiculo','placa','capacidad','modelo']},
+
+    rutas: { idField:'idRuta', fields:[
+      {name:'terminalOrigen', label:'Terminal origen', type:'fk', fk:'terminales', fkIdField:'idTerminal', fkLabelFn:t=>`${t.nombre} (${t.ciudad})`},
+      {name:'terminalDestino', label:'Terminal destino', type:'fk', fk:'terminales', fkIdField:'idTerminal', fkLabelFn:t=>`${t.nombre} (${t.ciudad})`},
+      {name:'valorTiquete', label:'Valor tiquete', type:'number', required:true}
+    ], columns:['idRuta','terminalOrigen','terminalDestino','valorTiquete']},
+
+    viajes: { idField:'idViaje', fields:[
+      {name:'ruta', label:'Ruta', type:'fk', fk:'rutas', fkIdField:'idRuta', fkLabelFn:r=>`Ruta #${r.idRuta}`},
+      {name:'vehiculo', label:'Vehículo', type:'fk', fk:'vehiculos', fkIdField:'idVehiculo', fkLabelFn:v=>v.placa},
+      {name:'conductor', label:'Conductor', type:'fk', fk:'conductores', fkIdField:'idConductor', fkLabelFn:c=>c.nombreCompleto},
+      {name:'fechaViaje', label:'Fecha', type:'date', required:true},
+      {name:'horaSalida', label:'Hora salida', type:'time', required:true},
+      {name:'precio', label:'Precio', type:'number', required:true},
+      {name:'estadoViaje', label:'Estado', type:'select', options:['PROGRAMADO','EN_CURSO','FINALIZADO','CANCELADO'], default:'PROGRAMADO'}
+    ], columns:['idViaje','ruta','vehiculo','fechaViaje','horaSalida','estadoViaje']},
+
+    asientos: { idField:'idAsiento', fields:[
+      {name:'vehiculo', label:'Vehículo', type:'fk', fk:'vehiculos', fkIdField:'idVehiculo', fkLabelFn:v=>v.placa},
+      {name:'numeroAsiento', label:'N° Asiento', type:'text', required:true},
+      {name:'tipo', label:'Tipo', type:'text', default:'ESTANDAR'},
+      {name:'disponible', label:'Disponible', type:'checkbox', default:true}
+    ], columns:['idAsiento','vehiculo','numeroAsiento','tipo','disponible']},
+
+    reservas: { idField:'idReserva', fields:[
+      {name:'usuario', label:'Usuario', type:'fk', fk:'usuarios', fkIdField:'idUsuario', fkLabelFn:u=>u.nombreCompleto},
+      {name:'viaje', label:'Viaje', type:'fk', fk:'viajes', fkIdField:'idViaje', fkLabelFn:v=>`Viaje #${v.idViaje}`},
+      {name:'estado', label:'Estado', type:'select', options:['PENDIENTE','CONFIRMADA','CANCELADA'], default:'PENDIENTE'}
+    ], columns:['idReserva','usuario','viaje','estado']},
+
+    'detalle-reservas': { idField:'idDetalle', fields:[
+      {name:'reserva', label:'Reserva', type:'fk', fk:'reservas', fkIdField:'idReserva', fkLabelFn:r=>`Reserva #${r.idReserva}`},
+      {name:'asiento', label:'Asiento', type:'fk', fk:'asientos', fkIdField:'idAsiento', fkLabelFn:a=>a.numeroAsiento},
+      {name:'asientoAsignado', label:'Asignado', type:'checkbox', default:false}
+    ], columns:['idDetalle','reserva','asiento','asientoAsignado']},
+
+    pagos: { idField:'idPago', fields:[
+      {name:'reserva', label:'Reserva', type:'fk', fk:'reservas', fkIdField:'idReserva', fkLabelFn:r=>`Reserva #${r.idReserva}`},
+      {name:'metodoPago', label:'Método de pago', type:'text', required:true},
+      {name:'valorPagado', label:'Valor pagado', type:'number', required:true},
+      {name:'estado', label:'Estado', type:'select', options:['PROCESADO','REEMBOLSADO','FALLIDO'], default:'PROCESADO'}
+    ], columns:['idPago','reserva','metodoPago','valorPagado','estado']}
+  };
+
+  const dataCache = {};   // { key: [...registros...] }
+  const fkCache = {};     // cache de listas para selects fk
+  const editing = {};     // { key: idEnEdicion | null }
+
+  async function cargarEntidad(key) {
+    const wrap = document.getElementById('tabla-' + key);
+    wrap.innerHTML = 'Cargando…';
+    try {
+      const res = await fetch(`${API}/${key}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      dataCache[key] = await res.json();
+      await asegurarFkCache(key);
+      renderTabla(key);
+      if (key === 'viajes') cargarAvisoAgotados('aviso-viajes-agotados');
+    } catch (err) {
+      wrap.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-exclamation-triangle d-block mb-2" style="font-size:1.6rem"></i>
+        No se pudo conectar a la API.<br><small>${err.message} — revisa que el backend esté corriendo en el puerto 8082 y que agregaste CorsConfig.java</small>
+      </div>`;
+    }
+  }
+
+  async function asegurarFkCache(key) {
+    const fkKeys = entities[key].fields.filter(f => f.type === 'fk').map(f => f.fk);
+    for (const k of [...new Set(fkKeys)]) {
+      if (!fkCache[k]) {
+        try { fkCache[k] = await fetch(`${API}/${k}`).then(r => r.json()); }
+        catch (e) { fkCache[k] = []; }
+      }
+    }
+  }
+
+  function valorMostrado(field, row) {
+    const raw = row[field.name];
+    if (field.type === 'fk') {
+      if (!raw) return '<span class="text-muted">—</span>';
+      const id = raw[field.fkIdField];
+      const match = (fkCache[field.fk] || []).find(x => x[field.fkIdField] === id);
+      if (!match) return `<span class="text-muted">id ${id}</span>`;
+      const etiqueta = field.fkLabelFn(match);
+      return badgeMap[etiqueta] ? `<span class="estado-badge ${badgeMap[etiqueta]}">${etiqueta}</span>` : etiqueta;
+    }
+    if (field.type === 'checkbox') {
+      return raw ? '<span class="estado-badge eb-exitoso">Sí</span>' : '<span class="estado-badge eb-cancelada">No</span>';
+    }
+    if (field.type === 'select') {
+      return `<span class="estado-badge ${badgeMap[raw] || ''}">${raw ?? '—'}</span>`;
+    }
+    if (raw === null || raw === undefined || raw === '') return '<span class="text-muted">—</span>';
+    return raw;
+  }
+
+  function renderTabla(key) {
+    const wrap = document.getElementById('tabla-' + key);
+    const ent = entities[key];
+    const data = dataCache[key] || [];
+    if (!data.length) {
+      wrap.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-inbox d-block mb-2" style="font-size:1.6rem"></i>
+        No hay registros todavía. Crea el primero con "Nuevo".
+      </div>`;
+      return;
+    }
+    let html = `<table class="table" data-key="${key}"><thead><tr>`;
+    ent.columns.forEach(c => {
+      const f = ent.fields.find(fl => fl.name === c);
+      html += `<th>${f ? f.label : c}</th>`;
+    });
+    html += `<th>Acciones</th></tr></thead><tbody>`;
+    data.forEach(row => {
+      html += '<tr>';
+      ent.columns.forEach(c => {
+        if (c === ent.idField) {
+          html += `<td><strong>#${row[c]}</strong></td>`;
+        } else {
+          const f = ent.fields.find(fl => fl.name === c);
+          html += `<td>${f ? valorMostrado(f, row) : (row[c] ?? '—')}</td>`;
+        }
+      });
+      html += `<td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('${key}', ${row[ent.idField]})">Editar</button>
+        <button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('${key}', ${row[ent.idField]})">Eliminar</button>
+      </td>`;
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+
+  function filtrarTabla(key, q) {
+    q = q.toLowerCase();
+    document.querySelectorAll(`#tabla-${key} tbody tr`).forEach(fila => {
+      fila.style.display = fila.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  function abrirFormulario(key, id = null) {
+    editing[key] = id;
+    const data = id ? (dataCache[key] || []).find(r => r[entities[key].idField] === id) : {};
+    const cont = document.getElementById('form-' + key);
+    cont.style.display = 'block';
+    cont.innerHTML = construirFormulario(key, data || {});
+  }
+
+  function cerrarFormulario(key) {
+    editing[key] = null;
+    document.getElementById('form-' + key).style.display = 'none';
+  }
+
+  function construirFormulario(key, data) {
+    const ent = entities[key];
+    let campos = '';
+    ent.fields.forEach(f => {
+      if (f.type === 'fk') {
+        const currentVal = data[f.name] ? data[f.name][f.fkIdField] : '';
+        const opts = (fkCache[f.fk] || []).map(item => {
+          const id = item[f.fkIdField];
+          return `<option value="${id}" ${String(id)===String(currentVal)?'selected':''}>${f.fkLabelFn(item)}</option>`;
+        }).join('');
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <select class="form-select" data-name="${f.name}" data-type="fk" data-fkid="${f.fkIdField}" ${f.required?'required':''}>
+            <option value="">Selecciona…</option>${opts}
+          </select></div>`;
+      } else if (f.type === 'select') {
+        const currentVal = data[f.name] ?? f.default ?? '';
+        const opts = f.options.map(o => `<option value="${o}" ${o===currentVal?'selected':''}>${o}</option>`).join('');
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <select class="form-select" data-name="${f.name}">${opts}</select></div>`;
+      } else if (f.type === 'checkbox') {
+        const checked = (data[f.name] ?? f.default) ? 'checked' : '';
+        campos += `<div class="col-md-4 d-flex align-items-end">
+          <div class="form-check"><input class="form-check-input" type="checkbox" data-name="${f.name}" data-type="checkbox" ${checked}>
+          <label class="form-check-label form-label mb-0">${f.label}</label></div></div>`;
+      } else {
+        const val = data[f.name] ?? f.default ?? '';
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <input class="form-control" type="${f.type}" data-name="${f.name}" value="${val}" ${f.required?'required':''}></div>`;
+      }
+    });
+    return `<div class="config-card">
+      <form class="form-concorde row g-3" id="formulario-${key}" onsubmit="return false;">
+        ${campos}
+        <div class="col-12 d-flex gap-2">
+          <button type="button" class="btn btn-concorde-primario px-3" onclick="guardarFormulario('${key}')">
+            <i class="bi bi-check2 me-1"></i>Guardar</button>
+          <button type="button" class="btn btn-outline-secondary px-3" onclick="cerrarFormulario('${key}')">Cancelar</button>
+        </div>
+      </form>
+    </div>`;
+  }
+
+  function recolectarFormulario(key) {
+    const ent = entities[key];
+    const form = document.getElementById('formulario-' + key);
+    const payload = {};
+    ent.fields.forEach(f => {
+      const el = form.querySelector(`[data-name="${f.name}"]`);
+      if (f.type === 'fk') {
+        payload[f.name] = el.value ? { [f.fkIdField]: Number(el.value) } : null;
+      } else if (f.type === 'checkbox') {
+        payload[f.name] = el.checked;
+      } else if (f.type === 'number') {
+        payload[f.name] = el.value === '' ? null : Number(el.value);
+      } else {
+        payload[f.name] = el.value;
+      }
+    });
+    return payload;
+  }
+
+  async function guardarFormulario(key) {
+    const form = document.getElementById('formulario-' + key);
+    if (!form.reportValidity()) return;
+    const payload = recolectarFormulario(key);
+    const id = editing[key];
+    const url = id ? `${API}/${key}/${id}` : `${API}/${key}`;
+    const method = id ? 'PUT' : 'POST';
+    try {
+      const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || errBody.message || `HTTP ${res.status}`);
+      }
+      mostrarToastAdmin(id ? 'Registro actualizado' : 'Registro creado', 'success');
+      cerrarFormulario(key);
+      cargarEntidad(key);
+    } catch (err) {
+      mostrarToastAdmin('Error: ' + err.message, 'danger');
+    }
+  }
+
+  function editarRegistro(key, id) {
+    abrirFormulario(key, id);
+  }
+
+  async function eliminarRegistro(key, id) {
+    if (!confirm(`¿Eliminar el registro #${id}? Esta acción no se puede deshacer.`)) return;
+    try {
+      const res = await fetch(`${API}/${key}/${id}`, { method:'DELETE' });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || errBody.message || `HTTP ${res.status}`);
+      }
+      mostrarToastAdmin('Registro eliminado', 'success');
+      cargarEntidad(key);
+    } catch (err) {
+      mostrarToastAdmin('Error: ' + err.message, 'danger');
+    }
+  }
+
+  // ════════════════════════════════════════════════════════
+  // REPORTES
+  // ════════════════════════════════════════════════════════
+
+  function formatoMoneda(valor) {
+    return '$' + Number(valor || 0).toLocaleString('es-CO', { maximumFractionDigits: 0 });
+  }
+
+  // Banner de "viajes agotados" -- se usa tanto en Reportes como en Viajes
+  async function cargarAvisoAgotados(idContenedor) {
+    const cont = document.getElementById(idContenedor);
+    if (!cont) return;
+    try {
+      const agotados = await fetch(`${API}/reportes/viajes-agotados`).then(r => r.json());
+      if (!agotados.length) { cont.innerHTML = ''; return; }
+      cont.innerHTML = `
+        <div class="alert alert-warning d-flex align-items-start gap-2 mb-3" role="alert">
+          <i class="bi bi-exclamation-triangle-fill fs-5" aria-hidden="true"></i>
+          <div>
+            <strong>${agotados.length} viaje${agotados.length > 1 ? 's' : ''} sin cupo disponible:</strong>
+            <ul class="mb-0 mt-1 small">
+              ${agotados.map(v => `<li>Viaje #${v.idViaje} — ${v.ruta} — ${v.fechaViaje} ${v.horaSalida}</li>`).join('')}
+            </ul>
+          </div>
+        </div>`;
+    } catch (e) {
+      cont.innerHTML = '';
+    }
+  }
+
+  function tablaSimple(filas, columnas) {
+    if (!filas.length) return '<p class="text-muted small mb-0">Sin datos todavía.</p>';
+    let html = '<table class="table table-sm mb-0"><thead><tr>' +
+      columnas.map(c => `<th>${c.label}</th>`).join('') + '</tr></thead><tbody>';
+    filas.forEach(fila => {
+      html += '<tr>' + columnas.map(c => `<td>${c.render ? c.render(fila) : fila[c.key]}</td>`).join('') + '</tr>';
+    });
+    return html + '</tbody></table>';
+  }
+
+  function listaBadges(objeto, mapaColores) {
+    const entradas = Object.entries(objeto);
+    if (!entradas.length) return '<p class="text-muted small mb-0">Sin datos todavía.</p>';
+    return entradas.map(([clave, valor]) =>
+      `<div class="d-flex justify-content-between align-items-center py-1">
+        <span class="estado-badge ${mapaColores[clave] || ''}">${clave}</span>
+        <strong>${valor}</strong>
+      </div>`
+    ).join('');
+  }
+
+  async function cargarReportes() {
+    cargarAvisoAgotados('aviso-reportes-agotados');
+
+    try {
+      const [ingresosRuta, rutasVendidas, ocupacion, viajesEstado, reservasEstado, usuariosRol] = await Promise.all([
+        fetch(`${API}/reportes/ingresos-por-ruta`).then(r => r.json()),
+        fetch(`${API}/reportes/rutas-mas-vendidas`).then(r => r.json()),
+        fetch(`${API}/reportes/ocupacion-viajes`).then(r => r.json()),
+        fetch(`${API}/reportes/viajes-por-estado`).then(r => r.json()),
+        fetch(`${API}/reportes/reservas-por-estado`).then(r => r.json()),
+        fetch(`${API}/reportes/usuarios-por-rol`).then(r => r.json())
+      ]);
+
+      // Tarjetas resumen
+      const totalIngresos = ingresosRuta.reduce((s, r) => s + r.ingresos, 0);
+      document.getElementById('repIngresosTotales').textContent = formatoMoneda(totalIngresos);
+      document.getElementById('repViajesAgotados').textContent = ocupacion.filter(v => v.agotado).length;
+      document.getElementById('repReservasConfirmadas').textContent = reservasEstado['CONFIRMADA'] || 0;
+
+      // Ingresos por ruta
+      document.getElementById('rep-ingresos-ruta').innerHTML = tablaSimple(ingresosRuta, [
+        { label: 'Ruta', key: 'ruta' },
+        { label: 'Ingresos', render: f => formatoMoneda(f.ingresos) }
+      ]);
+
+      // Rutas más vendidas
+      document.getElementById('rep-rutas-vendidas').innerHTML = tablaSimple(rutasVendidas, [
+        { label: 'Ruta', key: 'ruta' },
+        { label: 'Reservas', key: 'reservas' }
+      ]);
+
+      // Ocupación de viajes
+      document.getElementById('rep-ocupacion').innerHTML = tablaSimple(ocupacion, [
+        { label: 'Viaje', render: f => `#${f.idViaje}` },
+        { label: 'Ruta', key: 'ruta' },
+        { label: 'Fecha', render: f => `${f.fechaViaje} ${f.horaSalida}` },
+        { label: 'Ocupados / Capacidad', render: f => `${f.ocupados} / ${f.capacidad}` },
+        { label: 'Estado', render: f => f.agotado
+            ? '<span class="estado-badge eb-cancelada">Agotado</span>'
+            : `<span class="estado-badge eb-exitoso">${f.disponibles} disponibles</span>` }
+      ]);
+
+      // Distribuciones
+      document.getElementById('rep-viajes-estado').innerHTML = listaBadges(viajesEstado, {
+        PROGRAMADO: 'eb-registrado', EN_CURSO: 'eb-pendiente', FINALIZADO: 'eb-completada', CANCELADO: 'eb-cancelada'
+      });
+      document.getElementById('rep-reservas-estado').innerHTML = listaBadges(reservasEstado, {
+        PENDIENTE: 'eb-pendiente', CONFIRMADA: 'eb-completada', CANCELADA: 'eb-cancelada'
+      });
+      document.getElementById('rep-usuarios-rol').innerHTML = listaBadges(usuariosRol, {
+        CLIENTE: 'eb-registrado', AGENTE: 'eb-actualizado', ADMIN: 'eb-pendiente'
+      });
+
+    } catch (err) {
+      mostrarToastAdmin('No se pudieron cargar los reportes: ' + err.message, 'danger');
+    }
+  }
+
+  function exportarReportesPDF() {
+    const elemento = document.getElementById('contenido-reportes');
+    const fecha = new Date().toLocaleDateString('es-CO');
+
+    // Encabezado temporal solo para el PDF (no se ve en la pantalla)
+    const encabezado = document.createElement('div');
+    encabezado.style.cssText = 'padding-bottom:12px;margin-bottom:12px;border-bottom:2px solid #003580;';
+    encabezado.innerHTML = `
+      <h3 style="color:#003580;margin:0;">Concorde Transporte Terrestre — Reporte General</h3>
+      <p style="margin:4px 0 0;color:#555;font-size:13px;">Generado el ${fecha}</p>
+    `;
+    elemento.prepend(encabezado);
+
+    mostrarToastAdmin('Generando PDF...', 'info');
+
+    html2pdf()
+      .set({
+        margin: 10,
+        filename: `reporte-concorde-${fecha.replaceAll('/', '-')}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      })
+      .from(elemento)
+      .save()
+      .then(() => encabezado.remove())
+      .catch(() => {
+        encabezado.remove();
+        mostrarToastAdmin('No se pudo generar el PDF', 'danger');
+      });
+  }
+
+  // ── Sidebar móvil ────────────────────────
+  function toggleSidebar() {
+    const sb = document.getElementById('adminSidebar');
+    const ov = document.getElementById('sidebarOverlay');
+    sb.classList.toggle('visible');
+    ov.classList.toggle('visible');
+  }
+  function cerrarSidebar() {
+    document.getElementById('adminSidebar').classList.remove('visible');
+    document.getElementById('sidebarOverlay').classList.remove('visible');
+  }
+
+  // ── Notificaciones ───────────────────────
+  function toggleNotif() {
+    const p = document.getElementById('panelNotif');
+    p.classList.toggle('d-none');
+    document.querySelector('.notif-dot').style.display = 'none';
+  }
+  document.addEventListener('click', (e) => {
+    if (!document.getElementById('btnNotif').contains(e.target) &&
+        !document.getElementById('panelNotif').contains(e.target)) {
+      document.getElementById('panelNotif').classList.add('d-none');
+    }
+  });
+
+  // ── Toast ────────────────────────────────
+  function mostrarToastAdmin(msg, tipo='info') {
+    const t = document.getElementById('adminToast');
+    const colores = { info:'var(--azul-principal)', success:'#27ae60', warning:' #e67e22', danger:'#e74c3c' };
+    t.style.background = colores[tipo] || colores.info;
+    t.textContent = msg;
+    t.classList.remove('d-none');
+    setTimeout(() => t.classList.add('d-none'), 3000);
+  }
+
+  // ── Config ───────────────────────────────
+  function guardarConfig() {
+    mostrarToastAdmin('✓ Configuración guardada correctamente', 'success');
+  }
+  function exportarDatos() {
+    mostrarToastAdmin('Exportando datos del sistema...', 'info');
+    setTimeout(() => mostrarToastAdmin('✓ Archivo descargado', 'success'), 1800);
+  }
+
+  // ── Ver detalle ──────────────────────────
+  function verDetalle(codigo) {
+    mostrarToastAdmin('Cargando detalle de reserva ' + codigo);
+  }
+
+  // ── Teclas sidebar-links ─────────────────
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); link.click(); }
+    });
+  });
+</script>
+</body>
+</html>

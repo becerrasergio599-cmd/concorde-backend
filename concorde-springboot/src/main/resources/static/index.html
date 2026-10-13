@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Concorde Transporte Terrestre - Busca y reserva tu tiquete de bus al mejor precio. Conectamos Colombia.">
+  <meta name="author" content="SENA Ficha 3171149-B">
+  <title>Concorde Transporte Terrestre | Inicio</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <div id="navbar-placeholder"></div>
+
+  <main id="contenido-principal">
+
+    <!-- HERO -->
+    <section class="hero-section" aria-label="Buscador de tiquetes">
+      <div class="container position-relative">
+        <div class="row justify-content-center text-center mb-4">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-3">
+              Viaja con <span style="color:var(--dorado)">Concorde</span>
+            </h1>
+            <p class="lead opacity-90">
+              La empresa de transporte terrestre más confiable de Colombia.
+              Rutas seguras, buses modernos y los mejores precios.
+            </p>
+          </div>
+        </div>
+
+        <!-- FORMULARIO DE BÚSQUEDA -->
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <article class="card-busqueda" aria-label="Formulario de búsqueda de tiquetes">
+              <ul class="nav nav-tabs" role="tablist" aria-label="Tipo de viaje">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="tab-ida-vuelta"
+                    data-bs-toggle="tab" data-bs-target="#contenido-ida-vuelta"
+                    type="button" role="tab" aria-selected="true">
+                    <i class="bi bi-arrow-left-right me-1" aria-hidden="true"></i>Ida y vuelta
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-solo-ida"
+                    data-bs-toggle="tab" data-bs-target="#contenido-solo-ida"
+                    type="button" role="tab" aria-selected="false">
+                    <i class="bi bi-arrow-right me-1" aria-hidden="true"></i>Solo ida
+                  </button>
+                </li>
+              </ul>
+
+              <form id="formBusqueda" class="form-concorde" novalidate aria-label="Buscar tiquetes de bus">
+                <div class="row g-3 align-items-end mt-1">
+
+                  <!-- Origen -->
+                  <div class="col-lg-3 col-md-6">
+                    <label class="form-label" for="origen">
+                      <i class="bi bi-geo-alt me-1" aria-hidden="true"></i>Origen
+                    </label>
+                    <select class="form-select" id="origen" name="origen" required aria-required="true">
+                      <option value="">Selecciona ciudad</option>
+                      <option value="AGUAZUL">Aguazul</option>
+                      <option value="BARRANQUILLA">Barranquilla</option>
+                      <option value="BOGOTA_NORTE">Bogotá Norte</option>
+                      <option value="BOGOTA_SALITRE">Bogotá Salitre</option>
+                      <option value="BUCARAMANGA">Bucaramanga</option>
+                      <option value="CARTAGENA">Cartagena</option>
+                      <option value="CUCUTA">Cúcuta</option>
+                      <option value="DUITAMA">Duitama</option>
+                      <option value="ONZAGA">Onzaga</option>
+                      <option value="PAIPA">Paipa</option>
+                      <option value="PAMPLONA">Pamplona</option>
+                      <option value="SOGAMOSO">Sogamoso</option>
+                      <option value="TUNJA">Tunja</option>
+                      <option value="YOPAL">Yopal</option>
+                    </select>
+                    <div class="invalid-feedback">Selecciona la ciudad de origen</div>
+                  </div>
+
+                  <!-- Swap -->
+                  <div class="col-auto d-flex align-items-end pb-1">
+                    <button type="button" id="btnSwap" class="btn btn-outline-secondary rounded-circle"
+                      aria-label="Intercambiar origen y destino"
+                      data-bs-toggle="tooltip" title="Intercambiar ciudades">
+                      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+                    </button>
+                  </div>
+
+                  <!-- Destino -->
+                  <div class="col-lg-3 col-md-6">
+                    <label class="form-label" for="destino">
+                      <i class="bi bi-geo me-1" aria-hidden="true"></i>Destino
+                    </label>
+                    <select class="form-select" id="destino" name="destino" required aria-required="true">
+                      <option value="">Selecciona ciudad</option>
+                      <option value="AGUAZUL">Aguazul</option>
+                      <option value="BARRANQUILLA">Barranquilla</option>
+                      <option value="BOGOTA_NORTE">Bogotá Norte</option>
+                      <option value="BOGOTA_SALITRE">Bogotá Salitre</option>
+                      <option value="BUCARAMANGA">Bucaramanga</option>
+                      <option value="CARTAGENA">Cartagena</option>
+                      <option value="CUCUTA">Cúcuta</option>
+                      <option value="DUITAMA">Duitama</option>
+                      <option value="ONZAGA">Onzaga</option>
+                      <option value="PAIPA">Paipa</option>
+                      <option value="PAMPLONA">Pamplona</option>
+                      <option value="SOGAMOSO">Sogamoso</option>
+                      <option value="TUNJA">Tunja</option>
+                      <option value="YOPAL">Yopal</option>
+                    </select>
+                    <div class="invalid-feedback">Selecciona la ciudad de destino</div>
+                  </div>
+
+                  <!-- Fecha Ida -->
+                  <div class="col-lg-2 col-md-6">
+                    <label class="form-label" for="fechaIda">
+                      <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Ida
+                    </label>
+                    <input type="date" class="form-control" id="fechaIda" name="fechaIda"
+                      required aria-required="true">
+                    <div class="invalid-feedback">Selecciona la fecha de ida</div>
+                  </div>
+
+                  <!-- Fecha Vuelta -->
+                  <div class="col-lg-2 col-md-6" id="grupoFechaVuelta">
+                    <label class="form-label" for="fechaVuelta">
+                      <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Vuelta
+                    </label>
+                    <input type="date" class="form-control" id="fechaVuelta" name="fechaVuelta">
+                  </div>
+
+                  <!-- Pasajeros -->
+                  <div class="col-lg-2 col-md-4">
+                    <label class="form-label" for="pasajeros">
+                      <i class="bi bi-people me-1" aria-hidden="true"></i>Pasajeros
+                    </label>
+                    <div class="contador-pasajeros input-group" role="group" aria-label="Número de pasajeros">
+                      <button type="button" class="btn btn-outline-secondary btn-menos" aria-label="Reducir">−</button>
+                      <input type="number" class="form-control text-center" id="pasajeros"
+                        name="pasajeros" value="1" min="1" max="9" readonly aria-label="Pasajeros">
+                      <button type="button" class="btn btn-outline-secondary btn-mas" aria-label="Aumentar">+</button>
+                    </div>
+                  </div>
+
+                  <!-- Botón -->
+                  <div class="col-12 col-md-3 col-lg-2">
+                    <button type="submit" class="btn btn-concorde-dorado w-100 py-2">
+                      <i class="bi bi-search me-1" aria-hidden="true"></i><strong>Buscar</strong>
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DESTINOS POPULARES -->
+    <section class="py-5" aria-labelledby="titulo-destinos">
+      <div class="container">
+        <h2 class="seccion-titulo centrado text-center" id="titulo-destinos">Destinos Populares</h2>
+        <p class="text-center text-muted mb-4">Nuestras rutas más viajadas desde Boyacá y el centro del país</p>
+        <div class="row g-3">
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Tunja desde $18.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#1a3c6e,#2563eb);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/tunja.jpg" alt="Tunja" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Tunja</h5>
+                <span class="precio-desde">Desde $18.000 COP</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bucaramanga desde $55.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#7c3aed,#a855f7);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/bucaramanga.jpg" alt="Bucaramanga" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Bucaramanga</h5>
+                <span class="precio-desde">Desde $55.000 COP</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bogotá Salitre desde $22.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#0f766e,#14b8a6);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/bogota.jpg" alt="Bogotá Salitre" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Bogotá Salitre</h5>
+                <span class="precio-desde">Desde $22.000 COP</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Sogamoso desde $15.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#b45309,#d97706);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/sogamoso.jpg" alt="Sogamoso" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Sogamoso</h5>
+                <span class="precio-desde">Desde $15.000 COP</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Yopal desde $45.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#166534,#16a34a);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/yopal.jpg" alt="Yopal" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Yopal</h5>
+                <span class="precio-desde">Desde $45.000 COP</span>
+              </div>
+            </a>
+          </div>
+          <div class="col-lg-4 col-md-6 fade-in-up">
+            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Cartagena desde $120.000">
+              <div class="destino-bg" style="background:linear-gradient(135deg,#0369a1,#0ea5e9);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/cartagena.jpg" alt="Cartagena" class="img-fluid"></div>
+              <div class="destino-overlay">
+                <h5>Cartagena</h5>
+                <span class="precio-desde">Desde $120.000 COP</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <!-- Fila 2: destinos adicionales -->
+        <div class="row g-3 mt-1">
+          <div class="col-6 col-md-3 fade-in-up">
+            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Duitama">
+              <div style="font-size:1.8rem" aria-hidden="true">🏘️</div>
+              <div class="fw-bold small texto-azul mt-1">Duitama</div>
+              <div class="text-muted" style="font-size:.75rem">Desde $12.000</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3 fade-in-up">
+            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Paipa">
+              <div style="font-size:1.8rem" aria-hidden="true">🌊</div>
+              <div class="fw-bold small texto-azul mt-1">Paipa</div>
+              <div class="text-muted" style="font-size:.75rem">Desde $14.000</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3 fade-in-up">
+            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Cúcuta">
+              <div style="font-size:1.8rem" aria-hidden="true">🌆</div>
+              <div class="fw-bold small texto-azul mt-1">Cúcuta</div>
+              <div class="text-muted" style="font-size:.75rem">Desde $75.000</div>
+            </a>
+          </div>
+          <div class="col-6 col-md-3 fade-in-up">
+            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Barranquilla">
+              <div style="font-size:1.8rem" aria-hidden="true">🎉</div>
+              <div class="fw-bold small texto-azul mt-1">Barranquilla</div>
+              <div class="text-muted" style="font-size:.75rem">Desde $130.000</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- POR QUÉ CONCORDE -->
+    <section class="py-5" style="background:var(--blanco)" aria-labelledby="titulo-ventajas">
+      <div class="container">
+        <h2 class="seccion-titulo centrado text-center" id="titulo-ventajas">¿Por qué viajar con Concorde?</h2>
+        <div class="row g-4 mt-2">
+          <div class="col-md-4 text-center fade-in-up">
+            <div style="font-size:3rem;margin-bottom:1rem" aria-hidden="true">🚌</div>
+            <h3 class="h5 fw-bold texto-azul">Buses Modernos</h3>
+            <p class="text-muted">Flota de buses climatizados, con asientos reclinables y WiFi en rutas seleccionadas.</p>
+          </div>
+          <div class="col-md-4 text-center fade-in-up">
+            <div style="font-size:3rem;margin-bottom:1rem" aria-hidden="true">🛡️</div>
+            <h3 class="h5 fw-bold texto-azul">Seguridad Garantizada</h3>
+            <p class="text-muted">Conductores certificados, GPS en toda la flota y seguros de viaje incluidos en tu tiquete.</p>
+          </div>
+          <div class="col-md-4 text-center fade-in-up">
+            <div style="font-size:3rem;margin-bottom:1rem" aria-hidden="true">⏰</div>
+            <h3 class="h5 fw-bold texto-azul">Puntualidad</h3>
+            <p class="text-muted">Salidas programadas con precisión. Más de 20 años conectando Colombia a tiempo.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="py-5 bg-azul-gradiente text-white text-center" aria-labelledby="cta-titulo">
+      <div class="container">
+        <h2 class="seccion-titulo centrado" id="cta-titulo" style="color:white">¿Listo para tu próximo viaje?</h2>
+        <p class="lead opacity-90 mb-4">Regístrate y obtén 10% de descuento en tu primer tiquete</p>
+        <a href="p04-registro.html" class="btn btn-concorde-dorado btn-lg px-5">
+          <i class="bi bi-person-plus me-2" aria-hidden="true"></i>Crear cuenta gratis
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-placeholder"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function(){ var u=Auth.getUsuario(); if(u && u.rol==="administrador") window.location.href="admin-panel.html"; })();
+  </script>
+  <script src="js/componentes.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/aviso-agotados.js"></script>
+</body>
+</html>

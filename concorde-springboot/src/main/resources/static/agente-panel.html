@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Panel de Agente — Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Panel de Agente</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── AGENTE VARS (mismo layout del admin, acento azul de "agente") ── */
+    :root {
+      --admin-sidebar: #0d1b2a;
+      --admin-sidebar-hover: rgba(255,255,255,0.07);
+      --admin-accent: #3498db;
+      --admin-verde: #2ecc71;
+      --admin-rojo: #e74c3c;
+      --admin-morado: #9b59b6;
+    }
+
+    body { background: #f0f2f7; }
+
+    /* ── LAYOUT ─────────────────────────── */
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* ── SIDEBAR ────────────────────────── */
+    .admin-sidebar {
+      width: 240px;
+      background: var(--admin-sidebar);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 1040;
+      transition: transform .3s ease;
+    }
+    .admin-sidebar.oculto { transform: translateX(-100%); }
+
+    .sidebar-logo {
+      padding: 1.4rem 1.2rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sidebar-logo .logo-icono { color: var(--admin-accent); font-size: 1.6rem; }
+    .sidebar-logo .logo-texto { color: #fff; font-size: 1rem; font-family: var(--fuente-titulo); letter-spacing: 1px; }
+    .sidebar-logo .logo-subtexto { color: var(--admin-accent); font-size: .58rem; letter-spacing: 2px; display: block; }
+
+    .sidebar-nav { flex: 1; padding: 1rem 0; overflow-y: auto; }
+
+    .sidebar-section {
+      padding: .4rem 1rem .2rem;
+      font-size: .65rem;
+      letter-spacing: 1.5px;
+      color: rgba(255,255,255,.3);
+      text-transform: uppercase;
+      margin-top: .8rem;
+    }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: .65rem 1.2rem;
+      color: rgba(255,255,255,.65);
+      font-size: .875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all .2s;
+      border-left: 3px solid transparent;
+      cursor: pointer;
+    }
+    .sidebar-link i { font-size: 1rem; width: 20px; text-align: center; }
+    .sidebar-link:hover,
+    .sidebar-link.activo {
+      background: var(--admin-sidebar-hover);
+      color: #fff;
+      border-left-color: var(--admin-accent);
+    }
+    .sidebar-link.activo { color: var(--admin-accent); }
+    .sidebar-link .badge-sidebar {
+      margin-left: auto;
+      background: var(--admin-accent);
+      color: #fff;
+      font-size: .65rem;
+      padding: .15em .5em;
+      border-radius: 20px;
+    }
+
+    .sidebar-footer { padding: 1rem 1.2rem; border-top: 1px solid rgba(255,255,255,.08); }
+    .sidebar-footer button {
+      background: rgba(231,76,60,.15);
+      border: 1px solid rgba(231,76,60,.3);
+      color: #e74c3c;
+      width: 100%;
+      padding: .5rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .sidebar-footer button:hover { background: #e74c3c; color: #fff; }
+
+    /* ── MAIN CONTENT ───────────────────── */
+    .admin-main { margin-left: 240px; flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    /* ── TOPBAR ─────────────────────────── */
+    .admin-topbar {
+      background: #fff;
+      border-bottom: 1px solid #e8ecf1;
+      padding: .9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 8px rgba(0,0,0,.06);
+    }
+    .topbar-titulo { font-family: var(--fuente-titulo); font-size: 1.15rem; font-weight: 700; color: var(--azul-oscuro); }
+    .topbar-acciones { display: flex; align-items: center; gap: .75rem; }
+    .topbar-user { display: flex; align-items: center; gap: .6rem; background: var(--gris-claro); border-radius: 40px; padding: .35rem .9rem .35rem .35rem; }
+    .topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--admin-accent); color: #fff; font-weight: 700; font-size: .72rem; display: flex; align-items: center; justify-content: center; }
+    .topbar-user-info { line-height: 1.2; }
+    .topbar-user-nombre { font-size: .8rem; font-weight: 700; color: var(--negro); }
+    .topbar-user-rol { font-size: .65rem; color: var(--admin-accent); text-transform: uppercase; letter-spacing: .5px; }
+
+    /* ── CONTENIDO ──────────────────────── */
+    .admin-content { padding: 1.8rem; flex: 1; }
+
+    /* ── HERO BANNER ────────────────────── */
+    .admin-hero {
+      background: linear-gradient(135deg, var(--azul-oscuro) 0%, var(--azul-principal) 70%, var(--admin-accent) 130%);
+      border-radius: 16px;
+      padding: 1.8rem 2rem;
+      color: #fff;
+      margin-bottom: 1.8rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .admin-hero::after { content: '🎧'; position: absolute; right: 2rem; top: 50%; transform: translateY(-50%); font-size: 5rem; opacity: .12; }
+    .admin-hero h1 { font-family: var(--fuente-titulo); font-size: 1.6rem; margin-bottom: .3rem; }
+    .admin-hero p { opacity: .8; margin: 0; font-size: .9rem; }
+
+    /* ── STAT CARDS ─────────────────────── */
+    .stat-card { background: #fff; border-radius: 14px; padding: 1.4rem; box-shadow: 0 2px 12px rgba(0,0,0,.06); border: 1px solid #eef0f5; transition: all .25s; position: relative; overflow: hidden; }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,.1); }
+    .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+    .stat-card.azul::before   { background: linear-gradient(90deg, var(--azul-principal), var(--azul-claro)); }
+    .stat-card.verde::before  { background: linear-gradient(90deg, #27ae60, var(--admin-verde)); }
+    .stat-card.dorado::before { background: linear-gradient(90deg, var(--admin-accent), #5dade2); }
+    .stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: .8rem; }
+    .stat-icon.azul   { background: rgba(0,87,183,.1);   color: var(--azul-claro); }
+    .stat-icon.verde  { background: rgba(46,204,113,.12); color: var(--admin-verde); }
+    .stat-icon.dorado { background: rgba(52,152,219,.12); color: var(--admin-accent); }
+    .stat-numero { font-size: 2rem; font-weight: 700; font-family: var(--fuente-titulo); color: var(--negro); line-height: 1; margin-bottom: .2rem; }
+    .stat-label  { font-size: .82rem; color: var(--gris-texto); }
+
+    /* ── SECTION TITLES ─────────────────── */
+    .admin-section-titulo { font-family: var(--fuente-titulo); font-size: 1.1rem; font-weight: 700; color: var(--azul-oscuro); margin-bottom: 1rem; display: flex; align-items: center; gap: .6rem; }
+    .admin-section-titulo::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--gris-medio), transparent); }
+
+    /* ── TABLA ───────────────────────────── */
+    .admin-tabla { border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.05); }
+    .admin-tabla table { margin: 0; }
+    .admin-tabla thead { background: linear-gradient(135deg, var(--azul-oscuro), var(--azul-principal)); color: #fff; }
+    .admin-tabla thead th { font-weight: 600; font-size: .82rem; letter-spacing: .3px; padding: 1rem; border: none; }
+    .admin-tabla tbody tr { transition: background .2s; }
+    .admin-tabla tbody tr:hover { background: rgba(0,87,183,.04); }
+    .admin-tabla tbody td { padding: .85rem 1rem; vertical-align: middle; font-size: .875rem; border-color: #f0f2f7; }
+
+    /* ── BADGES DE ESTADO ───────────────── */
+    .estado-badge { font-size: .72rem; font-weight: 600; padding: .28em .8em; border-radius: 20px; display: inline-block; }
+    .eb-completada  { background: rgba(46,204,113,.15); color: #1a8a4a; }
+    .eb-cancelada   { background: rgba(231,76,60,.12);  color: #c0392b; }
+    .eb-registrado  { background: rgba(52,152,219,.12); color: #1a6fa8; }
+    .eb-exitoso     { background: rgba(46,204,113,.15); color: #1a8a4a; }
+    .eb-actualizado { background: rgba(155,89,182,.12); color: #7d3c98; }
+    .eb-pendiente   { background: rgba(241,196,15,.15); color: #9a7d0a; }
+
+    /* ── CONFIG FORM ────────────────────── */
+    .config-card { background: #fff; border-radius: 14px; padding: 1.8rem; box-shadow: 0 2px 10px rgba(0,0,0,.05); border: 1px solid #eef0f5; }
+
+    /* ── AVISO SOLO LECTURA ─────────────── */
+    .aviso-lectura { background: rgba(52,152,219,.08); border: 1px solid rgba(52,152,219,.25); color: #1a6fa8; border-radius: 10px; padding: .7rem 1rem; font-size: .82rem; margin-bottom: 1rem; display:flex; align-items:center; gap:.5rem; }
+
+    /* ── TOGGLE SIDEBAR ─────────────────── */
+    .btn-sidebar-toggle { display: none; background: none; border: none; font-size: 1.4rem; color: var(--azul-oscuro); cursor: pointer; }
+
+    /* ── OVERLAY SIDEBAR MÓVIL ──────────── */
+    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1039; }
+    .sidebar-overlay.visible { display: block; }
+
+    /* ── RESPONSIVE ─────────────────────── */
+    @media (max-width: 991px) {
+      .admin-main { margin-left: 0; }
+      .admin-sidebar { transform: translateX(-100%); }
+      .admin-sidebar.visible { transform: translateX(0); }
+      .btn-sidebar-toggle { display: flex; align-items: center; }
+    }
+    @media (max-width: 576px) {
+      .admin-content { padding: 1rem; }
+      .admin-hero { padding: 1.2rem; }
+      .admin-hero h1 { font-size: 1.2rem; }
+      .stat-numero { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Overlay sidebar móvil -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="cerrarSidebar()"></div>
+
+<div class="admin-layout">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="admin-sidebar" id="adminSidebar" role="navigation" aria-label="Menú de agente">
+
+    <div class="sidebar-logo">
+      <span class="logo-icono" aria-hidden="true"><img src="img/LogoConcorde.png" alt="Logo Concorde" style="height: 40px;"></span>
+      <div>
+        <span class="logo-texto">CONCORDE</span>
+        <span class="logo-subtexto">Panel de Agente</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Secciones del panel">
+      <div class="sidebar-section">Principal</div>
+      <a class="sidebar-link activo" data-key="dashboard" onclick="mostrarSeccion('dashboard')" tabindex="0"
+        aria-current="page" aria-label="Ir al Dashboard">
+        <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+      </a>
+
+      <div class="sidebar-section">Atención al cliente</div>
+      <a class="sidebar-link" data-key="chat" onclick="mostrarSeccion('chat')" tabindex="0" aria-label="Chat con clientes">
+        <i class="bi bi-chat-dots-fill" aria-hidden="true"></i> Chat con clientes
+        <span class="badge-sidebar" id="badge-chat">–</span>
+      </a>
+      <a class="sidebar-link" data-key="reservas" onclick="mostrarSeccion('reservas')" tabindex="0" aria-label="Gestión de reservas">
+        <i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i> Reservas
+        <span class="badge-sidebar" id="badge-reservas">–</span>
+      </a>
+      <a class="sidebar-link" data-key="usuarios" onclick="mostrarSeccion('usuarios')" tabindex="0" aria-label="Clientes">
+        <i class="bi bi-people-fill" aria-hidden="true"></i> Clientes
+      </a>
+
+      <div class="sidebar-section">Pagos</div>
+      <a class="sidebar-link" data-key="pagos" onclick="mostrarSeccion('pagos')" tabindex="0" aria-label="Gestión de pagos">
+        <i class="bi bi-credit-card-fill" aria-hidden="true"></i> Pagos
+      </a>
+
+      <div class="sidebar-section">Operación (consulta)</div>
+      <a class="sidebar-link" data-key="viajes" onclick="mostrarSeccion('viajes')" tabindex="0" aria-label="Consultar viajes">
+        <i class="bi bi-airplane-fill" aria-hidden="true"></i> Viajes
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button onclick="Auth.logout()" aria-label="Cerrar sesión de agente">
+        <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════════ -->
+  <div class="admin-main">
+
+    <!-- TOPBAR -->
+    <header class="admin-topbar" role="banner">
+      <div class="d-flex align-items-center gap-3">
+        <button class="btn-sidebar-toggle" onclick="toggleSidebar()" aria-label="Abrir menú lateral">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <div>
+          <div class="topbar-titulo" id="topbarTitulo">Dashboard</div>
+          <div style="font-size:.72rem;color:var(--gris-texto)" id="topbarBreadcrumb">
+            Panel de Agente › Dashboard
+          </div>
+        </div>
+      </div>
+      <div class="topbar-acciones">
+        <div class="topbar-user" id="topbarUser">
+          <div class="topbar-avatar" id="topbarAvatar" aria-hidden="true">AG</div>
+          <div class="topbar-user-info d-none d-sm-block">
+            <div class="topbar-user-nombre" id="topbarNombre">Agente</div>
+            <div class="topbar-user-rol">Agente</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="admin-content" id="contenido-principal">
+
+      <!-- ══ SECCIÓN: DASHBOARD ══════════════════════════════════════ -->
+      <section id="sec-dashboard" aria-label="Dashboard principal">
+        <div class="admin-hero">
+          <h1><i class="bi bi-headset me-2" style="font-size:1.4rem" aria-hidden="true"></i>Panel de Agente</h1>
+          <p>Bienvenido, <strong id="heroNombre">Agente</strong>. Desde aquí puedes atender reservas, registrar clientes y pagos, y consultar los viajes disponibles.</p>
+        </div>
+
+        <h2 class="admin-section-titulo">
+          <i class="bi bi-bar-chart-line-fill" style="color:var(--azul-claro)" aria-hidden="true"></i>
+          Resumen del día
+        </h2>
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card dorado" tabindex="0" role="button" onclick="mostrarSeccion('chat')">
+              <div class="stat-icon dorado"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statChatsPendientes">0</div>
+              <div class="stat-label">Chats por atender</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card azul" tabindex="0">
+              <div class="stat-icon azul"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statReservasHoy">0</div>
+              <div class="stat-label">Reservas de hoy</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card verde" tabindex="0">
+              <div class="stat-icon verde"><i class="bi bi-credit-card-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statPagosHoy">0</div>
+              <div class="stat-label">Pagos procesados hoy</div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card dorado" tabindex="0">
+              <div class="stat-icon dorado"><i class="bi bi-airplane-fill" aria-hidden="true"></i></div>
+              <div class="stat-numero" id="statViajesProgramados">0</div>
+              <div class="stat-label">Viajes programados</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-card">
+          <p class="mb-0 text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            Este panel está pensado para la operación diaria: crear y consultar reservas, registrar clientes nuevos, procesar pagos
+            y revisar horarios de viajes. La configuración estructural del sistema (rutas, vehículos, terminales, conductores y roles)
+            solo la gestiona un administrador.
+          </p>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: CHAT CON CLIENTES (tickets escalados por el bot) ══ -->
+      <section id="sec-chat" class="d-none" aria-label="Chat con clientes">
+        <h2 class="admin-section-titulo"><i class="bi bi-chat-dots-fill" aria-hidden="true"></i>Chat con clientes</h2>
+        <div class="config-card">
+          <div class="aviso-lectura">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Aquí llegan las conversaciones que el chatbot no pudo resolver solo, o en las que el cliente pidió hablar con un asesor.
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="btn-group btn-group-sm" role="group" aria-label="Filtro de tickets de chat">
+              <button type="button" class="btn btn-outline-secondary active" data-filtro-chat="PENDIENTES" onclick="cambiarFiltroChat('PENDIENTES', this)">Pendientes</button>
+              <button type="button" class="btn btn-outline-secondary" data-filtro-chat="TODAS" onclick="cambiarFiltroChat('TODAS', this)">Todas</button>
+            </div>
+            <button class="btn btn-outline-secondary btn-sm" onclick="cargarTicketsChat()"><i class="bi bi-arrow-clockwise me-1"></i>Actualizar</button>
+          </div>
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <div class="admin-tabla" style="max-height:520px;overflow-y:auto">
+                <div id="listaTicketsChat">Cargando…</div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div id="conversacionChatVacia" class="config-card text-center text-muted py-5">
+                <i class="bi bi-chat-square-text d-block mb-2" style="font-size:2rem" aria-hidden="true"></i>
+                Selecciona una conversación de la lista para verla aquí.
+              </div>
+              <div id="conversacionChat" class="d-none">
+                <div class="config-card mb-2">
+                  <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                      <div class="fw-bold" id="chatClienteNombre">—</div>
+                      <div class="text-muted small" id="chatClienteCorreo">—</div>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                      <span id="chatEstadoBadge" class="estado-badge">—</span>
+                      <button class="btn btn-outline-danger btn-sm" id="btnCerrarTicket" onclick="cerrarTicketChat()"><i class="bi bi-check2-circle me-1"></i>Cerrar ticket</button>
+                    </div>
+                  </div>
+                </div>
+                <div id="chatMensajesAgente" class="chatbot-mensajes" style="height:320px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)"></div>
+                <form id="formRespuestaAgente" class="chatbot-form" style="border-top:none;border-radius:0 0 14px 14px;box-shadow:0 2px 10px rgba(0,0,0,.05)">
+                  <input type="text" id="inputRespuestaAgente" placeholder="Escribe tu respuesta..." autocomplete="off" aria-label="Escribe tu respuesta">
+                  <button type="submit" aria-label="Enviar respuesta"><i class="bi bi-send-fill" aria-hidden="true"></i></button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: RESERVAS (CRUD completo) ══════════════════════ -->
+      <section id="sec-reservas" class="d-none" aria-label="Gestión de reservas">
+        <h2 class="admin-section-titulo"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i>Gestión de Reservas</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar reserva" oninput="filtrarTabla('reservas', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('reservas')"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nueva reserva</button>
+          </div>
+          <div id="form-reservas" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-reservas">Cargando…</div></div>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: CLIENTES (usuarios, solo rol CLIENTE, sin eliminar) ══ -->
+      <section id="sec-usuarios" class="d-none" aria-label="Gestión de clientes">
+        <h2 class="admin-section-titulo"><i class="bi bi-people-fill" aria-hidden="true"></i>Clientes</h2>
+        <div class="config-card">
+          <div class="aviso-lectura">
+            <i class="bi bi-info-circle" aria-hidden="true"></i>
+            Aquí puedes crear o editar clientes que llaman o llegan a atención. No puedes crear administradores ni agentes, ni eliminar cuentas — eso lo maneja un administrador.
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar cliente" oninput="filtrarTabla('usuarios', this.value)">
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('usuarios')"><i class="bi bi-person-plus me-1" aria-hidden="true"></i>Nuevo cliente</button>
+          </div>
+          <div id="form-usuarios" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-usuarios">Cargando…</div></div>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: PAGOS (CRUD completo) ══════════════════════════ -->
+      <section id="sec-pagos" class="d-none" aria-label="Gestión de pagos">
+        <h2 class="admin-section-titulo"><i class="bi bi-credit-card-fill" aria-hidden="true"></i>Gestión de Pagos</h2>
+        <div class="config-card">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="text-muted small mb-0">Registra el pago de una reserva</p>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('pagos')"><i class="bi bi-plus-lg me-1" aria-hidden="true"></i>Nuevo pago</button>
+          </div>
+          <div id="form-pagos" class="mb-3" style="display:none;"></div>
+          <div class="admin-tabla"><div id="tabla-pagos">Cargando…</div></div>
+        </div>
+      </section>
+
+      <!-- ══ SECCIÓN: VIAJES (solo lectura) ══════════════════════════ -->
+      <section id="sec-viajes" class="d-none" aria-label="Consulta de viajes">
+        <h2 class="admin-section-titulo"><i class="bi bi-airplane-fill" aria-hidden="true"></i>Viajes</h2>
+        <div class="config-card">
+          <div class="aviso-lectura">
+            <i class="bi bi-eye" aria-hidden="true"></i>
+            Consulta de solo lectura — horarios, rutas y disponibilidad. Para crear o modificar viajes contacta a un administrador.
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar viaje" oninput="filtrarTabla('viajes', this.value)">
+          </div>
+          <div class="admin-tabla"><div id="tabla-viajes">Cargando…</div></div>
+        </div>
+      </section>
+
+    </main>
+  </div><!-- /admin-main -->
+</div><!-- /admin-layout -->
+
+<!-- Toast -->
+<div id="adminToast" class="position-fixed bottom-0 end-0 m-3 p-3 rounded-3 text-white shadow-lg d-none"
+  style="background:var(--azul-principal);z-index:9999;max-width:300px" role="alert" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/passwordPolicy.js"></script>
+<script>
+  // Proteger página: solo agente
+  if (!Auth.requiereRol('agente')) { /* redirigido */ }
+
+  const user = Auth.getUsuario();
+  if (user) {
+    document.getElementById('topbarNombre').textContent = user.nombre;
+    document.getElementById('topbarAvatar').textContent = user.avatar;
+    document.getElementById('heroNombre').textContent = user.nombre.split(' ')[0];
+  }
+
+  function animarContador(id, destino, prefijo='', sufijo='') {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let actual = 0;
+    const dur = 900, pasos = 40, inc = destino / pasos || 0;
+    const t = setInterval(() => {
+      actual = Math.min(actual + inc, destino);
+      el.textContent = prefijo + Math.round(actual).toLocaleString('es-CO') + sufijo;
+      if (actual >= destino) clearInterval(t);
+    }, dur / pasos);
+    if (destino === 0) el.textContent = prefijo + '0' + sufijo;
+  }
+
+  const API = 'http://localhost:8082/api';
+
+  async function cargarStatsDashboard() {
+    try {
+      const hoy = new Date().toISOString().slice(0,10);
+      const [reservas, pagos, viajes] = await Promise.all([
+        fetch(`${API}/reservas`).then(r => r.json()),
+        fetch(`${API}/pagos`).then(r => r.json()),
+        fetch(`${API}/viajes`).then(r => r.json())
+      ]);
+      // No hay fecha de creación expuesta en reserva/pago, así que "hoy" se aproxima
+      // mostrando el total como referencia operativa del día de trabajo.
+      animarContador('statReservasHoy', reservas.length);
+      const pagosProcesados = pagos.filter(p => p.estado === 'PROCESADO').length;
+      animarContador('statPagosHoy', pagosProcesados);
+      const programados = viajes.filter(v => v.estadoViaje === 'PROGRAMADO' && v.fechaViaje >= hoy).length;
+      animarContador('statViajesProgramados', programados);
+      document.getElementById('badge-reservas').textContent = reservas.length;
+    } catch (e) {
+      mostrarToastAdmin('No se pudo conectar a la API (puerto 8082). Verifica que el backend esté corriendo.', 'danger');
+    }
+    cargarBadgeChat();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // CHAT CON CLIENTES (tickets escalados por el chatbot)
+  // ════════════════════════════════════════════════════════
+  let filtroChatActual = 'PENDIENTES';
+  let ticketChatSeleccionado = null;
+  let totalMensajesTicketChat = 0;
+  let intervaloPollingChat = null;
+
+  async function cargarBadgeChat() {
+    try {
+      const pendientes = await fetch(`${API}/chatbot/consultas?estados=ESCALADA,EN_ATENCION`).then(r => r.json());
+      document.getElementById('badge-chat').textContent = pendientes.length;
+      animarContador('statChatsPendientes', pendientes.length);
+    } catch (e) { document.getElementById('badge-chat').textContent = '–'; }
+  }
+
+  function cambiarFiltroChat(filtro, btn) {
+    filtroChatActual = filtro;
+    document.querySelectorAll('[data-filtro-chat]').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    cargarTicketsChat();
+  }
+
+  async function cargarTicketsChat() {
+    const cont = document.getElementById('listaTicketsChat');
+    cont.innerHTML = 'Cargando…';
+    try {
+      const query = filtroChatActual === 'TODAS' ? 'estados=TODAS' : 'estados=ESCALADA,EN_ATENCION';
+      const tickets = await fetch(`${API}/chatbot/consultas?${query}`).then(r => r.json());
+      renderizarListaTicketsChat(tickets);
+      cargarBadgeChat();
+    } catch (e) {
+      cont.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-exclamation-triangle d-block mb-2" style="font-size:1.6rem"></i>
+        No se pudo conectar a la API.
+      </div>`;
+    }
+  }
+
+  const ESTADO_CHAT_LABEL = { ESCALADA:'Esperando asesor', EN_ATENCION:'En atención', CERRADA:'Cerrado', BOT:'Con el bot' };
+  const ESTADO_CHAT_CLASE = { ESCALADA:'eb-pendiente', EN_ATENCION:'eb-actualizado', CERRADA:'eb-completada', BOT:'eb-registrado' };
+
+  function renderizarListaTicketsChat(tickets) {
+    const cont = document.getElementById('listaTicketsChat');
+    if (!tickets.length) {
+      cont.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-inbox d-block mb-2" style="font-size:1.6rem"></i>No hay conversaciones para mostrar.
+      </div>`;
+      return;
+    }
+    cont.innerHTML = tickets.map(t => `
+      <button type="button" class="btn w-100 text-start border-0 border-bottom rounded-0 py-3 px-3 ${ticketChatSeleccionado === t.idConsulta ? 'bg-light' : ''}"
+        onclick="seleccionarTicketChat(${t.idConsulta})">
+        <div class="d-flex justify-content-between align-items-center">
+          <strong class="small">${t.nombreContacto || 'Cliente sin nombre'}</strong>
+          <span class="estado-badge ${ESTADO_CHAT_CLASE[t.estado] || ''}" style="font-size:.68rem">${ESTADO_CHAT_LABEL[t.estado] || t.estado}</span>
+        </div>
+        <div class="text-muted small">${t.correoContacto || 'Sin correo registrado'}</div>
+        <div class="text-muted" style="font-size:.7rem">Ticket #${t.idConsulta} · ${t.agenteNombre ? 'Atendido por ' + t.agenteNombre : 'Sin asignar'}</div>
+      </button>
+    `).join('');
+  }
+
+  async function seleccionarTicketChat(id) {
+    ticketChatSeleccionado = id;
+    document.getElementById('conversacionChatVacia').classList.add('d-none');
+    document.getElementById('conversacionChat').classList.remove('d-none');
+    await cargarTicketsChat();
+    await cargarConversacionChat(id);
+    iniciarPollingConversacionChat();
+  }
+
+  async function cargarConversacionChat(id) {
+    try {
+      const datos = await fetch(`${API}/chatbot/consultas/${id}/mensajes`).then(r => r.json());
+      const tickets = await fetch(`${API}/chatbot/consultas?estados=TODAS`).then(r => r.json());
+      const ticket = tickets.find(t => t.idConsulta === id) || {};
+      document.getElementById('chatClienteNombre').textContent = ticket.nombreContacto || 'Cliente sin nombre';
+      document.getElementById('chatClienteCorreo').textContent = ticket.correoContacto || 'Sin correo registrado';
+      const badge = document.getElementById('chatEstadoBadge');
+      badge.textContent = ESTADO_CHAT_LABEL[datos.estado] || datos.estado;
+      badge.className = `estado-badge ${ESTADO_CHAT_CLASE[datos.estado] || ''}`;
+      document.getElementById('btnCerrarTicket').disabled = datos.estado === 'CERRADA';
+
+      const cont = document.getElementById('chatMensajesAgente');
+      cont.innerHTML = '';
+      datos.mensajes.forEach(m => {
+        const div = document.createElement('div');
+        const remitente = m.remitente.toLowerCase() === 'agente' ? 'cliente' : (m.remitente.toLowerCase() === 'cliente' ? 'bot' : m.remitente.toLowerCase());
+        // Nota: en la vista del agente se invierte visualmente el lado de las
+        // burbujas (las propias respuestas del agente quedan a la derecha).
+        const lado = m.remitente === 'AGENTE' ? 'cliente' : 'bot';
+        div.className = `chatbot-burbuja-msg ${lado}`;
+        const etiqueta = m.remitente === 'CLIENTE' ? 'Cliente' : (m.remitente === 'BOT' ? 'Asistente' : 'Tú');
+        div.innerHTML = `<span class="chatbot-remitente">${etiqueta}</span>${(m.contenido || '').replace(/</g,'&lt;')}`;
+        cont.appendChild(div);
+      });
+      cont.scrollTop = cont.scrollHeight;
+      totalMensajesTicketChat = datos.mensajes.length;
+    } catch (e) {
+      mostrarToastAdmin('No se pudo cargar la conversación.', 'danger');
+    }
+  }
+
+  function iniciarPollingConversacionChat() {
+    detenerPollingConversacionChat();
+    intervaloPollingChat = setInterval(async () => {
+      if (!ticketChatSeleccionado) return;
+      try {
+        const datos = await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/mensajes`).then(r => r.json());
+        if (datos.mensajes.length !== totalMensajesTicketChat) await cargarConversacionChat(ticketChatSeleccionado);
+      } catch (e) { /* se reintenta en el próximo ciclo */ }
+    }, 8000);
+  }
+
+  function detenerPollingConversacionChat() {
+    if (intervaloPollingChat) { clearInterval(intervaloPollingChat); intervaloPollingChat = null; }
+    ticketChatSeleccionado = null;
+  }
+
+  document.getElementById('formRespuestaAgente')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = document.getElementById('inputRespuestaAgente');
+    const texto = input.value.trim();
+    if (!texto || !ticketChatSeleccionado) return;
+    input.value = '';
+    try {
+      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/responder`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texto, agenteId: user ? user.id : null })
+      });
+      await cargarConversacionChat(ticketChatSeleccionado);
+    } catch (e) {
+      mostrarToastAdmin('No se pudo enviar la respuesta.', 'danger');
+    }
+  });
+
+  async function cerrarTicketChat() {
+    if (!ticketChatSeleccionado) return;
+    if (!confirm('¿Cerrar esta conversación? El cliente podrá escribir de nuevo si necesita algo más.')) return;
+    try {
+      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/cerrar`, { method: 'POST' });
+      mostrarToastAdmin('Ticket cerrado', 'success');
+      await cargarConversacionChat(ticketChatSeleccionado);
+      await cargarTicketsChat();
+    } catch (e) {
+      mostrarToastAdmin('No se pudo cerrar el ticket.', 'danger');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    cargarStatsDashboard();
+    cargarRolClienteId();
+  });
+
+  // ── Navegación entre secciones ───────────
+  const secciones = ['dashboard','chat','reservas','usuarios','pagos','viajes'];
+  const titulosSec = { dashboard:'Dashboard', chat:'Chat con clientes', reservas:'Reservas', usuarios:'Clientes', pagos:'Pagos', viajes:'Viajes' };
+  const entityKeys = ['reservas','usuarios','pagos','viajes'];
+
+  function mostrarSeccion(nombre) {
+    secciones.forEach(s => {
+      const el = document.getElementById('sec-' + s);
+      if (el) el.classList.toggle('d-none', s !== nombre);
+    });
+    document.querySelectorAll('.sidebar-link').forEach(l => {
+      l.classList.remove('activo');
+      l.removeAttribute('aria-current');
+    });
+    const linkActivo = document.querySelector(`.sidebar-link[data-key="${nombre}"]`);
+    if (linkActivo) { linkActivo.classList.add('activo'); linkActivo.setAttribute('aria-current','page'); }
+
+    document.getElementById('topbarTitulo').textContent = titulosSec[nombre];
+    document.getElementById('topbarBreadcrumb').textContent = `Panel de Agente › ${titulosSec[nombre]}`;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    cerrarSidebar();
+
+    if (entityKeys.includes(nombre)) cargarEntidad(nombre);
+    if (nombre === 'dashboard') cargarStatsDashboard();
+    if (nombre === 'chat') cargarTicketsChat();
+    else detenerPollingConversacionChat();
+  }
+
+  // ════════════════════════════════════════════════════════
+  // MOTOR CRUD (subconjunto del admin) — conecta a /api/... (8082)
+  // ════════════════════════════════════════════════════════
+  const badgeMap = {
+    CLIENTE:'eb-registrado', AGENTE:'eb-actualizado', ADMIN:'eb-pendiente',
+    PROGRAMADO:'eb-registrado', EN_CURSO:'eb-pendiente', FINALIZADO:'eb-completada', CANCELADO:'eb-cancelada',
+    PENDIENTE:'eb-pendiente', CONFIRMADA:'eb-completada', CANCELADA:'eb-cancelada',
+    PROCESADO:'eb-exitoso', REEMBOLSADO:'eb-actualizado', FALLIDO:'eb-cancelada'
+  };
+
+  // idRol de "CLIENTE", resuelto al cargar (para asignarlo automáticamente
+  // al crear un cliente desde este panel, sin mostrar el campo de rol).
+  let rolClienteId = null;
+  async function cargarRolClienteId() {
+    try {
+      const roles = await fetch(`${API}/roles`).then(r => r.json());
+      const cliente = roles.find(r => r.nombreRol === 'CLIENTE');
+      rolClienteId = cliente ? cliente.idRol : null;
+    } catch (e) { rolClienteId = null; }
+  }
+
+  const entities = {
+    usuarios: {
+      idField:'idUsuario',
+      columns:['idUsuario','nombreCompleto','correoElectronico','telefono'],
+      fields:[
+        {name:'nombreCompleto', label:'Nombre completo', type:'text', required:true},
+        {name:'numeroDocumento', label:'N° Documento', type:'text', required:true},
+        {name:'telefono', label:'Teléfono', type:'text', required:true},
+        {name:'correoElectronico', label:'Correo', type:'email', required:true},
+        {name:'contrasenaHash', label:'Contraseña', type:'password', required:true}
+      ],
+      soloClientes: true,   // filtra la tabla para mostrar solo rol CLIENTE
+      noEliminar: true      // el agente no puede eliminar cuentas
+    },
+    reservas: { idField:'idReserva', fields:[
+      {name:'usuario', label:'Usuario', type:'fk', fk:'usuarios', fkIdField:'idUsuario', fkLabelFn:u=>u.nombreCompleto},
+      {name:'viaje', label:'Viaje', type:'fk', fk:'viajes', fkIdField:'idViaje', fkLabelFn:v=>`Viaje #${v.idViaje}`},
+      {name:'estado', label:'Estado', type:'select', options:['PENDIENTE','CONFIRMADA','CANCELADA'], default:'PENDIENTE'}
+    ], columns:['idReserva','usuario','viaje','estado']},
+    pagos: { idField:'idPago', fields:[
+      {name:'reserva', label:'Reserva', type:'fk', fk:'reservas', fkIdField:'idReserva', fkLabelFn:r=>`Reserva #${r.idReserva}`},
+      {name:'metodoPago', label:'Método de pago', type:'text', required:true},
+      {name:'valorPagado', label:'Valor pagado', type:'number', required:true},
+      {name:'estado', label:'Estado', type:'select', options:['PROCESADO','REEMBOLSADO','FALLIDO'], default:'PROCESADO'}
+    ], columns:['idPago','reserva','metodoPago','valorPagado','estado']},
+    viajes: {
+      idField:'idViaje',
+      columns:['idViaje','ruta','vehiculo','fechaViaje','horaSalida','estadoViaje'],
+      fields:[
+        {name:'ruta', label:'Ruta', type:'fk', fk:'rutas', fkIdField:'idRuta', fkLabelFn:r=>`Ruta #${r.idRuta}`},
+        {name:'vehiculo', label:'Vehículo', type:'fk', fk:'vehiculos', fkIdField:'idVehiculo', fkLabelFn:v=>v.placa},
+        {name:'fechaViaje', label:'Fecha', type:'date'},
+        {name:'horaSalida', label:'Hora salida', type:'time'},
+        {name:'estadoViaje', label:'Estado', type:'select', options:['PROGRAMADO','EN_CURSO','FINALIZADO','CANCELADO']}
+      ],
+      soloLectura: true   // no se puede crear/editar/eliminar desde este panel
+    }
+  };
+
+  const dataCache = {};
+  const fkCache = {};
+  const editing = {};
+
+  async function cargarEntidad(key) {
+    const wrap = document.getElementById('tabla-' + key);
+    wrap.innerHTML = 'Cargando…';
+    try {
+      const res = await fetch(`${API}/${key}`);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      let data = await res.json();
+      await asegurarFkCache(key);
+      if (entities[key].soloClientes) {
+        data = data.filter(row => row.rol && row.rol.idRol === rolClienteId);
+      }
+      dataCache[key] = data;
+      renderTabla(key);
+    } catch (err) {
+      wrap.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-exclamation-triangle d-block mb-2" style="font-size:1.6rem"></i>
+        No se pudo conectar a la API.<br><small>${err.message} — revisa que el backend esté corriendo en el puerto 8082</small>
+      </div>`;
+    }
+  }
+
+  async function asegurarFkCache(key) {
+    const fkKeys = entities[key].fields.filter(f => f.type === 'fk').map(f => f.fk);
+    for (const k of [...new Set(fkKeys)]) {
+      if (!fkCache[k]) {
+        try { fkCache[k] = await fetch(`${API}/${k}`).then(r => r.json()); }
+        catch (e) { fkCache[k] = []; }
+      }
+    }
+  }
+
+  function valorMostrado(field, row) {
+    const raw = row[field.name];
+    if (field.type === 'fk') {
+      if (!raw) return '<span class="text-muted">—</span>';
+      const id = raw[field.fkIdField];
+      const match = (fkCache[field.fk] || []).find(x => x[field.fkIdField] === id);
+      if (!match) return `<span class="text-muted">id ${id}</span>`;
+      const etiqueta = field.fkLabelFn(match);
+      return badgeMap[etiqueta] ? `<span class="estado-badge ${badgeMap[etiqueta]}">${etiqueta}</span>` : etiqueta;
+    }
+    if (field.type === 'select') {
+      return `<span class="estado-badge ${badgeMap[raw] || ''}">${raw ?? '—'}</span>`;
+    }
+    if (raw === null || raw === undefined || raw === '') return '<span class="text-muted">—</span>';
+    return raw;
+  }
+
+  function renderTabla(key) {
+    const wrap = document.getElementById('tabla-' + key);
+    const ent = entities[key];
+    const data = dataCache[key] || [];
+    if (!data.length) {
+      wrap.innerHTML = `<div class="text-center text-muted py-4">
+        <i class="bi bi-inbox d-block mb-2" style="font-size:1.6rem"></i>
+        No hay registros todavía.
+      </div>`;
+      return;
+    }
+    let html = `<table class="table" data-key="${key}"><thead><tr>`;
+    ent.columns.forEach(c => {
+      const f = ent.fields.find(fl => fl.name === c);
+      html += `<th>${f ? f.label : c}</th>`;
+    });
+    if (!ent.soloLectura) html += `<th>Acciones</th>`;
+    html += `</tr></thead><tbody>`;
+    data.forEach(row => {
+      html += '<tr>';
+      ent.columns.forEach(c => {
+        if (c === ent.idField) {
+          html += `<td><strong>#${row[c]}</strong></td>`;
+        } else {
+          const f = ent.fields.find(fl => fl.name === c);
+          html += `<td>${f ? valorMostrado(f, row) : (row[c] ?? '—')}</td>`;
+        }
+      });
+      if (!ent.soloLectura) {
+        html += `<td>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('${key}', ${row[ent.idField]})">Editar</button>
+          ${ent.noEliminar ? '' : `<button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('${key}', ${row[ent.idField]})">Eliminar</button>`}
+        </td>`;
+      }
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    wrap.innerHTML = html;
+  }
+
+  function filtrarTabla(key, q) {
+    q = q.toLowerCase();
+    document.querySelectorAll(`#tabla-${key} tbody tr`).forEach(fila => {
+      fila.style.display = fila.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+  }
+
+  function abrirFormulario(key, id = null) {
+    if (entities[key].soloLectura) return;
+    editing[key] = id;
+    const data = id ? (dataCache[key] || []).find(r => r[entities[key].idField] === id) : {};
+    const cont = document.getElementById('form-' + key);
+    cont.style.display = 'block';
+    cont.innerHTML = construirFormulario(key, data || {});
+    conectarMedidoresFormulario(key);
+  }
+
+  // Conecta la barra de fortaleza en vivo a cada campo de tipo "password"
+  // que haya en el formulario recién renderizado.
+  function conectarMedidoresFormulario(key) {
+    const form = document.getElementById('formulario-' + key);
+    if (!form) return;
+    form.querySelectorAll('[data-type="password"]').forEach(input => {
+      const barra = input.parentElement.querySelector('.barra-fortaleza');
+      const texto = input.parentElement.querySelector('.texto-fortaleza');
+      PasswordPolicy.conectarMedidor(input, barra, texto);
+    });
+  }
+
+  function cerrarFormulario(key) {
+    editing[key] = null;
+    document.getElementById('form-' + key).style.display = 'none';
+  }
+
+  function construirFormulario(key, data) {
+    const ent = entities[key];
+    let campos = '';
+    ent.fields.forEach(f => {
+      if (f.type === 'fk') {
+        const currentVal = data[f.name] ? data[f.name][f.fkIdField] : '';
+        const opts = (fkCache[f.fk] || []).map(item => {
+          const id = item[f.fkIdField];
+          return `<option value="${id}" ${String(id)===String(currentVal)?'selected':''}>${f.fkLabelFn(item)}</option>`;
+        }).join('');
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <select class="form-select" data-name="${f.name}" data-type="fk" data-fkid="${f.fkIdField}" ${f.required?'required':''}>
+            <option value="">Selecciona…</option>${opts}
+          </select></div>`;
+      } else if (f.type === 'select') {
+        const currentVal = data[f.name] ?? f.default ?? '';
+        const opts = f.options.map(o => `<option value="${o}" ${o===currentVal?'selected':''}>${o}</option>`).join('');
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <select class="form-select" data-name="${f.name}">${opts}</select></div>`;
+      } else if (f.type === 'password') {
+        // Al editar, se deja en blanco y opcional: si no se toca, se
+        // conserva la contraseña actual (ver recolectarFormulario).
+        const esEdicion = !!data[entities[key].idField];
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <input class="form-control" type="password" data-name="${f.name}" data-type="password"
+            placeholder="${esEdicion ? 'Dejar en blanco para no cambiar' : 'Mín. 8, mayúscula, minúscula, número y símbolo'}"
+            autocomplete="new-password" ${(!esEdicion && f.required) ? 'required' : ''}>
+          <div class="mt-1" style="height:4px;border-radius:2px;background:var(--gris-medio)">
+            <div class="barra-fortaleza" style="height:100%;border-radius:2px;width:0;transition:all .4s"></div>
+          </div>
+          <small class="texto-fortaleza text-muted"></small>
+        </div>`;
+      } else {
+        const val = data[f.name] ?? f.default ?? '';
+        campos += `<div class="col-md-4"><label class="form-label">${f.label}</label>
+          <input class="form-control" type="${f.type}" data-name="${f.name}" value="${val}" ${f.required?'required':''}></div>`;
+      }
+    });
+    return `<div class="config-card">
+      <form class="form-concorde row g-3" id="formulario-${key}" onsubmit="return false;">
+        ${campos}
+        <div class="col-12 d-flex gap-2">
+          <button type="button" class="btn btn-concorde-primario px-3" onclick="guardarFormulario('${key}')">
+            <i class="bi bi-check2 me-1"></i>Guardar</button>
+          <button type="button" class="btn btn-outline-secondary px-3" onclick="cerrarFormulario('${key}')">Cancelar</button>
+        </div>
+      </form>
+    </div>`;
+  }
+
+  function recolectarFormulario(key) {
+    const ent = entities[key];
+    const form = document.getElementById('formulario-' + key);
+    const payload = {};
+    const idActual = editing[key];
+    const original = idActual ? (dataCache[key] || []).find(r => r[ent.idField] === idActual) : null;
+    ent.fields.forEach(f => {
+      const el = form.querySelector(`[data-name="${f.name}"]`);
+      if (f.type === 'fk') {
+        payload[f.name] = el.value ? { [f.fkIdField]: Number(el.value) } : null;
+      } else if (f.type === 'number') {
+        payload[f.name] = el.value === '' ? null : Number(el.value);
+      } else if (f.type === 'password') {
+        // Si se deja en blanco al editar, se conserva la contraseña actual.
+        payload[f.name] = el.value.trim() ? el.value : (original ? original[f.name] : '');
+      } else {
+        payload[f.name] = el.value;
+      }
+    });
+    // El cliente creado/editado desde este panel siempre queda con rol CLIENTE,
+    // sin mostrar ni dejar elegir el campo de rol.
+    if (key === 'usuarios') {
+      payload.rol = rolClienteId ? { idRol: rolClienteId } : null;
+    }
+    return payload;
+  }
+
+  async function guardarFormulario(key) {
+    const form = document.getElementById('formulario-' + key);
+    if (!form.reportValidity()) return;
+
+    // Valida la política de contraseña solo si el campo tiene un valor
+    // (en edición puede quedar en blanco para no cambiarla).
+    for (const f of entities[key].fields) {
+      if (f.type === 'password') {
+        const el = form.querySelector(`[data-name="${f.name}"]`);
+        if (el.value.trim()) {
+          const chequeo = PasswordPolicy.validar(el.value);
+          if (!chequeo.valido) {
+            mostrarToastAdmin(chequeo.mensaje, 'warning');
+            el.focus();
+            return;
+          }
+        }
+      }
+    }
+
+    const payload = recolectarFormulario(key);
+    const id = editing[key];
+    const url = id ? `${API}/${key}/${id}` : `${API}/${key}`;
+    const method = id ? 'PUT' : 'POST';
+    try {
+      const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || errBody.message || `HTTP ${res.status}`);
+      }
+      mostrarToastAdmin(id ? 'Registro actualizado' : 'Registro creado', 'success');
+      cerrarFormulario(key);
+      cargarEntidad(key);
+    } catch (err) {
+      mostrarToastAdmin('Error: ' + err.message, 'danger');
+    }
+  }
+
+  function editarRegistro(key, id) { abrirFormulario(key, id); }
+
+  async function eliminarRegistro(key, id) {
+    if (entities[key].noEliminar) return;
+    if (!confirm(`¿Eliminar el registro #${id}? Esta acción no se puede deshacer.`)) return;
+    try {
+      const res = await fetch(`${API}/${key}/${id}`, { method:'DELETE' });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody.detail || errBody.message || `HTTP ${res.status}`);
+      }
+      mostrarToastAdmin('Registro eliminado', 'success');
+      cargarEntidad(key);
+    } catch (err) {
+      mostrarToastAdmin('Error: ' + err.message, 'danger');
+    }
+  }
+
+  // ── Sidebar móvil ────────────────────────
+  function toggleSidebar() {
+    const sb = document.getElementById('adminSidebar');
+    const ov = document.getElementById('sidebarOverlay');
+    sb.classList.toggle('visible');
+    ov.classList.toggle('visible');
+  }
+  function cerrarSidebar() {
+    document.getElementById('adminSidebar').classList.remove('visible');
+    document.getElementById('sidebarOverlay').classList.remove('visible');
+  }
+
+  // ── Toast ────────────────────────────────
+  function mostrarToastAdmin(msg, tipo='info') {
+    const t = document.getElementById('adminToast');
+    const colores = { info:'var(--azul-principal)', success:'#27ae60', warning:'#e67e22', danger:'#e74c3c' };
+    t.style.background = colores[tipo] || colores.info;
+    t.textContent = msg;
+    t.classList.remove('d-none');
+    setTimeout(() => t.classList.add('d-none'), 3000);
+  }
+
+  // ── Teclas sidebar-links ─────────────────
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    link.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); link.click(); }
+    });
+  });
+</script>
+</body>
+</html>

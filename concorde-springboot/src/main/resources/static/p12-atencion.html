@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Atención al cliente - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Atención al Cliente</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal">
+    <!-- Banner -->
+    <section role="banner" class="bg-azul-gradiente text-white py-4">
+      <div class="container">
+        <h1 class="h3 fw-bold mb-1"><i class="bi bi-headset me-2" aria-hidden="true"></i>Atención al Cliente</h1>
+        <p class="mb-0 opacity-75">Estamos aquí para ayudarte 24/7</p>
+      </div>
+    </section>
+
+    <div class="container py-4">
+      <!-- Canales de contacto -->
+      <div class="row g-3 mb-5">
+        <div class="col-md-4">
+          <div class="card-concorde text-center p-4 h-100">
+            <div style="font-size:2.5rem;margin-bottom:1rem" aria-hidden="true">📞</div>
+            <h2 class="h5 fw-bold texto-azul">Teléfono</h2>
+            <p class="text-muted small mb-2">Lunes a Domingo 4:00am – 11:00pm<br>Sábados 8am – 6pm</p>
+            <a href="tel:018000266267" class="btn btn-concorde-primario btn-sm">01-800-266-267</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-concorde text-center p-4 h-100">
+            <div style="font-size:2.5rem;margin-bottom:1rem" aria-hidden="true">💬</div>
+            <h2 class="h5 fw-bold texto-azul">Chat en vivo</h2>
+            <p class="text-muted small mb-2">Disponible todos los días<br>24 horas</p>
+            <button type="button" onclick="if (typeof ChatbotWidget !== 'undefined') { ChatbotWidget.toggle(); } else { UI.mostrarToast('El chat se está cargando, intenta de nuevo en un segundo.','info'); }"
+              class="btn btn-concorde-primario btn-sm">Iniciar chat</button>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card-concorde text-center p-4 h-100">
+            <div style="font-size:2.5rem;margin-bottom:1rem" aria-hidden="true">📧</div>
+            <h2 class="h5 fw-bold texto-azul">Correo electrónico</h2>
+            <p class="text-muted small mb-2">Respuesta en máximo<br>24 horas hábiles</p>
+            <a href="mailto:ayuda@concordetransporte.co" class="btn btn-concorde-primario btn-sm">ayuda@concordetransporte.co</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Formulario de contacto -->
+        <div class="col-lg-7">
+          <div class="card-concorde">
+            <div class="card-header-concorde"><i class="bi bi-envelope-open me-2"></i>Envíanos un mensaje</div>
+            <div class="card-body">
+              <form id="formAtencion" class="form-concorde" data-action="atencion" novalidate>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="nombreContacto">Nombre completo <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="nombreContacto" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="emailContactoAt">Correo <span class="text-danger">*</span></label>
+                    <input type="email" class="form-control" id="emailContactoAt" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="codigoReservaAt">Código de reserva</label>
+                    <input type="text" class="form-control" id="codigoReservaAt" placeholder="Ej: CC-8472">
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="tipoConsulta">Tipo de consulta <span class="text-danger">*</span></label>
+                    <select class="form-select" id="tipoConsulta" required>
+                      <option value="">Selecciona...</option>
+                      <option>Información de vuelos</option>
+                      <option>Cambio de reserva</option>
+                      <option>Cancelación y reembolso</option>
+                      <option>Equipaje</option>
+                      <option>Accesibilidad</option>
+                      <option>Otro</option>
+                    </select>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="mensajeAt">Mensaje <span class="text-danger">*</span></label>
+                    <textarea class="form-control" id="mensajeAt" rows="5" 
+                      placeholder="Describe tu consulta con el mayor detalle posible..." required></textarea>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-concorde-primario w-100 py-2">
+                      <i class="bi bi-send me-1" aria-hidden="true"></i>Enviar mensaje
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="col-lg-5">
+          <div class="card-concorde">
+            <div class="card-header-concorde"><i class="bi bi-question-circle me-2"></i>Preguntas frecuentes</div>
+            <div class="card-body p-0">
+              <div class="accordion accordion-flush" id="faqAccordion">
+                <div class="accordion-item border-0 border-bottom">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button" 
+                      data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false">
+                      ¿Cómo puedo cambiar mi vuelo?
+                    </button>
+                  </h2>
+                  <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                      Puedes realizar cambios hasta 2 horas antes de la salida del bus desde "Mis Reservas" o contactando a nuestro equipo. Los cambios tienen un cargo de $5.000.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item border-0 border-bottom">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq2">
+                      ¿Cuánto equipaje puedo llevar?
+                    </button>
+                  </h2>
+                  <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                      En clase económica: 1 artículo personal (10kg), 1 equipaje de mano (10kg) y 1 maleta en bodega (23kg). En clase premium los límites son mayores.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item border-0 border-bottom">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq3">
+                      ¿Con cuánto tiempo debo llegar al terminal de transporte?
+                    </button>
+                  </h2>
+                  <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                      Se recomienda llegar a la terminal 30 minutos antes de la salida del bus. Los buses parten en el horario exacto indicado en tu tiquete.
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item border-0">
+                  <h2 class="accordion-header">
+                    <button class="accordion-button collapsed fw-semibold" type="button"
+                      data-bs-toggle="collapse" data-bs-target="#faq4">
+                      ¿Puedo viajar con mascotas?
+                    </button>
+                  </h2>
+                  <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body text-muted small">
+                      Sí, aceptamos mascotas pequeñas en transportador (hasta 8kg con transportador) y mascotas de mayor tamaño en bodega. Consulta los requisitos según el destino.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Crear cuenta en Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Registro</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main id="contenido-principal" class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+          <div class="card-concorde">
+            <div class="card-header-concorde text-center py-3">
+              <span style="font-size:2rem" aria-hidden="true">👤</span>
+              <h1 class="h4 mb-0 mt-1">Crear Cuenta</h1>
+              <p class="mb-0 small opacity-75">Regístrate y obtén 10% de descuento en tu primer vuelo</p>
+            </div>
+            <div class="card-body p-4">
+              <form id="formRegistro" class="form-concorde" data-action="registro" novalidate>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="nombres">Nombres <span class="text-danger" aria-label="requerido">*</span></label>
+                    <input type="text" class="form-control" id="nombres" name="nombres"
+                      placeholder="Ej: Juan Carlos" required aria-required="true" autocomplete="given-name">
+                    <div class="invalid-feedback">Ingresa tus nombres</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="apellidos">Apellidos <span class="text-danger" aria-label="requerido">*</span></label>
+                    <input type="text" class="form-control" id="apellidos" name="apellidos"
+                      placeholder="Ej: García López" required aria-required="true" autocomplete="family-name">
+                    <div class="invalid-feedback">Ingresa tus apellidos</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="emailReg">Correo electrónico <span class="text-danger" aria-label="requerido">*</span></label>
+                    <input type="email" class="form-control" id="emailReg" name="email"
+                      placeholder="correo@ejemplo.com" required aria-required="true" autocomplete="email">
+                    <div class="invalid-feedback">Ingresa un correo válido</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="telefono">Teléfono</label>
+                    <input type="tel" class="form-control" id="telefono" name="telefono"
+                      placeholder="Ej: 3001234567" autocomplete="tel" pattern="[0-9]{7,10}">
+                    <div class="invalid-feedback">Número de teléfono inválido</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="tipoDoc">Tipo de documento <span class="text-danger" aria-label="requerido">*</span></label>
+                    <select class="form-select" id="tipoDoc" name="tipoDoc" required aria-required="true">
+                      <option value="">Selecciona...</option>
+                      <option value="CC">Cédula de Ciudadanía</option>
+                      <option value="CE">Cédula de Extranjería</option>
+                      <option value="PA">Pasaporte</option>
+                    </select>
+                    <div class="invalid-feedback">Selecciona el tipo de documento</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="numDoc">Número de documento <span class="text-danger" aria-label="requerido">*</span></label>
+                    <input type="text" class="form-control" id="numDoc" name="numDoc"
+                      placeholder="Ej: 1234567890" required aria-required="true">
+                    <div class="invalid-feedback">Ingresa el número de documento</div>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="password">
+                      Contraseña <span class="text-danger" aria-label="requerido">*</span>
+                    </label>
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Mín. 8, mayúscula, minúscula, número y símbolo" required aria-required="true"
+                        minlength="8" autocomplete="new-password">
+                      <button class="btn btn-outline-secondary" type="button" id="togglePass1"
+                        aria-label="Mostrar contraseña">
+                        <i class="bi bi-eye" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <div class="invalid-feedback">La contraseña debe tener mínimo 8 caracteres</div>
+                    <!-- Indicador de fortaleza -->
+                    <div class="mt-1" id="fortalezaBarra" style="height:4px;border-radius:2px;background:var(--gris-medio)">
+                      <div id="fortalezaFill" style="height:100%;border-radius:2px;width:0;transition:all 0.4s"></div>
+                    </div>
+                    <small id="fortalezaTexto" class="text-muted"></small>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="confirmarPassword">
+                      Confirmar contraseña <span class="text-danger" aria-label="requerido">*</span>
+                    </label>
+                    <input type="password" class="form-control" id="confirmarPassword"
+                      name="confirmarPassword" placeholder="Repite tu contraseña"
+                      required aria-required="true" autocomplete="new-password">
+                    <div class="invalid-feedback">Las contraseñas no coinciden</div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-abordajeput" id="terminos" required aria-required="true">
+                      <label class="form-check-label" for="terminos">
+                        Acepto los <a href="#">Términos y Condiciones</a> y la 
+                        <a href="#">Política de Privacidad</a>
+                        <span class="text-danger" aria-label="requerido">*</span>
+                      </label>
+                      <div class="invalid-feedback">Debes aceptar los términos y condiciones</div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <button type="submit" class="btn btn-concorde-primario w-100 py-2">
+                      <i class="bi bi-person-check me-1" aria-hidden="true"></i>
+                      Crear mi cuenta
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="text-center py-3 border-top">
+              <span class="text-muted">¿Ya tienes cuenta?</span>
+              <a href="p03-login.html" class="fw-bold ms-1">Inicia sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/passwordPolicy.js"></script>
+  <script src="js/componentes.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Indicador de fortaleza de contraseña (módulo compartido)
+    PasswordPolicy.conectarMedidor(
+      document.getElementById('password'),
+      document.getElementById('fortalezaFill'),
+      document.getElementById('fortalezaTexto')
+    );
+    // Toggle password
+    document.getElementById('togglePass1')?.addEventListener('click', function() {
+      const inp = document.getElementById('password');
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      this.querySelector('i').className = inp.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+    });
+  </script>
+  <script>
+    // Registro real contra la API. Se usa /api/registro (no /api/usuarios)
+    // a propósito: es un endpoint público que en el servidor SIEMPRE
+    // asigna el rol CLIENTE, sin importar qué mande el navegador -- así
+    // nadie puede auto-asignarse un rol distinto editando el payload.
+    const API_REG = 'http://localhost:8082/api';
+
+    async function enviarRegistro() {
+      const form = document.getElementById('formRegistro');
+      if (!form.reportValidity()) return;
+
+      const passInput = document.getElementById('password');
+      const confirmInput = document.getElementById('confirmarPassword');
+      if (passInput.value !== confirmInput.value) {
+        confirmInput.classList.add('is-invalid');
+        UI.mostrarToast('Las contraseñas no coinciden', 'warning');
+        return;
+      }
+
+      const politica = PasswordPolicy.validar(passInput.value);
+      if (!politica.valido) {
+        passInput.classList.add('is-invalid');
+        UI.mostrarToast(politica.mensaje, 'warning');
+        return;
+      }
+
+      const payload = {
+        nombreCompleto: `${document.getElementById('nombres').value.trim()} ${document.getElementById('apellidos').value.trim()}`.trim(),
+        correoElectronico: document.getElementById('emailReg').value.trim(),
+        telefono: document.getElementById('telefono').value.trim() || null,
+        numeroDocumento: document.getElementById('numDoc').value.trim(),
+        contrasena: passInput.value
+      };
+
+      const btn = form.querySelector('button[type="submit"]');
+      const textoOriginal = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = 'Creando cuenta…';
+
+      try {
+        const res = await fetch(`${API_REG}/registro`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.detail || err.message || `HTTP ${res.status}`);
+        }
+        window.location.href = 'p04b-confirmacion-registro.html';
+      } catch (e) {
+        UI.mostrarToast('No se pudo crear la cuenta: ' + e.message, 'danger');
+        btn.disabled = false;
+        btn.innerHTML = textoOriginal;
+      }
+    }
+
+    // Se intercepta el submit en fase de captura sobre "document": así se
+    // adelanta al manejador genérico de main.js (que solo simula el envío
+    // y redirige) y se hace la petición real a la API.
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.id === 'formRegistro') {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        enviarRegistro();
+      }
+    }, true);
+  </script>
+<script>
+  // Si ya está logueado, redirigir
+  (function(){ var u=Auth.getUsuario(); if(u) window.location.href = u.rol==="administrador" ? "admin-panel.html" : "index.html"; })();
+  </script>
+</body>
+</html>

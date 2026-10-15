@@ -8,7 +8,7 @@
 //   <script src="js/aviso-agotados.js"></script>
 
 (function () {
-  const API = 'http://localhost:8082/api';
+  const API = '/api';
 
   async function mostrarAvisoAgotados() {
     try {

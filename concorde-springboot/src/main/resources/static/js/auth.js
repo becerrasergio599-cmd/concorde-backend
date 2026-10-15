@@ -7,7 +7,7 @@
 
 'use strict';
 
-const AUTH_API = 'http://localhost:8082/api';
+const AUTH_API = '/api';
 
 function inicialesDe(nombreCompleto) {
   return (nombreCompleto || '')

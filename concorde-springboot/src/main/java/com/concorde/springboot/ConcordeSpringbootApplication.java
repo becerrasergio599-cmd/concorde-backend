@@ -1,23 +1,23 @@
-package com.concorde.springboot.config;
+package com.concorde.springboot;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.concorde.springboot.repositorio.VehiculoRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Configuration
-public class CorsConfig {
+@SpringBootApplication
+public class ConcordeSpringbootApplication implements CommandLineRunner {
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("https://concorde-ykv1.onrender.com")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*");
-            }
-        };
+    @Autowired
+    private VehiculoRepository vehiculoRepository;
+
+    public static void main(String[] args) {
+        SpringApplication.run(ConcordeSpringbootApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("Vehiculos en la base de datos: " + vehiculoRepository.count());
     }
 }

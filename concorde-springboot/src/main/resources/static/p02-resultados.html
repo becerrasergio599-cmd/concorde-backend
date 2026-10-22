@@ -23,7 +23,7 @@
         </nav>
         <h1 class="h4 mt-2 fw-bold">
           <i class="bi bi-search me-2" aria-hidden="true"></i>
-          <span id="rutaBusqueda">Tunja → Bogotá Salitre · 2 Ene · 1 pasajero</span>
+          <span id="rutaBusqueda">Cargando búsqueda...</span>
         </h1>
       </div>
     </div>
@@ -88,7 +88,7 @@
             </div>
           </div>
 
-          <!-- Mini buscador rápido -->
+          <!-- Mini buscador rápido (las ciudades se llenan por JS) -->
           <div class="card-concorde">
             <div class="card-header-concorde">
               <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Modificar búsqueda
@@ -96,26 +96,10 @@
             <div class="card-body">
               <div class="form-concorde">
                 <label class="form-label" for="origenFiltro">Origen</label>
-                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen">
-                  <option>Tunja</option>
-                  <option>Sogamoso</option>
-                  <option>Duitama</option>
-                  <option>Paipa</option>
-                  <option>Yopal</option>
-                  <option>Aguazul</option>
-                </select>
+                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen"></select>
                 <label class="form-label" for="destinoFiltro">Destino</label>
-                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino">
-                  <option>Bogotá Salitre</option>
-                  <option>Bogotá Norte</option>
-                  <option>Bucaramanga</option>
-                  <option>Barranquilla</option>
-                  <option>Cartagena</option>
-                  <option>Cúcuta</option>
-                  <option>Pamplona</option>
-                  <option>Onzaga</option>
-                </select>
-                <button type="button" onclick="UI.mostrarToast('Buscando trayectos...','info')" class="btn btn-concorde-primario w-100 btn-sm">
+                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino"></select>
+                <button type="button" id="btnModificar" class="btn btn-concorde-primario w-100 btn-sm">
                   <i class="bi bi-search me-1"></i>Buscar
                 </button>
               </div>
@@ -127,158 +111,21 @@
         <section class="col-lg-9" aria-label="Lista de trayectos disponibles">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <p class="mb-0 text-muted">
-              <strong class="texto-azul">5</strong> trayectos encontrados
+              <strong class="texto-azul" id="totalTrayectos">0</strong> trayectos encontrados
             </p>
             <div class="d-flex align-items-center gap-2">
               <label for="ordenar" class="form-label mb-0 small fw-semibold">Ordenar por:</label>
               <select class="form-select form-select-sm" id="ordenar" style="width:auto" aria-label="Ordenar resultados">
-                <option>Precio (menor)</option>
-                <option>Precio (mayor)</option>
-                <option>Duración</option>
-                <option>Salida más temprana</option>
+                <option value="precio-asc">Precio (menor)</option>
+                <option value="precio-desc">Precio (mayor)</option>
+                <option value="duracion">Duración</option>
+                <option value="salida">Salida más temprana</option>
               </select>
             </div>
           </div>
 
-          <!-- Trayecto 1 -->
-          <article class="card-vuelo fade-in-up" aria-label="Bus directo a las 05:30, precio $22.000">
-            <div class="row align-items-center g-2">
-              <div class="col-md-3">
-                <div class="hora">05:30</div>
-                <div class="ciudad">Tunja · Terminal</div>
-                <div class="small text-muted">Bus 🚌 Ejecutivo Plus</div>
-              </div>
-              <div class="col-md-3 text-center">
-                <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                  <span class="avion-icono">🚌</span>
-                </div>
-                <small class="text-muted d-block">3h 30min · Directo</small>
-                <span class="badge-clase badge-economica">Económico</span>
-              </div>
-              <div class="col-md-3">
-                <div class="hora">09:00</div>
-                <div class="ciudad">Bogotá Salitre</div>
-                <div class="small text-muted">Terminal Salitre</div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="precio">$22.000<small>/persona</small></div>
-                <div class="small text-muted mb-2">Asientos disponibles: 28</div>
-                <a href="p05-detalle-viaje.html" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Trayecto 2 -->
-          <article class="card-vuelo fade-in-up" aria-label="Bus directo a las 07:00, precio $28.000 clase premium">
-            <div class="row align-items-center g-2">
-              <div class="col-md-3">
-                <div class="hora">07:00</div>
-                <div class="ciudad">Tunja · Terminal</div>
-                <div class="small text-muted">Bus 🚌 Premium Plus</div>
-              </div>
-              <div class="col-md-3 text-center">
-                <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                  <span class="avion-icono">🚌</span>
-                </div>
-                <small class="text-muted d-block">3h 20min · Directo</small>
-                <span class="badge-clase badge-ejecutiva">Premium</span>
-              </div>
-              <div class="col-md-3">
-                <div class="hora">10:20</div>
-                <div class="ciudad">Bogotá Salitre</div>
-                <div class="small text-muted">Terminal Salitre</div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="precio">$28.000<small>/persona</small></div>
-                <div class="small text-muted mb-2">Asientos disponibles: 12</div>
-                <a href="p05-detalle-viaje.html" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Trayecto 3 -->
-          <article class="card-vuelo fade-in-up" aria-label="Bus con escala a las 09:30, precio $18.000">
-            <div class="row align-items-center g-2">
-              <div class="col-md-3">
-                <div class="hora">09:30</div>
-                <div class="ciudad">Tunja · Terminal</div>
-                <div class="small text-muted">Bus 🚌 Regular</div>
-              </div>
-              <div class="col-md-3 text-center">
-                <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                  <span class="avion-icono">🚌</span>
-                </div>
-                <small class="text-muted d-block">4h 10min · Parada en Zipaquirá</small>
-                <span class="badge-clase badge-economica">Económico</span>
-              </div>
-              <div class="col-md-3">
-                <div class="hora">13:40</div>
-                <div class="ciudad">Bogotá Salitre</div>
-                <div class="small text-muted">Terminal Salitre</div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="precio">$18.000<small>/persona</small></div>
-                <div class="small text-muted mb-2">Asientos disponibles: 35</div>
-                <a href="p05-detalle-viaje.html" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Trayecto 4 -->
-          <article class="card-vuelo fade-in-up" aria-label="Bus directo a las 14:00, precio $25.000">
-            <div class="row align-items-center g-2">
-              <div class="col-md-3">
-                <div class="hora">14:00</div>
-                <div class="ciudad">Tunja · Terminal</div>
-                <div class="small text-muted">Bus 🚌 Ejecutivo Plus</div>
-              </div>
-              <div class="col-md-3 text-center">
-                <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                  <span class="avion-icono">🚌</span>
-                </div>
-                <small class="text-muted d-block">3h 30min · Directo</small>
-                <span class="badge-clase badge-economica">Económico</span>
-              </div>
-              <div class="col-md-3">
-                <div class="hora">17:30</div>
-                <div class="ciudad">Bogotá Salitre</div>
-                <div class="small text-muted">Terminal Salitre</div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="precio">$25.000<small>/persona</small></div>
-                <div class="small text-muted mb-2">Asientos disponibles: 20</div>
-                <a href="p05-detalle-viaje.html" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>
-              </div>
-            </div>
-          </article>
-
-          <!-- Trayecto 5 -->
-          <article class="card-vuelo fade-in-up" aria-label="Bus nocturno a las 22:00, precio $32.000 clase premium">
-            <div class="row align-items-center g-2">
-              <div class="col-md-3">
-                <div class="hora">22:00</div>
-                <div class="ciudad">Tunja · Terminal</div>
-                <div class="small text-muted">Bus 🚌 Noche Premium</div>
-              </div>
-              <div class="col-md-3 text-center">
-                <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                  <span class="avion-icono">🚌</span>
-                </div>
-                <small class="text-muted d-block">3h 30min · Directo</small>
-                <span class="badge-clase badge-ejecutiva">Premium</span>
-              </div>
-              <div class="col-md-3">
-                <div class="hora">01:30</div>
-                <div class="ciudad">Bogotá Salitre</div>
-                <div class="small text-muted">Terminal Salitre</div>
-              </div>
-              <div class="col-md-3 text-end">
-                <div class="precio">$32.000<small>/persona</small></div>
-                <div class="small text-muted mb-2">Asientos disponibles: 8</div>
-                <a href="p05-detalle-viaje.html" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>
-              </div>
-            </div>
-          </article>
+          <!-- Aquí JS dibuja los trayectos -->
+          <div id="listaTrayectos"></div>
         </section>
       </div>
     </div>
@@ -290,14 +137,147 @@
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
   <script>
+  (function () {
+    const NOMBRES = {
+      AGUAZUL: 'Aguazul', BARRANQUILLA: 'Barranquilla', BOGOTA_NORTE: 'Bogotá Norte',
+      BOGOTA_SALITRE: 'Bogotá Salitre', BUCARAMANGA: 'Bucaramanga', CARTAGENA: 'Cartagena',
+      CUCUTA: 'Cúcuta', DUITAMA: 'Duitama', ONZAGA: 'Onzaga', PAIPA: 'Paipa',
+      PAMPLONA: 'Pamplona', SOGAMOSO: 'Sogamoso', TUNJA: 'Tunja', YOPAL: 'Yopal'
+    };
+
+    // TEMPORAL: datos fijos (los mismos 5 trayectos que tenías en el HTML).
+    // Cuando el backend tenga el endpoint, se reemplaza este arreglo por un fetch.
+    const TRAYECTOS = [
+      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '05:30', llegada: '09:00', bus: 'Ejecutivo Plus', dur: '3h 30min · Directo', min: 210, clase: 'Económico', precio: 22000, asientos: 28 },
+      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '07:00', llegada: '10:20', bus: 'Premium Plus', dur: '3h 20min · Directo', min: 200, clase: 'Premium', precio: 28000, asientos: 12 },
+      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '09:30', llegada: '13:40', bus: 'Regular', dur: '4h 10min · Parada en Zipaquirá', min: 250, clase: 'Económico', precio: 18000, asientos: 35 },
+      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '14:00', llegada: '17:30', bus: 'Ejecutivo Plus', dur: '3h 30min · Directo', min: 210, clase: 'Económico', precio: 25000, asientos: 20 },
+      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '22:00', llegada: '01:30', bus: 'Noche Premium', dur: '3h 30min · Directo', min: 210, clase: 'Premium', precio: 32000, asientos: 8 }
+    ];
+
+    // --- Parámetros de la búsqueda (vienen de la URL) ---
+    const params = new URLSearchParams(location.search);
+    const origen = params.get('origen') || 'TUNJA';
+    const destino = params.get('destino') || 'BOGOTA_SALITRE';
+    const pasajeros = parseInt(params.get('pasajeros')) || 1;
+    const ida = params.get('ida');
+    const fecha = ida
+      ? new Date(ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
+      : '';
+
+    document.getElementById('rutaBusqueda').textContent =
+      (NOMBRES[origen] || origen) + ' → ' + (NOMBRES[destino] || destino) +
+      (fecha ? ' · ' + fecha : '') + ' · ' + pasajeros + ' pasajero' + (pasajeros > 1 ? 's' : '');
+
+    const contenedor = document.getElementById('listaTrayectos');
+    const total = document.getElementById('totalTrayectos');
     const slider = document.getElementById('filtroPrecio');
     const valorPrecio = document.getElementById('valorPrecio');
-    if (slider) {
-      slider.addEventListener('input', () => {
-        const val = parseInt(slider.value);
-        valorPrecio.textContent = '$' + (val/1000) + 'k';
-      });
+    const ordenar = document.getElementById('ordenar');
+    const turnos = [
+      document.getElementById('turno1'), document.getElementById('turno2'),
+      document.getElementById('turno3'), document.getElementById('turno4')
+    ];
+    const claseEco = document.getElementById('claseEconomica');
+    const clasePre = document.getElementById('clasePremium');
+
+    function turnoDe(hora) {
+      const h = parseInt(hora.split(':')[0], 10);
+      if (h < 6) return 0;
+      if (h < 12) return 1;
+      if (h < 18) return 2;
+      return 3;
     }
+
+    function dibujar() {
+      const maxPrecio = parseInt(slider.value, 10);
+      let lista = TRAYECTOS.filter(function (t) {
+        return t.origen === origen && t.destino === destino &&
+               t.precio <= maxPrecio &&
+               turnos[turnoDe(t.salida)].checked &&
+               (t.clase === 'Premium' ? clasePre.checked : claseEco.checked);
+      });
+
+      const orden = ordenar.value;
+      lista.sort(function (a, b) {
+        if (orden === 'precio-desc') return b.precio - a.precio;
+        if (orden === 'duracion') return a.min - b.min;
+        if (orden === 'salida') return a.salida.localeCompare(b.salida);
+        return a.precio - b.precio;
+      });
+
+      total.textContent = lista.length;
+
+      if (!lista.length) {
+        contenedor.innerHTML =
+          '<div class="alert alert-info">No hay trayectos disponibles de ' +
+          (NOMBRES[origen] || origen) + ' a ' + (NOMBRES[destino] || destino) +
+          ' con estos filtros. Prueba con otra ruta o ajusta los filtros.</div>';
+        return;
+      }
+
+      const enlace = 'p05-detalle-viaje.html?' + params.toString();
+      contenedor.innerHTML = lista.map(function (t) {
+        const premium = t.clase === 'Premium';
+        return '' +
+          '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + t.precio.toLocaleString('es-CO') + '">' +
+            '<div class="row align-items-center g-2">' +
+              '<div class="col-md-3">' +
+                '<div class="hora">' + t.salida + '</div>' +
+                '<div class="ciudad">' + NOMBRES[t.origen] + ' · Terminal</div>' +
+                '<div class="small text-muted">Bus 🚌 ' + t.bus + '</div>' +
+              '</div>' +
+              '<div class="col-md-3 text-center">' +
+                '<div class="linea-vuelo justify-content-center" aria-hidden="true"><span class="avion-icono">🚌</span></div>' +
+                '<small class="text-muted d-block">' + t.dur + '</small>' +
+                '<span class="badge-clase ' + (premium ? 'badge-ejecutiva' : 'badge-economica') + '">' + t.clase + '</span>' +
+              '</div>' +
+              '<div class="col-md-3">' +
+                '<div class="hora">' + t.llegada + '</div>' +
+                '<div class="ciudad">' + NOMBRES[t.destino] + '</div>' +
+                '<div class="small text-muted">Terminal ' + NOMBRES[t.destino] + '</div>' +
+              '</div>' +
+              '<div class="col-md-3 text-end">' +
+                '<div class="precio">$' + t.precio.toLocaleString('es-CO') + '<small>/persona</small></div>' +
+                '<div class="small text-muted mb-2">Asientos disponibles: ' + t.asientos + '</div>' +
+                '<a href="' + enlace + '" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>' +
+              '</div>' +
+            '</div>' +
+          '</article>';
+      }).join('');
+    }
+
+    // --- Filtros y orden ---
+    slider.addEventListener('input', function () {
+      valorPrecio.textContent = '$' + (parseInt(slider.value, 10) / 1000) + 'k';
+      dibujar();
+    });
+    turnos.concat([claseEco, clasePre]).forEach(function (el) { el.addEventListener('change', dibujar); });
+    ordenar.addEventListener('change', dibujar);
+
+    // --- "Modificar búsqueda" ---
+    const selO = document.getElementById('origenFiltro');
+    const selD = document.getElementById('destinoFiltro');
+    const opciones = Object.keys(NOMBRES).map(function (k) {
+      return '<option value="' + k + '">' + NOMBRES[k] + '</option>';
+    }).join('');
+    selO.innerHTML = opciones;
+    selD.innerHTML = opciones;
+    selO.value = origen;
+    selD.value = destino;
+
+    document.getElementById('btnModificar').addEventListener('click', function () {
+      if (selO.value === selD.value) {
+        UI.mostrarToast('El origen y el destino deben ser distintos', 'warning');
+        return;
+      }
+      params.set('origen', selO.value);
+      params.set('destino', selD.value);
+      location.search = params.toString();
+    });
+
+    dibujar();
+  })();
   </script>
   <script src="js/aviso-agotados.js"></script>
 </body>

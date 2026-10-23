@@ -18,20 +18,12 @@ import java.util.List;
  * Reglas de acceso de la API, en un solo lugar:
  *
  *  - Público (sin token): las páginas estáticas, login, registro, el
- *    chatbot (lo puede usar cualquier visitante) y la búsqueda de
- *    viajes/rutas/terminales (para poder cotizar antes de iniciar
- *    sesión, como en cualquier página de venta de tiquetes real).
+ *    chatbot, la búsqueda de viajes/rutas/terminales y el aviso de
+ *    viajes agotados.
  *  - Solo ADMIN o AGENTE: gestión de usuarios, reportes, conductores
- *    y personas -- son datos internos/administrativos, no algo que un
- *    cliente cualquiera deba poder listar.
- *  - Cualquier usuario logueado (ADMIN, AGENTE o CLIENTE): todo lo
- *    demás (reservas, pagos, asientos...), porque un cliente necesita
- *    poder reservar y pagar su propio viaje.
+ *    y personas.
+ *  - Cualquier usuario logueado: todo lo demás (reservas, pagos, asientos...).
  *  - Borrar (DELETE) cualquier cosa: solo ADMIN o AGENTE.
- *
- * Nota: esto no filtra "solo tus propias reservas" (no hay ese control
- * fino a nivel de fila) -- es una limitación conocida del alcance
- * actual del proyecto, no algo que se nos haya olvidado configurar.
  */
 @Configuration
 @EnableWebSecurity
@@ -75,29 +67,26 @@ public class SecurityConfig {
                 .requestMatchers("/api/login/**", "/api/registro/**").permitAll()
                 // El chatbot lo usa cualquier visitante, con o sin sesión
                 .requestMatchers("/api/chatbot/**").permitAll()
+                // Aviso público de viajes agotados (debe ir ANTES de /api/reportes/**)
+                .requestMatchers(HttpMethod.GET, "/api/reportes/viajes-agotados").permitAll()
                 // Búsqueda pública (cotizar antes de iniciar sesión)
                 .requestMatchers(HttpMethod.GET, "/api/viajes/**", "/api/rutas/**",
                         "/api/terminales/**", "/api/vehiculos/**", "/api/roles/**").permitAll()
                 // Listado completo y creación de usuarios: solo personal interno
-                // (un cliente no debe poder ver ni crear la lista de clientes).
                 .requestMatchers(HttpMethod.GET, "/api/usuarios").hasAnyRole("ADMIN", "AGENTE")
                 .requestMatchers(HttpMethod.POST, "/api/usuarios").hasAnyRole("ADMIN", "AGENTE")
-                // Ver/editar un usuario puntual: cualquier usuario logueado (así
-                // un cliente puede ver y editar su propio perfil en p16-perfil.html).
-                // Nota: no hay verificación de que el id sea el suyo -- es una
-                // limitación conocida, no algo que se nos olvidó configurar.
+                // Ver/editar un usuario puntual: cualquier usuario logueado
                 .requestMatchers("/api/usuarios/**").authenticated()
                 // Reportes, conductores y personas: solo personal interno
                 .requestMatchers("/api/reportes/**", "/api/conductores/**", "/api/personas/**").hasAnyRole("ADMIN", "AGENTE")
-                // Crear/editar catálogo (rutas, viajes, terminales, vehículos): solo personal
+                // Crear/editar catálogo: solo personal
                 .requestMatchers(HttpMethod.POST, "/api/viajes/**", "/api/rutas/**",
                         "/api/terminales/**", "/api/vehiculos/**").hasAnyRole("ADMIN", "AGENTE")
                 .requestMatchers(HttpMethod.PUT, "/api/viajes/**", "/api/rutas/**",
                         "/api/terminales/**", "/api/vehiculos/**").hasAnyRole("ADMIN", "AGENTE")
                 // Borrar cualquier cosa: solo personal
                 .requestMatchers(HttpMethod.DELETE, "/api/**").hasAnyRole("ADMIN", "AGENTE")
-                // Todo lo demás (reservas, pagos, asientos, detalle-reservas):
-                // cualquier usuario que haya iniciado sesión
+                // Todo lo demás: cualquier usuario que haya iniciado sesión
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

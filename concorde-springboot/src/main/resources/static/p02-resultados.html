@@ -43,11 +43,11 @@
               <fieldset class="mb-3">
                 <legend class="form-label fw-bold">Precio máximo</legend>
                 <input type="range" class="form-range" min="10000" max="150000"
-                  step="5000" value="80000" id="filtroPrecio" data-filtro
+                  step="5000" value="150000" id="filtroPrecio" data-filtro
                   aria-label="Filtrar por precio máximo">
                 <div class="d-flex justify-content-between small text-muted">
                   <span>$10k</span>
-                  <span id="valorPrecio" class="fw-bold texto-azul">$80k</span>
+                  <span id="valorPrecio" class="fw-bold texto-azul">$150k</span>
                   <span>$150k</span>
                 </div>
               </fieldset>
@@ -145,117 +145,109 @@
       PAMPLONA: 'Pamplona', SOGAMOSO: 'Sogamoso', TUNJA: 'Tunja', YOPAL: 'Yopal'
     };
 
-    // TEMPORAL: datos fijos (los mismos 5 trayectos que tenías en el HTML).
-    // Cuando el backend tenga el endpoint, se reemplaza este arreglo por un fetch.
-    const TRAYECTOS = [
-      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '05:30', llegada: '09:00', bus: 'Ejecutivo Plus', dur: '3h 30min · Directo', min: 210, clase: 'Económico', precio: 22000, asientos: 28 },
-      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '07:00', llegada: '10:20', bus: 'Premium Plus', dur: '3h 20min · Directo', min: 200, clase: 'Premium', precio: 28000, asientos: 12 },
-      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '09:30', llegada: '13:40', bus: 'Regular', dur: '4h 10min · Parada en Zipaquirá', min: 250, clase: 'Económico', precio: 18000, asientos: 35 },
-      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '14:00', llegada: '17:30', bus: 'Ejecutivo Plus', dur: '3h 30min · Directo', min: 210, clase: 'Económico', precio: 25000, asientos: 20 },
-      { origen: 'TUNJA', destino: 'BOGOTA_SALITRE', salida: '22:00', llegada: '01:30', bus: 'Noche Premium', dur: '3h 30min · Directo', min: 210, clase: 'Premium', precio: 32000, asientos: 8 }
-    ];
+    let TRAYECTOS = [];
 
-    // --- Parámetros de la búsqueda (vienen de la URL) ---
+    function hoyLocal() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+    }
+
     const params = new URLSearchParams(location.search);
     const origen = params.get('origen') || 'TUNJA';
     const destino = params.get('destino') || 'BOGOTA_SALITRE';
     const pasajeros = parseInt(params.get('pasajeros')) || 1;
-    const ida = params.get('ida');
-    const fecha = ida
-      ? new Date(ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' })
-      : '';
+    const ida = params.get('ida') || hoyLocal();
+    const fecha = new Date(ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
     document.getElementById('rutaBusqueda').textContent =
-      (NOMBRES[origen] || origen) + ' → ' + (NOMBRES[destino] || destino) +
-      (fecha ? ' · ' + fecha : '') + ' · ' + pasajeros + ' pasajero' + (pasajeros > 1 ? 's' : '');
+            (NOMBRES[origen] || origen) + ' → ' + (NOMBRES[destino] || destino) +
+            ' · ' + fecha + ' · ' + pasajeros + ' pasajero' + (pasajeros > 1 ? 's' : '');
 
     const contenedor = document.getElementById('listaTrayectos');
     const total = document.getElementById('totalTrayectos');
     const slider = document.getElementById('filtroPrecio');
     const valorPrecio = document.getElementById('valorPrecio');
     const ordenar = document.getElementById('ordenar');
-    const turnos = [
-      document.getElementById('turno1'), document.getElementById('turno2'),
-      document.getElementById('turno3'), document.getElementById('turno4')
-    ];
-    const claseEco = document.getElementById('claseEconomica');
-    const clasePre = document.getElementById('clasePremium');
+    const turnos = [1, 2, 3, 4].map(function (n) { return document.getElementById('turno' + n); });
 
     function turnoDe(hora) {
       const h = parseInt(hora.split(':')[0], 10);
-      if (h < 6) return 0;
-      if (h < 12) return 1;
-      if (h < 18) return 2;
-      return 3;
+      return h < 6 ? 0 : h < 12 ? 1 : h < 18 ? 2 : 3;
     }
 
     function dibujar() {
       const maxPrecio = parseInt(slider.value, 10);
-      let lista = TRAYECTOS.filter(function (t) {
-        return t.origen === origen && t.destino === destino &&
-               t.precio <= maxPrecio &&
-               turnos[turnoDe(t.salida)].checked &&
-               (t.clase === 'Premium' ? clasePre.checked : claseEco.checked);
+      const lista = TRAYECTOS.filter(function (t) {
+        return Number(t.precio) <= maxPrecio && turnos[turnoDe(t.salida)].checked;
       });
 
-      const orden = ordenar.value;
       lista.sort(function (a, b) {
-        if (orden === 'precio-desc') return b.precio - a.precio;
-        if (orden === 'duracion') return a.min - b.min;
-        if (orden === 'salida') return a.salida.localeCompare(b.salida);
-        return a.precio - b.precio;
+        if (ordenar.value === 'precio-desc') return b.precio - a.precio;
+        if (ordenar.value === 'precio-asc') return a.precio - b.precio;
+        return a.salida.localeCompare(b.salida);
       });
 
       total.textContent = lista.length;
 
       if (!lista.length) {
         contenedor.innerHTML =
-          '<div class="alert alert-info">No hay trayectos disponibles de ' +
-          (NOMBRES[origen] || origen) + ' a ' + (NOMBRES[destino] || destino) +
-          ' con estos filtros. Prueba con otra ruta o ajusta los filtros.</div>';
+                '<div class="alert alert-info">No hay trayectos disponibles de ' +
+                (NOMBRES[origen] || origen) + ' a ' + (NOMBRES[destino] || destino) +
+                ' para el ' + fecha + ' con estos filtros. Prueba con otra fecha, otra ruta o ajusta los filtros.</div>';
         return;
       }
 
-      const enlace = 'p05-detalle-viaje.html?' + params.toString();
       contenedor.innerHTML = lista.map(function (t) {
-        const premium = t.clase === 'Premium';
+        const p = new URLSearchParams(params);
+        p.set('idViaje', t.idViaje);
+        const precio = Number(t.precio).toLocaleString('es-CO');
         return '' +
-          '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + t.precio.toLocaleString('es-CO') + '">' +
-            '<div class="row align-items-center g-2">' +
-              '<div class="col-md-3">' +
+                '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + precio + '">' +
+                '<div class="row align-items-center g-2">' +
+                '<div class="col-md-4">' +
                 '<div class="hora">' + t.salida + '</div>' +
-                '<div class="ciudad">' + NOMBRES[t.origen] + ' · Terminal</div>' +
-                '<div class="small text-muted">Bus 🚌 ' + t.bus + '</div>' +
-              '</div>' +
-              '<div class="col-md-3 text-center">' +
-                '<div class="linea-vuelo justify-content-center" aria-hidden="true"><span class="avion-icono">🚌</span></div>' +
-                '<small class="text-muted d-block">' + t.dur + '</small>' +
-                '<span class="badge-clase ' + (premium ? 'badge-ejecutiva' : 'badge-economica') + '">' + t.clase + '</span>' +
-              '</div>' +
-              '<div class="col-md-3">' +
-                '<div class="hora">' + t.llegada + '</div>' +
-                '<div class="ciudad">' + NOMBRES[t.destino] + '</div>' +
-                '<div class="small text-muted">Terminal ' + NOMBRES[t.destino] + '</div>' +
-              '</div>' +
-              '<div class="col-md-3 text-end">' +
-                '<div class="precio">$' + t.precio.toLocaleString('es-CO') + '<small>/persona</small></div>' +
-                '<div class="small text-muted mb-2">Asientos disponibles: ' + t.asientos + '</div>' +
-                '<a href="' + enlace + '" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>' +
-              '</div>' +
-            '</div>' +
-          '</article>';
+                '<div class="ciudad">' + t.terminalOrigen + '</div>' +
+                '<div class="small text-muted">Bus 🚌</div>' +
+                '</div>' +
+                '<div class="col-md-4">' +
+                '<div class="ciudad">' + t.terminalDestino + '</div>' +
+                '<div class="small text-muted">' + fecha + '</div>' +
+                '</div>' +
+                '<div class="col-md-4 text-end">' +
+                '<div class="precio">$' + precio + '<small>/persona</small></div>' +
+                '<a href="p05-detalle-viaje.html?' + p.toString() + '" class="btn btn-concorde-primario btn-sm px-3 mt-2">Seleccionar</a>' +
+                '</div>' +
+                '</div>' +
+                '</article>';
       }).join('');
     }
 
-    // --- Filtros y orden ---
+    async function cargar() {
+      contenedor.innerHTML = '<div class="alert alert-secondary">Buscando trayectos...</div>';
+      try {
+        const q = new URLSearchParams({
+          origen: NOMBRES[origen] || origen,
+          destino: NOMBRES[destino] || destino,
+          fecha: ida
+        });
+        const res = await fetch(AUTH_API + '/viajes/buscar?' + q.toString());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        TRAYECTOS = await res.json();
+        dibujar();
+      } catch (e) {
+        console.error(e);
+        total.textContent = 0;
+        contenedor.innerHTML = '<div class="alert alert-danger">No se pudieron consultar los trayectos. Intenta de nuevo.</div>';
+      }
+    }
+
     slider.addEventListener('input', function () {
       valorPrecio.textContent = '$' + (parseInt(slider.value, 10) / 1000) + 'k';
       dibujar();
     });
-    turnos.concat([claseEco, clasePre]).forEach(function (el) { el.addEventListener('change', dibujar); });
+    turnos.forEach(function (el) { el.addEventListener('change', dibujar); });
     ordenar.addEventListener('change', dibujar);
 
-    // --- "Modificar búsqueda" ---
     const selO = document.getElementById('origenFiltro');
     const selD = document.getElementById('destinoFiltro');
     const opciones = Object.keys(NOMBRES).map(function (k) {
@@ -276,9 +268,9 @@
       location.search = params.toString();
     });
 
-    dibujar();
+    cargar();
   })();
-  </script>
+</script>
   <script src="js/aviso-agotados.js"></script>
 </body>
 </html>

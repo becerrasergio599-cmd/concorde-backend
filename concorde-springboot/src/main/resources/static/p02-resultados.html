@@ -230,7 +230,7 @@
           destino: NOMBRES[destino] || destino,
           fecha: ida
         });
-        const res = await fetch(AUTH_API + '/viajes/buscar?' + q.toString());
+        const res = await fetch(AUTH_API + '/viajes/disponibles?' + q.toString());
         if (!res.ok) throw new Error('HTTP ' + res.status);
         TRAYECTOS = await res.json();
         dibujar();

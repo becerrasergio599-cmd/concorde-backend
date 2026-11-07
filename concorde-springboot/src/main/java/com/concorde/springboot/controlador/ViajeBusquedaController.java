@@ -16,7 +16,7 @@ public class ViajeBusquedaController {
 
     public ViajeBusquedaController(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
-    @GetMapping("/buscar")
+    @GetMapping("/disponibles")
     public List<Map<String, Object>> buscar(@RequestParam String origen,
                                             @RequestParam String destino,
                                             @RequestParam String fecha) {

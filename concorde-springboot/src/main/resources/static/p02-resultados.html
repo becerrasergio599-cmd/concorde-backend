@@ -278,7 +278,7 @@
 
     function urlSeleccionar(v) {
       const p = new URLSearchParams(window.location.search);
-      p.set('idViaje', v.id);
+      p.set('idViaje', v.idViaje ?? v.id);
       return 'p05-detalle-viaje.html?' + p.toString();
     }
 

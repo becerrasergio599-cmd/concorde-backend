@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Selección de asientos del bus - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Selección de Asientos</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Mapa de asientos estilo bus */
+    .bus-body {
+      background: var(--gris-claro);
+      border-radius: 16px;
+      padding: 1.5rem;
+      max-width: 340px;
+      margin: 0 auto;
+      border: 2px solid var(--gris-medio);
+    }
+    .bus-frente {
+      background: linear-gradient(135deg, var(--azul-principal), var(--azul-claro));
+      border-radius: 12px 12px 4px 4px;
+      padding: 0.6rem;
+      text-align: center;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+    .fila-bus {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 5px;
+      justify-content: center;
+    }
+    .num-fila {
+      width: 22px;
+      font-size: 0.6rem;
+      color: var(--gris-texto);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .pasillo-bus { width: 18px; flex-shrink: 0; }
+    .asiento-bus {
+      width: 38px;
+      height: 38px;
+      border-radius: 6px 6px 4px 4px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.25s;
+      font-size: 0.62rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    /* Respaldo del asiento */
+    .asiento-bus::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 2px; right: 2px;
+      height: 6px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 3px 3px 0 0;
+    }
+    .asiento-libre  { background: #e8f4ea; border-color: #28a745; color: #155724; }
+    .asiento-libre:hover  { background: #28a745; color: white; transform: scale(1.08); }
+    .asiento-ocupado { background: #f8d7da; border-color: #dc3545; color: #721c24; cursor: not-allowed; }
+    .asiento-seleccionado { background: var(--dorado); border-color: var(--dorado-oscuro); color: var(--azul-oscuro); transform: scale(1.08); box-shadow: 0 3px 10px rgba(245,166,35,0.4); }
+    .asiento-premium { background: rgba(245,166,35,0.15); border-color: var(--dorado); color: var(--dorado-oscuro); }
+    .asiento-premium:hover { background: var(--dorado); color: white; transform: scale(1.08); }
+    .bus-trasero {
+      background: var(--gris-medio);
+      border-radius: 4px 4px 12px 12px;
+      padding: 5px;
+      text-align: center;
+      margin-top: 0.8rem;
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main id="contenido-principal" class="py-4">
+    <div class="container">
+      <nav class="stepper" aria-label="Pasos del proceso de compra">
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Detalle</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Pasajero</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step activo" aria-current="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
+        <div class="step-linea"></div>
+        <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
+      </nav>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card-concorde">
+            <div class="card-header-concorde">
+              <i class="bi bi-grid-3x3-gap me-2" aria-hidden="true"></i>Mapa de asientos del bus
+            </div>
+            <div class="card-body">
+
+              <!-- Leyenda -->
+              <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center" role="legend" aria-label="Leyenda de asientos">
+                <span class="d-flex align-items-center gap-1">
+                  <span class="asiento-bus asiento-libre" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
+                  <small>Disponible</small>
+                </span>
+                <span class="d-flex align-items-center gap-1">
+                  <span class="asiento-bus asiento-ocupado" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
+                  <small>Ocupado</small>
+                </span>
+                <span class="d-flex align-items-center gap-1">
+                  <span class="asiento-bus asiento-seleccionado" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
+                  <small>Seleccionado</small>
+                </span>
+                <span class="d-flex align-items-center gap-1">
+                  <span class="asiento-bus asiento-premium" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
+                  <small>Premium ⭐</small>
+                </span>
+              </div>
+
+              <!-- Bus layout -->
+              <div class="bus-body" aria-label="Mapa interactivo de asientos del bus" data-pasajeros="1">
+                <div class="bus-frente">🚌 FRENTE · CONDUCTOR</div>
+
+                <!-- Referencia de columnas -->
+                <div class="fila-bus mb-1">
+                  <span class="num-fila"></span>
+                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">A</span>
+                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">B</span>
+                  <span class="pasillo-bus"></span>
+                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">C</span>
+                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">D</span>
+                </div>
+
+                <!-- Filas se generan con JS -->
+                <div id="filasAsientos"></div>
+
+                <!-- Fila trasera (5 asientos) -->
+                <div class="bus-trasero" id="filaTrasera"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card-concorde" style="position:sticky;top:80px">
+            <div class="card-header-concorde"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Tu selección</div>
+            <div class="card-body">
+              <p class="mb-1 small"><strong>Trayecto:</strong> Tunja → Bogotá Salitre</p>
+              <p class="mb-2 small"><strong>Salida:</strong> Jue 2 Ene · 05:30</p>
+              <div id="resumenAsientos" class="alerta-advertencia alerta-concorde mb-3 small"
+                role="status" aria-live="polite">
+                Ningún asiento seleccionado
+              </div>
+              <a href="p08-resumen-compra.html" id="btnContinuarAsientos"
+                class="btn btn-concorde-dorado w-100 py-2"
+                style="pointer-events:none;opacity:0.6" aria-disabled="true">
+                Continuar al resumen
+                <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+              </a>
+              <p class="small text-muted mt-2 text-center">Selecciona 1 asiento para continuar</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function(){ var u=Auth.getUsuario(); if(!u) window.location.href='p03-login.html'; else if(u.rol==='administrador') window.location.href='admin-panel.html'; })();
+  </script>
+  <script src="js/componentes.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // Asientos ocupados (fila+columna)
+    const ocupados = ['1A','1C','2B','3D','4A','4B','5C','6D','7A','8B','9C','10D','11A'];
+    const premium  = ['1A','1B','1C','1D','2A','2B','2C','2D']; // primeras 2 filas
+    let seleccionados = [];
+
+    function generarFilas() {
+      const contenedor = document.getElementById('filasAsientos');
+      for (let fila = 1; fila <= 12; fila++) {
+        const div = document.createElement('div');
+        div.className = 'fila-bus';
+        div.innerHTML = `<span class="num-fila">${fila}</span>`;
+
+        ['A','B','','C','D'].forEach(col => {
+          if (col === '') {
+            div.innerHTML += `<span class="pasillo-bus"></span>`;
+            return;
+          }
+          const id = `${fila}${col}`;
+          const esOcupado  = ocupados.includes(id);
+          const esPremium  = premium.includes(id) && !esOcupado;
+          let clase = esOcupado ? 'asiento-ocupado' : (esPremium ? 'asiento-premium' : 'asiento-libre');
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `asiento-bus ${clase}`;
+          btn.dataset.numero = id;
+          btn.textContent = id;
+          btn.setAttribute('aria-label', `Asiento ${id}${esPremium?' Premium':''}, ${esOcupado?'ocupado':'disponible'}`);
+          if (!esOcupado) btn.addEventListener('click', () => toggleAsiento(btn));
+          div.appendChild(btn);
+        });
+        contenedor.appendChild(div);
+      }
+
+      // Fila trasera: 41–45
+      const trasero = document.getElementById('filaTrasera');
+      ['41','42','43','44','45'].forEach(n => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'asiento-bus asiento-libre';
+        btn.dataset.numero = n;
+        btn.textContent = n;
+        btn.setAttribute('aria-label', `Asiento ${n}, disponible`);
+        btn.addEventListener('click', () => toggleAsiento(btn));
+        trasero.appendChild(btn);
+      });
+    }
+
+    function toggleAsiento(btn) {
+      const id = btn.dataset.numero;
+      const esPremium = btn.classList.contains('asiento-premium');
+
+      if (btn.classList.contains('asiento-seleccionado')) {
+        btn.classList.remove('asiento-seleccionado');
+        btn.classList.add(esPremium ? 'asiento-premium' : 'asiento-libre');
+        seleccionados = seleccionados.filter(s => s !== id);
+      } else {
+        if (seleccionados.length >= 1) {
+          UI.mostrarToast('Solo puedes seleccionar 1 asiento', 'warning');
+          return;
+        }
+        btn.classList.remove('asiento-libre','asiento-premium');
+        btn.classList.add('asiento-seleccionado');
+        seleccionados.push(id);
+      }
+      actualizarResumen();
+    }
+
+    function actualizarResumen() {
+      const el   = document.getElementById('resumenAsientos');
+      const btn  = document.getElementById('btnContinuarAsientos');
+      if (seleccionados.length === 0) {
+        el.textContent = 'Ningún asiento seleccionado';
+        btn.style.pointerEvents = 'none'; btn.style.opacity = '0.6';
+        btn.setAttribute('aria-disabled','true');
+      } else {
+        el.textContent = `Asiento seleccionado: ${seleccionados[0]}`;
+        btn.style.pointerEvents = ''; btn.style.opacity = '';
+        btn.removeAttribute('aria-disabled');
+      }
+    }
+
+    generarFilas();
+  </script>
+</body>
+</html>

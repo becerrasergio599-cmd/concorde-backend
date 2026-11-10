@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Reserva confirmada - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Confirmación de Compra</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-5">
+    <div class="container">
+      <section aria-label="Confirmación de compra"><div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9 text-center">
+          <div class="card-concorde p-5">
+            <div class="icono-exito" aria-hidden="true">✓</div>
+            <h1 class="h2 fw-bold texto-azul mb-2">¡Reserva Confirmada!</h1>
+            <p class="text-muted mb-1">Tu trayecto ha sido reservado exitosamente.</p>
+            <p class="text-muted mb-4">Hemos enviado el tiquete a tu correo electrónico.</p>
+
+            <!-- Código de reserva con botón copiar -->
+            <div style="background:var(--gris-claro);border-radius:var(--radio-md);padding:1.5rem;margin-bottom:1.5rem" role="region" aria-label="Código de reserva">
+              <p class="text-muted small mb-1">Código de reserva</p>
+              <div style="font-family:monospace;font-size:2.2rem;font-weight:700;color:var(--azul-principal);letter-spacing:6px" id="codigoReserva">
+                CC-8472
+              </div>
+              <button type="button" onclick="copiarCodigo()" class="btn btn-outline-concorde btn-sm mt-2" aria-label="Copiar código de reserva">
+                <i class="bi bi-clipboard me-1" aria-hidden="true"></i>Copiar código
+              </button>
+            </div>
+
+            <!-- Resumen vuelo -->
+            <div class="row g-3 text-start mb-4">
+              <div class="col-6"><small class="text-muted d-block">Vuelo</small><strong>Tunja → Bogotá Salitre</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Fecha</small><strong>Jue, 2 Ene 2025</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Hora</small><strong>05:30 – 09:00</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Asiento</small><strong>12C · Económico</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Pasajero</small><strong>Juan C. García</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Total pagado</small><strong class="texto-azul">$22.000 COP</strong></div>
+            </div>
+
+            <!-- Abordaje online -->
+            <div class="alerta-info alerta-concorde text-start mb-4">
+              <i class="bi bi-phone me-2" aria-hidden="true"></i>
+              <strong>Abordaje online disponible</strong> desde 24 horas antes del vuelo.
+              <div id="estadoCheckin" class="mt-2" aria-live="polite"></div>
+              <button type="button" onclick="hacerCheckin()" class="btn btn-sm btn-concorde-primario mt-2" id="btnCheckin">
+                <i class="bi bi-qr-code me-1" aria-hidden="true"></i>Hacer abordaje ahora
+              </button>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <button type="button" onclick="window.print()" class="btn btn-outline-concorde px-4">
+                <i class="bi bi-printer me-1" aria-hidden="true"></i>Imprimir tiquete
+              </button>
+              <a href="p11-reservas.html" class="btn btn-concorde-primario px-4">
+                <i class="bi bi-calendar-check me-1" aria-hidden="true"></i>Mis reservas
+              </a>
+              <a href="index.html" class="btn btn-concorde-dorado px-4">
+                <i class="bi bi-house me-1" aria-hidden="true"></i>Inicio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>// Proteger: requiere sesión de cliente
+  (function(){ var u=Auth.getUsuario(); if(!u) window.location.href="p03-login.html"; else if(u.rol==="administrador") window.location.href="admin-panel.html"; })();
+  </script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    function copiarCodigo() {
+      const codigo = document.getElementById('codigoReserva').textContent.trim();
+      navigator.clipboard?.writeText(codigo).then(() => {
+        UI.mostrarToast('¡Código CC-8472 copiado!', 'success');
+      }).catch(() => UI.mostrarToast('Código: CC-8472', 'info'));
+    }
+
+    function hacerCheckin() {
+      const btn = document.getElementById('btnCheckin');
+      const estado = document.getElementById('estadoCheckin');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Procesando...';
+      setTimeout(() => {
+        btn.textContent = '✓ Abordaje completado';
+        estado.innerHTML = '<span class="text-success fw-bold">Abordaje exitoso.</span> Tu tiquete de viaje fue enviado al correo.';
+        UI.mostrarToast('¡Abordaje completado exitosamente!', 'success');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

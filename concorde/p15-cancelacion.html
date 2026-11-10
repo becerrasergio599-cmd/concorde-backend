@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cancelar reserva - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Cancelación de Reserva</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-4">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+          <div class="card-concorde">
+            <div class="card-header-concorde" style="background:linear-gradient(135deg,#c0392b,#e74c3c)">
+              <i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>Cancelar Reserva
+            </div>
+            <div class="card-body p-4">
+              <!-- Advertencia -->
+              <div class="alerta-advertencia alerta-concorde mb-4" role="alert">
+                <strong><i class="bi bi-exclamation-triangle me-2" aria-hidden="true"></i>¡Atención!</strong>
+                Esta acción no se puede deshacer. La tarifa seleccionada no es reembolsable.
+              </div>
+
+              <!-- Datos de la reserva -->
+              <article class="card-concorde mb-4">
+                <div class="card-body">
+                  <h2 class="h6 fw-bold mb-3">Reserva: <span style="font-family:monospace" class="texto-azul">CC-8472</span></h2>
+                  <div class="row g-2 small">
+                    <div class="col-6"><strong>Ruta:</strong> Tunja → Bogotá Salitre</div>
+                    <div class="col-6"><strong>Fecha:</strong> 2 Ene 2025 · 05:30</div>
+                    <div class="col-6"><strong>Pasajero:</strong> Juan C. García</div>
+                    <div class="col-6"><strong>Valor pagado:</strong> $22.000</div>
+                  </div>
+                </div>
+              </article>
+
+              <!-- Motivo -->
+              <div class="form-concorde mb-3">
+                <label class="form-label fw-bold" for="motivoCancelacion">Motivo de cancelación <span class="text-danger">*</span></label>
+                <select class="form-select" id="motivoCancelacion" required aria-required="true" onchange="evaluarOpcion()">
+                  <option value="">Selecciona un motivo...</option>
+                  <option value="planes">Cambio de planes</option>
+                  <option value="emergencia">Emergencia familiar</option>
+                  <option value="salud">Motivos de salud</option>
+                  <option value="pago">Problemas con el pago</option>
+                  <option value="tarifa">Encontré mejor tarifa</option>
+                  <option value="otro">Otro</option>
+                </select>
+              </div>
+
+              <!-- Opción según motivo -->
+              <div id="opcionAlternativa" class="alerta-info alerta-concorde mb-3 d-none" role="status" aria-live="polite"></div>
+
+              <!-- Política reembolso -->
+              <div class="alerta-info alerta-concorde mb-4">
+                <strong>Política de reembolso:</strong><br>
+                La tarifa Económica Básica no tiene reembolso monetario. Sin embargo, obtienes un <strong>crédito de viaje del 50% ($11.000)</strong> válido por 12 meses.
+              </div>
+
+              <!-- Confirmación -->
+              <div class="form-check mb-4">
+                <input type="checkbox" class="form-abordajeput" id="checkAceptarCancelacion"
+                  onchange="this.checked ? btnConfirmar.disabled=false : btnConfirmar.disabled=true"
+                  aria-label="Acepto las condiciones de cancelación">
+                <label class="form-check-label" for="checkAceptarCancelacion">
+                  Entiendo que esta cancelación es <strong>definitiva</strong> y acepto las condiciones descritas anteriormente
+                </label>
+              </div>
+
+              <div class="d-flex gap-3 flex-wrap">
+                <button type="button" id="btnConfirmar"
+                  class="btn btn-danger flex-grow-1 py-2" disabled aria-disabled="true"
+                  onclick="confirmarCancelacion()">
+                  <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Confirmar cancelación
+                </button>
+                <a href="p14-detalle-reserva.html" class="btn btn-outline-concorde flex-grow-1 py-2">
+                  <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>(function(){ var u=Auth.getUsuario(); if(u && u.rol==="administrador") window.location.href="admin-panel.html"; })();</script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    const btnConfirmar = document.getElementById('btnConfirmar');
+
+    function evaluarOpcion() {
+      const val = document.getElementById('motivoCancelacion').value;
+      const div = document.getElementById('opcionAlternativa');
+      const msgs = {
+        emergencia: '🏥 Por emergencia familiar puedes solicitar un cambio de fecha sin costo. <a href="p12-atencion.html" class="fw-bold">Contactar soporte →</a>',
+        salud: '🏥 Por motivos de salud con certificado médico puedes obtener un reembolso completo. <a href="p12-atencion.html" class="fw-bold">Contactar soporte →</a>',
+        tarifa: '💡 ¿Encontraste mejor tarifa? Podemos igualarlo. <a href="p12-atencion.html" class="fw-bold">Hablar con un agente →</a>',
+      };
+      if (msgs[val]) {
+        div.innerHTML = msgs[val];
+        div.classList.remove('d-none');
+      } else {
+        div.classList.add('d-none');
+      }
+    }
+
+    function confirmarCancelacion() {
+      if (!document.getElementById('motivoCancelacion').value) {
+        UI.mostrarToast('Selecciona un motivo de cancelación', 'danger'); return;
+      }
+      UI.mostrarLoader('Procesando cancelación...');
+      setTimeout(() => location.href = 'p15b-cancelacion-ok.html', 1800);
+    }
+  </script>
+</body>
+</html>

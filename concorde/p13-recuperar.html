@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Recuperar contraseña - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Recuperar Contraseña</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-5 col-md-7">
+          <!-- Paso 1: Ingresar correo -->
+          <div id="paso1" class="card-concorde">
+            <div class="card-header-concorde text-center py-3">
+              <span style="font-size:2rem" aria-hidden="true">🔐</span>
+              <h1 class="h4 mb-0 mt-1">Recuperar Contraseña</h1>
+            </div>
+            <div class="card-body p-4">
+              <!-- Stepper de pasos -->
+              <nav class="stepper mb-4" aria-label="Pasos para recuperar contraseña">
+                <div class="step activo" id="step1" aria-current="step"><div class="step-numero">1</div><span class="step-label">Correo</span></div>
+                <div class="step-linea" id="linea1"></div>
+                <div class="step" id="step2"><div class="step-numero">2</div><span class="step-label">Código</span></div>
+                <div class="step-linea" id="linea2"></div>
+                <div class="step" id="step3"><div class="step-numero">3</div><span class="step-label">Nueva clave</span></div>
+              </nav>
+
+              <div id="contenidoPaso1">
+                <p class="text-muted small mb-4">Ingresa tu correo y te enviaremos un código de 6 dígitos para restablecer tu contraseña.</p>
+                <div class="form-concorde mb-4">
+                  <label class="form-label" for="emailRecuperar">
+                    <i class="bi bi-envelope me-1" aria-hidden="true"></i>Correo electrónico <span class="text-danger">*</span>
+                  </label>
+                  <input type="email" class="form-control" id="emailRecuperar"
+                    placeholder="correo@ejemplo.com" required aria-required="true" autocomplete="email">
+                  <div class="invalid-feedback">Ingresa un correo válido</div>
+                </div>
+                <button type="button" id="btnEnviarCodigo" onclick="enviarCodigo()" class="btn btn-concorde-primario w-100 py-2 mb-3">
+                  <i class="bi bi-send me-1" aria-hidden="true"></i>Enviar código
+                </button>
+              </div>
+
+              <!-- Paso 2: Ingresar código -->
+              <div id="contenidoPaso2" class="d-none">
+                <p class="text-muted small mb-4">Ingresa el código de 6 dígitos enviado a tu correo.</p>
+                <div class="form-concorde mb-3">
+                  <label class="form-label" for="codigoVerif">Código de verificación <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control text-center fw-bold" id="codigoVerif"
+                    maxlength="6" placeholder="000000" style="font-size:1.5rem;letter-spacing:8px"
+                    inputmode="numeric" aria-required="true">
+                </div>
+                <div class="d-flex justify-content-between small mb-4">
+                  <span id="cuentaRegresiva" class="text-muted" aria-live="polite">Expira en: <strong>02:00</strong></span>
+                  <button type="button" onclick="reenviarCodigo()" class="btn btn-link btn-sm p-0">Reenviar código</button>
+                </div>
+                <button type="button" onclick="verificarCodigo()" class="btn btn-concorde-primario w-100 py-2">
+                  Verificar código <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <!-- Paso 3: Nueva contraseña -->
+              <div id="contenidoPaso3" class="d-none">
+                <p class="text-muted small mb-4">Ingresa tu nueva contraseña. Debe tener al menos 8 caracteres.</p>
+                <div class="form-concorde">
+                  <div class="mb-3">
+                    <label class="form-label" for="nuevaPass">Nueva contraseña <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="nuevaPass" minlength="8" required autocomplete="new-password">
+                  </div>
+                  <div class="mb-4">
+                    <label class="form-label" for="confirmarNuevaPass">Confirmar contraseña <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control" id="confirmarNuevaPass" required autocomplete="new-password">
+                  </div>
+                  <button type="button" onclick="cambiarContrasena()" class="btn btn-concorde-dorado w-100 py-2">
+                    <i class="bi bi-shield-check me-1" aria-hidden="true"></i>Cambiar contraseña
+                  </button>
+                </div>
+              </div>
+
+              <div class="text-center mt-3">
+                <a href="p03-login.html" class="small">
+                  <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver al inicio de sesión
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    let timerInterval;
+
+    function irAPaso(num) {
+      [1,2,3].forEach(n => {
+        document.getElementById(`contenidoPaso${n}`).classList.toggle('d-none', n !== num);
+        const step = document.getElementById(`step${n}`);
+        step.classList.remove('activo','completado');
+        if (n < num) step.classList.add('completado');
+        else if (n === num) { step.classList.add('activo'); step.setAttribute('aria-current','step'); }
+        else step.removeAttribute('aria-current');
+        if (n < 3) document.getElementById(`linea${n}`).classList.toggle('completado', n < num);
+      });
+    }
+
+    function enviarCodigo() {
+      const email = document.getElementById('emailRecuperar');
+      if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
+        email.classList.add('is-invalid'); return;
+      }
+      email.classList.remove('is-invalid');
+      const btn = document.getElementById('btnEnviarCodigo');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Enviando...';
+      setTimeout(() => {
+        irAPaso(2);
+        UI.mostrarToast('Código enviado a ' + email.value, 'success');
+        iniciarCuentaRegresiva();
+      }, 1500);
+    }
+
+    function verificarCodigo() {
+      const codigo = document.getElementById('codigoVerif').value;
+      if (codigo.length !== 6) { UI.mostrarToast('Ingresa los 6 dígitos del código', 'danger'); return; }
+      // Simulación: cualquier código de 6 dígitos es válido
+      clearInterval(timerInterval);
+      UI.mostrarToast('¡Código verificado!', 'success');
+      setTimeout(() => irAPaso(3), 600);
+    }
+
+    function cambiarContrasena() {
+      const nueva = document.getElementById('nuevaPass').value;
+      const confirmar = document.getElementById('confirmarNuevaPass').value;
+      if (nueva.length < 8) { UI.mostrarToast('La contraseña debe tener mínimo 8 caracteres', 'danger'); return; }
+      if (nueva !== confirmar) { UI.mostrarToast('Las contraseñas no coinciden', 'danger'); return; }
+      UI.mostrarLoader('Actualizando contraseña...');
+      setTimeout(() => location.href = 'p17-confirmacion-mensaje.html', 1800);
+    }
+
+    function reenviarCodigo() {
+      clearInterval(timerInterval);
+      UI.mostrarToast('Nuevo código enviado', 'info');
+      iniciarCuentaRegresiva();
+    }
+
+    function iniciarCuentaRegresiva() {
+      let segundos = 120;
+      const el = document.getElementById('cuentaRegresiva');
+      timerInterval = setInterval(() => {
+        segundos--;
+        const m = String(Math.floor(segundos/60)).padStart(2,'0');
+        const s = String(segundos%60).padStart(2,'0');
+        el.innerHTML = `Expira en: <strong>${m}:${s}</strong>`;
+        if (segundos <= 0) { clearInterval(timerInterval); el.innerHTML = '<span class="text-danger">Código expirado. Reenvía uno nuevo.</span>'; }
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

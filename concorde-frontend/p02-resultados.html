@@ -1,37 +1,26 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Resultados de búsqueda de tiquetes - Concorde Transporte Terrestre">
   <title>Concorde Transporte Terrestre | Resultados</title>
-
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
-
   <div id="navbar-placeholder"></div>
 
   <main id="contenido-principal">
-
     <div class="bg-azul-gradiente text-white py-3">
       <div class="container">
         <nav aria-label="Ruta de navegación">
           <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item">
-              <a href="index.html" class="text-white-50">Inicio</a>
-            </li>
-            <li class="breadcrumb-item active text-white" aria-current="page">
-              Resultados
-            </li>
+            <li class="breadcrumb-item"><a href="index.html" class="text-white-50">Inicio</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Resultados</li>
           </ol>
         </nav>
-
         <h1 class="h4 mt-2 fw-bold">
           <i class="bi bi-search me-2" aria-hidden="true"></i>
           <span id="rutaBusqueda">Cargando búsqueda...</span>
@@ -44,29 +33,18 @@
 
         <!-- FILTROS -->
         <aside class="col-lg-3" aria-label="Filtros de búsqueda">
-
           <div class="card-concorde mb-3">
             <div class="card-header-concorde">
-              <i class="bi bi-funnel me-1" aria-hidden="true"></i>
-              Filtros
+              <i class="bi bi-funnel me-1" aria-hidden="true"></i>Filtros
             </div>
-
             <div class="card-body">
 
+              <!-- Precio -->
               <fieldset class="mb-3">
                 <legend class="form-label fw-bold">Precio máximo</legend>
-
-                <input
-                  type="range"
-                  class="form-range"
-                  min="10000"
-                  max="150000"
-                  step="5000"
-                  value="150000"
-                  id="filtroPrecio"
-                  aria-label="Filtrar por precio máximo"
-                >
-
+                <input type="range" class="form-range" min="10000" max="150000"
+                  step="5000" value="150000" id="filtroPrecio" data-filtro
+                  aria-label="Filtrar por precio máximo">
                 <div class="d-flex justify-content-between small text-muted">
                   <span>$10k</span>
                   <span id="valorPrecio" class="fw-bold texto-azul">$150k</span>
@@ -74,525 +52,225 @@
                 </div>
               </fieldset>
 
+              <!-- Hora de salida -->
               <fieldset class="mb-3">
                 <legend class="form-label fw-bold">Hora de salida</legend>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="turno1" checked>
+                  <input class="form-check-input" type="checkbox" id="turno1" checked data-filtro>
                   <label class="form-check-label" for="turno1">🌅 Madrugada (00–06)</label>
                 </div>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="turno2" checked>
+                  <input class="form-check-input" type="checkbox" id="turno2" checked data-filtro>
                   <label class="form-check-label" for="turno2">☀️ Mañana (06–12)</label>
                 </div>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="turno3" checked>
+                  <input class="form-check-input" type="checkbox" id="turno3" checked data-filtro>
                   <label class="form-check-label" for="turno3">🌤️ Tarde (12–18)</label>
                 </div>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="turno4" checked>
+                  <input class="form-check-input" type="checkbox" id="turno4" checked data-filtro>
                   <label class="form-check-label" for="turno4">🌙 Noche (18–00)</label>
                 </div>
               </fieldset>
 
+              <!-- Clase de servicio -->
               <fieldset>
                 <legend class="form-label fw-bold">Tipo de servicio</legend>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="claseEconomica" checked>
+                  <input class="form-check-input" type="checkbox" id="claseEconomica" checked data-filtro>
                   <label class="form-check-label" for="claseEconomica">Económico</label>
                 </div>
-
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="clasePremium" checked>
+                  <input class="form-check-input" type="checkbox" id="clasePremium" checked data-filtro>
                   <label class="form-check-label" for="clasePremium">Premium</label>
                 </div>
               </fieldset>
-
             </div>
           </div>
 
-          <!-- MODIFICAR BÚSQUEDA -->
+          <!-- Mini buscador rápido (las ciudades se llenan por JS) -->
           <div class="card-concorde">
             <div class="card-header-concorde">
-              <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>
-              Modificar búsqueda
+              <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Modificar búsqueda
             </div>
-
             <div class="card-body">
               <div class="form-concorde">
-
                 <label class="form-label" for="origenFiltro">Origen</label>
-                <select class="form-select form-select-sm mb-2" id="origenFiltro"></select>
-
+                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen"></select>
                 <label class="form-label" for="destinoFiltro">Destino</label>
-                <select class="form-select form-select-sm mb-3" id="destinoFiltro"></select>
-
+                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino"></select>
                 <button type="button" id="btnModificar" class="btn btn-concorde-primario w-100 btn-sm">
-                  <i class="bi bi-search me-1"></i>
-                  Buscar
+                  <i class="bi bi-search me-1"></i>Buscar
                 </button>
-
               </div>
             </div>
           </div>
-
         </aside>
 
         <!-- RESULTADOS -->
         <section class="col-lg-9" aria-label="Lista de trayectos disponibles">
-
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-
             <p class="mb-0 text-muted">
-              <strong class="texto-azul" id="totalTrayectos">0</strong>
-              trayectos encontrados
+              <strong class="texto-azul" id="totalTrayectos">0</strong> trayectos encontrados
             </p>
-
             <div class="d-flex align-items-center gap-2">
-              <label for="ordenar" class="form-label mb-0 small fw-semibold">
-                Ordenar por:
-              </label>
-
-              <select class="form-select form-select-sm" id="ordenar" style="width:auto">
+              <label for="ordenar" class="form-label mb-0 small fw-semibold">Ordenar por:</label>
+              <select class="form-select form-select-sm" id="ordenar" style="width:auto" aria-label="Ordenar resultados">
                 <option value="precio-asc">Precio (menor)</option>
                 <option value="precio-desc">Precio (mayor)</option>
                 <option value="duracion">Duración</option>
                 <option value="salida">Salida más temprana</option>
               </select>
             </div>
-
           </div>
 
+          <!-- Aquí JS dibuja los trayectos -->
           <div id="listaTrayectos"></div>
-
         </section>
-
       </div>
     </div>
-
   </main>
 
   <div id="footer-placeholder"></div>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
-
   <script>
   (function () {
-
-    'use strict';
-
-    // CIUDADES DISPONIBLES
     const NOMBRES = {
-      AGUAZUL: 'Aguazul',
-      BARRANQUILLA: 'Barranquilla',
-      BOGOTA_NORTE: 'Bogotá Norte',
-      BOGOTA_SALITRE: 'Bogotá Salitre',
-      BUCARAMANGA: 'Bucaramanga',
-      CARTAGENA: 'Cartagena',
-      CUCUTA: 'Cúcuta',
-      DUITAMA: 'Duitama',
-      ONZAGA: 'Onzaga',
-      PAIPA: 'Paipa',
-      PAMPLONA: 'Pamplona',
-      SOGAMOSO: 'Sogamoso',
-      TUNJA: 'Tunja',
-      YOPAL: 'Yopal'
+      AGUAZUL: 'Aguazul', BARRANQUILLA: 'Barranquilla', BOGOTA_NORTE: 'Bogotá Norte',
+      BOGOTA_SALITRE: 'Bogotá Salitre', BUCARAMANGA: 'Bucaramanga', CARTAGENA: 'Cartagena',
+      CUCUTA: 'Cúcuta', DUITAMA: 'Duitama', ONZAGA: 'Onzaga', PAIPA: 'Paipa',
+      PAMPLONA: 'Pamplona', SOGAMOSO: 'Sogamoso', TUNJA: 'Tunja', YOPAL: 'Yopal'
     };
 
     let TRAYECTOS = [];
 
-    const $ = id => document.getElementById(id);
-
-    // NORMALIZAR CIUDADES
-    function quitarAcentos(texto) {
-      return String(texto || '')
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-    }
-
-    function normalizarCiudad(valor, predeterminado) {
-      if (!valor || !valor.trim()) return predeterminado;
-
-      const limpio = quitarAcentos(valor)
-        .trim()
-        .toUpperCase()
-        .replace(/[\s-]+/g, '_');
-
-      if (NOMBRES[limpio]) return limpio;
-
-      const encontrada = Object.keys(NOMBRES).find(clave => {
-        return quitarAcentos(NOMBRES[clave]).toUpperCase() ===
-          limpio.replace(/_/g, ' ');
-      });
-
-      return encontrada || valor.trim();
-    }
-
-    function nombreCiudad(valor) {
-      const clave = normalizarCiudad(valor, '');
-      return NOMBRES[clave] || valor || 'Ciudad no definida';
-    }
-
     function hoyLocal() {
       const d = new Date();
-
-      return d.getFullYear() + '-' +
-        String(d.getMonth() + 1).padStart(2, '0') + '-' +
-        String(d.getDate()).padStart(2, '0');
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
 
-    // LEER PARÁMETROS DE BÚSQUEDA
     const params = new URLSearchParams(location.search);
-
-    let origen = normalizarCiudad(params.get('origen'), 'TUNJA');
-    let destino = normalizarCiudad(params.get('destino'), 'BOGOTA_SALITRE');
-
-    const pasajeros = Math.max(
-      1,
-      parseInt(params.get('pasajeros'), 10) || 1
-    );
-
+    const origen = params.get('origen') || 'TUNJA';
+    const destino = params.get('destino') || 'BOGOTA_SALITRE';
+    const pasajeros = parseInt(params.get('pasajeros')) || 1;
     const ida = params.get('ida') || hoyLocal();
+    const fecha = new Date(ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
-    const fechaObj = new Date(ida + 'T00:00:00');
+    document.getElementById('rutaBusqueda').textContent =
+            (NOMBRES[origen] || origen) + ' → ' + (NOMBRES[destino] || destino) +
+            ' · ' + fecha + ' · ' + pasajeros + ' pasajero' + (pasajeros > 1 ? 's' : '');
 
-    const fecha = isNaN(fechaObj.getTime())
-      ? ida
-      : fechaObj.toLocaleDateString('es-CO', {
-          day: 'numeric',
-          month: 'short'
-        });
+    const contenedor = document.getElementById('listaTrayectos');
+    const total = document.getElementById('totalTrayectos');
+    const slider = document.getElementById('filtroPrecio');
+    const valorPrecio = document.getElementById('valorPrecio');
+    const ordenar = document.getElementById('ordenar');
+    const turnos = [1, 2, 3, 4].map(function (n) { return document.getElementById('turno' + n); });
 
-    // ELEMENTOS HTML
-    const rutaBusqueda = $('rutaBusqueda');
-    const contenedor = $('listaTrayectos');
-    const total = $('totalTrayectos');
-    const slider = $('filtroPrecio');
-    const valorPrecio = $('valorPrecio');
-    const ordenar = $('ordenar');
-
-    const turnos = [1, 2, 3, 4].map(n => $('turno' + n));
-
-    const claseEconomica = $('claseEconomica');
-    const clasePremium = $('clasePremium');
-
-    // MOSTRAR RUTA CORRECTA
-    function actualizarCabecera() {
-      rutaBusqueda.textContent =
-        nombreCiudad(origen) + ' → ' +
-        nombreCiudad(destino) + ' · ' +
-        fecha + ' · ' +
-        pasajeros + ' pasajero' +
-        (pasajeros > 1 ? 's' : '');
-    }
-
-    // CLASIFICAR HORARIOS
     function turnoDe(hora) {
-      const h = parseInt(String(hora || '00:00').split(':')[0], 10);
-
-      if (h < 6) return 0;
-      if (h < 12) return 1;
-      if (h < 18) return 2;
-
-      return 3;
+      const h = parseInt(hora.split(':')[0], 10);
+      return h < 6 ? 0 : h < 12 ? 1 : h < 18 ? 2 : 3;
     }
 
-    // IDENTIFICAR TIPO DE SERVICIO
-    function esPremium(viaje) {
-      const tipo = String(
-        viaje.tipoServicio ||
-        viaje.tipo ||
-        viaje.clase ||
-        ''
-      ).toLowerCase();
-
-      return tipo.includes('premium');
-    }
-
-    // DIBUJAR RESULTADOS
     function dibujar() {
-
-      const maxPrecio = Number(slider.value);
-
-      const lista = TRAYECTOS.filter(t => {
-
-        const precio = Number(t.precio);
-        const turno = turnoDe(t.salida);
-        const premium = esPremium(t);
-
-        if (!Number.isFinite(precio) || precio > maxPrecio) {
-          return false;
-        }
-
-        if (!turnos[turno] || !turnos[turno].checked) {
-          return false;
-        }
-
-        if (premium && !clasePremium.checked) {
-          return false;
-        }
-
-        if (!premium && !claseEconomica.checked) {
-          return false;
-        }
-
-        return true;
+      const maxPrecio = parseInt(slider.value, 10);
+      const lista = TRAYECTOS.filter(function (t) {
+        return Number(t.precio) <= maxPrecio && turnos[turnoDe(t.salida)].checked;
       });
 
-      lista.sort((a, b) => {
-
-        if (ordenar.value === 'precio-desc') {
-          return Number(b.precio) - Number(a.precio);
-        }
-
-        if (ordenar.value === 'precio-asc') {
-          return Number(a.precio) - Number(b.precio);
-        }
-
-        if (ordenar.value === 'duracion') {
-          return String(a.duracion || '').localeCompare(
-            String(b.duracion || '')
-          );
-        }
-
-        return String(a.salida || '').localeCompare(
-          String(b.salida || '')
-        );
+      lista.sort(function (a, b) {
+        if (ordenar.value === 'precio-desc') return b.precio - a.precio;
+        if (ordenar.value === 'precio-asc') return a.precio - b.precio;
+        return a.salida.localeCompare(b.salida);
       });
 
       total.textContent = lista.length;
 
-      if (lista.length === 0) {
-        contenedor.innerHTML = `
-          <div class="alert alert-info">
-            No hay trayectos disponibles de
-            ${nombreCiudad(origen)} a ${nombreCiudad(destino)}
-            para el ${fecha}.
-            Prueba otra fecha o modifica los filtros.
-          </div>
-        `;
+      if (!lista.length) {
+        contenedor.innerHTML =
+                '<div class="alert alert-info">No hay trayectos disponibles de ' +
+                (NOMBRES[origen] || origen) + ' a ' + (NOMBRES[destino] || destino) +
+                ' para el ' + fecha + ' con estos filtros. Prueba con otra fecha, otra ruta o ajusta los filtros.</div>';
         return;
       }
 
-      contenedor.innerHTML = lista.map(t => {
-
+      contenedor.innerHTML = lista.map(function (t) {
         const p = new URLSearchParams(params);
-
         p.set('idViaje', t.idViaje);
-
         const precio = Number(t.precio).toLocaleString('es-CO');
-
-        return `
-          <article class="card-vuelo fade-in-up visible"
-                   aria-label="Bus a las ${t.salida}, precio $${precio}">
-
-            <div class="row align-items-center g-2">
-
-              <div class="col-md-4">
-                <div class="hora">${t.salida || '--:--'}</div>
-                <div class="ciudad">${t.terminalOrigen || nombreCiudad(origen)}</div>
-                <div class="small text-muted">Bus 🚌</div>
-              </div>
-
-              <div class="col-md-4">
-                <div class="ciudad">${t.terminalDestino || nombreCiudad(destino)}</div>
-                <div class="small text-muted">${fecha}</div>
-                <div class="small text-muted">${t.duracion || ''}</div>
-              </div>
-
-              <div class="col-md-4 text-end">
-                <div class="precio">
-                  $${precio}<small>/persona</small>
-                </div>
-
-                <a href="p05-detalle-viaje.html?${p.toString()}"
-                   class="btn btn-concorde-primario btn-sm px-3 mt-2">
-                  Seleccionar
-                </a>
-              </div>
-
-            </div>
-          </article>
-        `;
-
+        return '' +
+                '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + precio + '">' +
+                '<div class="row align-items-center g-2">' +
+                '<div class="col-md-4">' +
+                '<div class="hora">' + t.salida + '</div>' +
+                '<div class="ciudad">' + t.terminalOrigen + '</div>' +
+                '<div class="small text-muted">Bus 🚌</div>' +
+                '</div>' +
+                '<div class="col-md-4">' +
+                '<div class="ciudad">' + t.terminalDestino + '</div>' +
+                '<div class="small text-muted">' + fecha + '</div>' +
+                '</div>' +
+                '<div class="col-md-4 text-end">' +
+                '<div class="precio">$' + precio + '<small>/persona</small></div>' +
+                '<a href="p05-detalle-viaje.html?' + p.toString() + '" class="btn btn-concorde-primario btn-sm px-3 mt-2">Seleccionar</a>' +
+                '</div>' +
+                '</div>' +
+                '</article>';
       }).join('');
     }
 
-    // CONSULTAR BACKEND
     async function cargar() {
-
-      contenedor.innerHTML = `
-        <div class="alert alert-secondary">
-          <span class="spinner-border spinner-border-sm me-2"></span>
-          Buscando trayectos...
-        </div>
-      `;
-
-      total.textContent = '...';
-
-      const controlador = new AbortController();
-
-      const tiempoLimite = setTimeout(() => {
-        controlador.abort();
-      }, 20000);
-
+      contenedor.innerHTML = '<div class="alert alert-secondary">Buscando trayectos...</div>';
       try {
-
-        const api = typeof AUTH_API !== 'undefined'
-          ? AUTH_API
-          : '/api';
-
         const q = new URLSearchParams({
-          origen: nombreCiudad(origen),
-          destino: nombreCiudad(destino),
+          origen: NOMBRES[origen] || origen,
+          destino: NOMBRES[destino] || destino,
           fecha: ida
         });
-
-        const respuesta = await fetch(
-          api + '/viajes/disponibles?' + q.toString(),
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json'
-            },
-            signal: controlador.signal
-          }
-        );
-
-        if (!respuesta.ok) {
-          throw new Error(
-            'El servidor respondió con el error HTTP ' +
-            respuesta.status
-          );
-        }
-
-        const datos = await respuesta.json();
-
-        // ACEPTAR LISTAS DIRECTAS O RESPUESTAS ENVUELTAS
-        const lista = Array.isArray(datos)
-          ? datos
-          : Array.isArray(datos.content)
-            ? datos.content
-            : Array.isArray(datos.data)
-              ? datos.data
-              : Array.isArray(datos.viajes)
-                ? datos.viajes
-                : null;
-
-        if (!lista) {
-          throw new Error(
-            'La respuesta del servidor no contiene una lista de viajes.'
-          );
-        }
-
-        TRAYECTOS = lista;
-
+        const res = await fetch(AUTH_API + '/viajes/disponibles?' + q.toString());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        TRAYECTOS = await res.json();
         dibujar();
-
-      } catch (error) {
-
-        console.error('Error al cargar trayectos:', error);
-
-        total.textContent = '0';
-
-        const mensaje = error.name === 'AbortError'
-          ? 'El servidor tardó demasiado en responder. Intenta nuevamente.'
-          : error.message || 'No se pudieron consultar los trayectos.';
-
-        contenedor.innerHTML = `
-          <div class="alert alert-danger">
-            <strong>No se pudieron cargar los trayectos.</strong>
-            <br>
-            ${mensaje}
-            <br>
-            <button type="button"
-                    class="btn btn-outline-danger btn-sm mt-2"
-                    id="btnReintentar">
-              <i class="bi bi-arrow-clockwise me-1"></i>
-              Intentar nuevamente
-            </button>
-          </div>
-        `;
-
-        const btnReintentar = $('btnReintentar');
-
-        if (btnReintentar) {
-          btnReintentar.addEventListener('click', cargar);
-        }
-
-      } finally {
-        clearTimeout(tiempoLimite);
+      } catch (e) {
+        console.error(e);
+        total.textContent = 0;
+        contenedor.innerHTML = '<div class="alert alert-danger">No se pudieron consultar los trayectos. Intenta de nuevo.</div>';
       }
     }
 
-    // EVENTOS DE FILTROS
-    slider.addEventListener('input', () => {
-      valorPrecio.textContent =
-        '$' + Math.round(Number(slider.value) / 1000) + 'k';
-
+    slider.addEventListener('input', function () {
+      valorPrecio.textContent = '$' + (parseInt(slider.value, 10) / 1000) + 'k';
       dibujar();
     });
-
-    turnos.forEach(el => {
-      el.addEventListener('change', dibujar);
-    });
-
-    claseEconomica.addEventListener('change', dibujar);
-    clasePremium.addEventListener('change', dibujar);
+    turnos.forEach(function (el) { el.addEventListener('change', dibujar); });
     ordenar.addEventListener('change', dibujar);
 
-    // SELECTORES DE CIUDADES
-    const selO = $('origenFiltro');
-    const selD = $('destinoFiltro');
-
-    const opciones = Object.keys(NOMBRES).map(clave => {
-      return `<option value="${clave}">${NOMBRES[clave]}</option>`;
+    const selO = document.getElementById('origenFiltro');
+    const selD = document.getElementById('destinoFiltro');
+    const opciones = Object.keys(NOMBRES).map(function (k) {
+      return '<option value="' + k + '">' + NOMBRES[k] + '</option>';
     }).join('');
-
     selO.innerHTML = opciones;
     selD.innerHTML = opciones;
-
     selO.value = origen;
     selD.value = destino;
 
-    // MODIFICAR BÚSQUEDA
-    $('btnModificar').addEventListener('click', () => {
-
+    document.getElementById('btnModificar').addEventListener('click', function () {
       if (selO.value === selD.value) {
-
-        if (typeof UI !== 'undefined' && UI.mostrarToast) {
-          UI.mostrarToast(
-            'El origen y el destino deben ser distintos',
-            'warning'
-          );
-        } else {
-          alert('El origen y el destino deben ser distintos');
-        }
-
+        UI.mostrarToast('El origen y el destino deben ser distintos', 'warning');
         return;
       }
-
       params.set('origen', selO.value);
       params.set('destino', selD.value);
-
       location.search = params.toString();
     });
 
-    // INICIAR
-    actualizarCabecera();
     cargar();
-
   })();
-  </script>
-
+</script>
   <script src="js/aviso-agotados.js"></script>
-
 </body>
 </html>

@@ -7,7 +7,7 @@
 'use strict';
 
 const ChatbotWidget = {
-  API: (typeof AUTH_API !== 'undefined') ? AUTH_API : 'http://localhost:8082/api',
+  API: (typeof AUTH_API !== 'undefined') ? AUTH_API : '/api',
   idConsulta: null,
   estado: null,
   abierto: false,

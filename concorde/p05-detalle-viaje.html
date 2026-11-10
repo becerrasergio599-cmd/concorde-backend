@@ -1,294 +1,443 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Detalle del trayecto seleccionado - Concorde Transporte Terrestre">
   <title>Concorde Transporte Terrestre | Detalle del Trayecto</title>
+
   <link rel="icon" type="image/png" href="img/LogoConcorde.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
-  <div id="navbar-placeholder"></div>
-  <main id="contenido-principal" class="py-4">
-    <div class="container">
 
-      <!-- Stepper -->
-      <nav class="stepper" aria-label="Pasos del proceso de compra">
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step activo" aria-current="step"><div class="step-numero">2</div><span class="step-label">Detalle</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">3</div><span class="step-label">Pasajero</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
-      </nav>
+<div id="navbar-placeholder"></div>
 
-      <div class="row g-4">
-        <div class="col-lg-8">
+<main id="contenido-principal" class="py-4">
+<div class="container">
 
-          <!-- Detalle del trayecto -->
-          <article class="card-concorde mb-4">
-            <div class="card-header-concorde">
-              <i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto seleccionado
-            </div>
-            <div class="card-body">
-              <div class="row align-items-center text-center g-3">
-                <div class="col-4">
-                  <div id="horaSalida" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
-                  <div class="fw-bold" id="ciudadOrigen">Cargando...</div>
-                  <small class="text-muted" id="terminalOrigen"></small>
-                  <div class="small text-muted mt-1" id="fechaSalida"></div>
-                </div>
-                <div class="col-4">
-                  <div class="text-muted small mb-1" id="duracion"></div>
-                  <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                    <span class="avion-icono">🚌</span>
-                  </div>
-                  <div class="small mt-1"><span class="badge-clase badge-economica" id="tipoRuta">Directo</span></div>
-                  <div class="small text-muted mt-1">Placa: <span id="placa">--</span></div>
-                </div>
-                <div class="col-4">
-                  <div id="horaLlegada" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
-                  <div class="fw-bold" id="ciudadDestino">Cargando...</div>
-                  <small class="text-muted" id="terminalDestino"></small>
-                  <div class="small text-muted mt-1" id="fechaLlegada"></div>
-                </div>
-              </div>
+  <nav class="stepper" aria-label="Pasos del proceso de compra">
+    <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
+    <div class="step-linea completado"></div>
+    <div class="step activo" aria-current="step"><div class="step-numero">2</div><span class="step-label">Detalle</span></div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-numero">3</div><span class="step-label">Pasajero</span></div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
+    <div class="step-linea"></div>
+    <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
+  </nav>
 
-              <hr>
+  <div class="row g-4">
 
-              <!-- Selector de clase -->
-              <fieldset>
-                <legend class="h6 fw-bold mb-3">Selecciona tu tipo de servicio</legend>
-                <div class="row g-2" id="selectorClase" role="radiogroup" aria-label="Tipo de servicio">
-                  <div class="col-md-6">
-                    <label class="d-block p-3 rounded border-2 border text-center"
-                      id="labelEconomica" style="cursor:pointer;border-color:var(--azul-principal)!important;background:rgba(0,53,128,0.06)"
-                      for="claseEconomica">
-                      <input type="radio" name="clase" id="claseEconomica" value="economica" checked class="d-none">
-                      <div style="font-size:1.5rem" aria-hidden="true">🚌</div>
-                      <strong>Económico</strong>
-                      <div class="texto-azul fw-bold fs-5" id="precioEconomico">$0</div>
-                      <small class="text-muted">Asiento reclinable · 1 maleta</small>
-                    </label>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="d-block p-3 rounded border-2 border text-center"
-                      id="labelPremium" style="cursor:pointer" for="clasePremium">
-                      <input type="radio" name="clase" id="clasePremium" value="premium" class="d-none">
-                      <div style="font-size:1.5rem" aria-hidden="true">⭐</div>
-                      <strong>Premium</strong>
-                      <div class="texto-dorado fw-bold fs-5" id="precioPremium">$0</div>
-                      <small class="text-muted">Asiento cama · WiFi · Snack · 2 maletas</small>
-                    </label>
-                  </div>
-                </div>
-              </fieldset>
+    <div class="col-lg-8">
 
-              <hr>
-
-              <!-- Servicios incluidos -->
-              <h2 class="h6 fw-bold mb-3">Incluido en tu tiquete</h2>
-              <div class="row g-2" id="serviciosIncluidos">
-                <div class="col-6 col-md-3">
-                  <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
-                    <div aria-hidden="true">🧳</div><small>1 maleta en bodega</small>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3">
-                  <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
-                    <div aria-hidden="true">🎒</div><small>Equipaje de mano</small>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3">
-                  <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
-                    <div aria-hidden="true" id="iconoComida">🍪</div>
-                    <small id="textoComida">Sin refrigerio</small>
-                  </div>
-                </div>
-                <div class="col-6 col-md-3">
-                  <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
-                    <div aria-hidden="true">🛡️</div><small>Seguro de viaje</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <!-- Política -->
-          <article class="card-concorde">
-            <div class="card-header-concorde"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Política de la tarifa</div>
-            <div class="card-body">
-              <div class="row g-3">
-                <div class="col-md-4 text-center">
-                  <i class="bi bi-pencil-square fs-4 texto-azul" aria-hidden="true"></i>
-                  <p class="small mt-1 mb-0"><strong>Cambios</strong><br>Hasta 2h antes de salida, cargo de $5.000</p>
-                </div>
-                <div class="col-md-4 text-center">
-                  <i class="bi bi-x-circle fs-4 text-danger" aria-hidden="true"></i>
-                  <p class="small mt-1 mb-0"><strong>Cancelación</strong><br>Hasta 4h antes, reembolso del 80%</p>
-                </div>
-                <div class="col-md-4 text-center">
-                  <i class="bi bi-check-circle fs-4 text-success" aria-hidden="true"></i>
-                  <p class="small mt-1 mb-0"><strong>Selección de asiento</strong><br>Incluida sin costo adicional</p>
-                </div>
-              </div>
-            </div>
-          </article>
+      <article class="card-concorde mb-4">
+        <div class="card-header-concorde">
+          <i class="bi bi-bus-front me-2"></i>Trayecto seleccionado
         </div>
 
-        <!-- Resumen precio -->
-        <aside class="col-lg-4" aria-label="Resumen de precio">
-          <div class="card-concorde" style="position:sticky;top:80px">
-            <div class="card-header-concorde"><i class="bi bi-receipt me-2" aria-hidden="true"></i>Resumen</div>
-            <div class="card-body">
-              <table class="table table-sm mb-0" aria-label="Desglose de precios">
-                <tbody>
-                  <tr><td>Tarifa base (1 pax)</td><td class="text-end" id="tarifaBase">$0</td></tr>
-                  <tr><td>Tasa de trayecto</td><td class="text-end" id="tasaTrayecto">$0</td></tr>
-                  <tr class="table-light">
-                    <td><strong>Total</strong></td>
-                    <td class="text-end"><strong class="texto-azul" id="totalPrecio" aria-live="polite">$0</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-              <a href="p06-pasajero.html" id="btnContinuar" class="btn btn-concorde-dorado w-100 mt-3 py-2">
-                Continuar <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-              </a>
-              <a href="p02-resultados.html" id="btnVolver" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
-                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Ver otros trayectos
-              </a>
+        <div class="card-body">
+
+          <div class="row align-items-center text-center g-3">
+
+            <div class="col-4">
+              <div id="horaSalida" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
+              <div class="fw-bold" id="ciudadOrigen">Cargando...</div>
+              <small class="text-muted" id="terminalOrigen"></small>
+              <div class="small text-muted mt-1" id="fechaSalida"></div>
             </div>
+
+            <div class="col-4">
+              <div class="text-muted small mb-1" id="duracion"></div>
+              <div class="linea-vuelo justify-content-center">
+                <span class="avion-icono">🚌</span>
+              </div>
+              <div class="small mt-1">
+                <span class="badge-clase badge-economica" id="tipoRuta">Directo</span>
+              </div>
+              <div class="small text-muted mt-1">
+                Placa: <span id="placa">--</span>
+              </div>
+            </div>
+
+            <div class="col-4">
+              <div id="horaLlegada" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
+              <div class="fw-bold" id="ciudadDestino">Cargando...</div>
+              <small class="text-muted" id="terminalDestino"></small>
+              <div class="small text-muted mt-1" id="fechaLlegada"></div>
+            </div>
+
           </div>
-        </aside>
-      </div>
+
+          <hr>
+
+          <fieldset>
+            <legend class="h6 fw-bold mb-3">Selecciona tu tipo de servicio</legend>
+
+            <div class="row g-2" id="selectorClase">
+
+              <div class="col-md-6">
+                <label class="d-block p-3 rounded border-2 border text-center"
+                  id="labelEconomica"
+                  style="cursor:pointer;border-color:var(--azul-principal)!important;background:rgba(0,53,128,0.06)"
+                  for="claseEconomica">
+
+                  <input type="radio" name="clase" id="claseEconomica" value="economica" checked class="d-none">
+
+                  <div style="font-size:1.5rem">🚌</div>
+                  <strong>Económico</strong>
+                  <div class="texto-azul fw-bold fs-5" id="precioEconomico">$0</div>
+                  <small class="text-muted">Asiento reclinable · 1 maleta</small>
+                </label>
+              </div>
+
+              <div class="col-md-6">
+                <label class="d-block p-3 rounded border-2 border text-center"
+                  id="labelPremium"
+                  style="cursor:pointer"
+                  for="clasePremium">
+
+                  <input type="radio" name="clase" id="clasePremium" value="premium" class="d-none">
+
+                  <div style="font-size:1.5rem">⭐</div>
+                  <strong>Premium</strong>
+                  <div class="texto-dorado fw-bold fs-5" id="precioPremium">$0</div>
+                  <small class="text-muted">Asiento cama · WiFi · Snack · 2 maletas</small>
+                </label>
+              </div>
+
+            </div>
+          </fieldset>
+
+          <hr>
+
+          <h2 class="h6 fw-bold mb-3">Incluido en tu tiquete</h2>
+
+          <div class="row g-2">
+
+            <div class="col-6 col-md-3">
+              <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
+                🧳<br><small>1 maleta en bodega</small>
+              </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
+                🎒<br><small>Equipaje de mano</small>
+              </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
+                <span id="iconoComida">🍪</span><br>
+                <small id="textoComida">Sin refrigerio</small>
+              </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <div class="text-center p-2 rounded" style="background:var(--gris-claro)">
+                🛡️<br><small>Seguro de viaje</small>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
+      <article class="card-concorde">
+        <div class="card-header-concorde">
+          <i class="bi bi-info-circle me-2"></i>Política de la tarifa
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3">
+
+            <div class="col-md-4 text-center">
+              <i class="bi bi-pencil-square fs-4 texto-azul"></i>
+              <p class="small mt-1 mb-0"><strong>Cambios</strong><br>Hasta 2h antes de salida, cargo de $5.000</p>
+            </div>
+
+            <div class="col-md-4 text-center">
+              <i class="bi bi-x-circle fs-4 text-danger"></i>
+              <p class="small mt-1 mb-0"><strong>Cancelación</strong><br>Hasta 4h antes, reembolso del 80%</p>
+            </div>
+
+            <div class="col-md-4 text-center">
+              <i class="bi bi-check-circle fs-4 text-success"></i>
+              <p class="small mt-1 mb-0"><strong>Selección de asiento</strong><br>Incluida sin costo adicional</p>
+            </div>
+
+          </div>
+        </div>
+      </article>
+
     </div>
-  </main>
 
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/componentes.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    // ================== PARÁMETROS DE LA URL ==================
-    const params  = new URLSearchParams(window.location.search);
-    const idViaje = params.get('idViaje');
+    <aside class="col-lg-4" aria-label="Resumen de precio">
 
-    // El botón "Ver otros trayectos" conserva la búsqueda original
-    const paramsBusqueda = new URLSearchParams(params);
-    paramsBusqueda.delete('idViaje');
-    document.getElementById('btnVolver').href = 'p02-resultados.html?' + paramsBusqueda.toString();
+      <div class="card-concorde" style="position:sticky;top:80px">
 
-    // ================== UTILIDADES ==================
-    const fmt = n => '$' + Number(n).toLocaleString('es-CO');
-    const setText = (id, valor) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = valor ?? '';
-    };
-    const capitalizar = t => t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : '';
+        <div class="card-header-concorde">
+          <i class="bi bi-receipt me-2"></i>Resumen
+        </div>
 
-    let precios = {
-      economica: { base: 0, total: 0, comida: 'Sin refrigerio', icono: '🍪' },
-      premium:   { base: 0, total: 0, comida: 'Snack incluido', icono: '🍱' }
-    };
+        <div class="card-body">
 
-    // ================== CARGAR EL VIAJE REAL ==================
-    async function cargarViaje() {
-      // Mientras carga (o si falla), al menos mostramos las ciudades buscadas
-      setText('ciudadOrigen',  capitalizar(params.get('origen')));
-      setText('ciudadDestino', capitalizar(params.get('destino')));
+          <table class="table table-sm mb-0">
+            <tbody>
+              <tr>
+                <td>Tarifa base (1 pax)</td>
+                <td class="text-end" id="tarifaBase">$0</td>
+              </tr>
 
-      if (!idViaje) {
-        UI.mostrarToast('No se seleccionó ningún trayecto', 'error');
-        setTimeout(() => window.location.href = 'p02-resultados.html?' + paramsBusqueda.toString(), 1500);
-        return;
+              <tr>
+                <td>Tasa de trayecto</td>
+                <td class="text-end" id="tasaTrayecto">$0</td>
+              </tr>
+
+              <tr class="table-light">
+                <td><strong>Total</strong></td>
+                <td class="text-end">
+                  <strong class="texto-azul" id="totalPrecio">$0</strong>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <a href="p06-pasajero.html" id="btnContinuar"
+             class="btn btn-concorde-dorado w-100 mt-3 py-2">
+            Continuar <i class="bi bi-arrow-right ms-1"></i>
+          </a>
+
+          <a href="p02-resultados.html" id="btnVolver"
+             class="btn btn-outline-secondary w-100 mt-2 py-2 small">
+            <i class="bi bi-arrow-left me-1"></i>Ver otros trayectos
+          </a>
+
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+</main>
+
+<div id="footer-placeholder"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/componentes.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+
+// ================== PARÁMETROS ==================
+
+const params = new URLSearchParams(window.location.search);
+const idViaje = params.get('idViaje');
+
+const paramsBusqueda = new URLSearchParams(params);
+paramsBusqueda.delete('idViaje');
+
+document.getElementById('btnVolver').href =
+  'p02-resultados.html?' + paramsBusqueda.toString();
+
+// ================== UTILIDADES ==================
+
+const fmt = n => '$' + Number(n).toLocaleString('es-CO');
+
+const setText = (id, valor) => {
+  const el = document.getElementById(id);
+  if (el) el.textContent = valor ?? '';
+};
+
+let precios = {
+  economica: {base: 0, total: 0, comida: 'Sin refrigerio', icono: '🍪'},
+  premium: {base: 0, total: 0, comida: 'Snack incluido', icono: '🍱'}
+};
+
+let viajeCargado = false;
+
+// ================== CARGAR VIAJE ==================
+
+async function cargarViaje() {
+
+  setText('ciudadOrigen', params.get('origen') || 'Cargando...');
+  setText('ciudadDestino', params.get('destino') || 'Cargando...');
+
+  if (!idViaje) {
+    console.error('No se recibió idViaje');
+    alert('No se seleccionó ningún trayecto');
+    return;
+  }
+
+  try {
+
+    const res = await fetch('/api/viajes/' + encodeURIComponent(idViaje));
+
+    if (!res.ok) {
+      throw new Error('Error al consultar viaje: ' + res.status);
+    }
+
+    const v = await res.json();
+
+    console.log('Viaje recibido:', v);
+
+    // ESTRUCTURA REAL DEL BACKEND
+
+    const ruta = v.ruta || {};
+    const origen = ruta.terminalOrigen || {};
+    const destino = ruta.terminalDestino || {};
+    const vehiculo = v.vehiculo || {};
+
+    // DATOS DEL TRAYECTO
+
+    setText('horaSalida', (v.horaSalida || '--:--').substring(0,5));
+
+    setText('ciudadOrigen', origen.ciudad || params.get('origen') || 'No disponible');
+    setText('terminalOrigen', origen.nombre || '');
+
+    setText('ciudadDestino', destino.ciudad || params.get('destino') || 'No disponible');
+    setText('terminalDestino', destino.nombre || '');
+
+    setText('fechaSalida', v.fechaViaje || '');
+    setText('fechaLlegada', v.fechaLlegada || v.fechaViaje || '');
+
+    setText('duracion', v.duracion || 'Trayecto directo');
+
+    setText('placa', vehiculo.placa || '--');
+
+    setText('horaLlegada', v.horaLlegada ? v.horaLlegada.substring(0,5) : '--:--');
+
+    // ================== PRECIOS ==================
+
+    const economico = Number(v.precio ?? ruta.valorTiquete ?? 0);
+
+    const tasa = Number(v.tasa ?? 0);
+
+    const premium = Number(
+      v.precioPremium ?? Math.round(economico * 1.27)
+    );
+
+    if (!economico || !Number.isFinite(economico)) {
+      throw new Error('El viaje no tiene un precio válido');
+    }
+
+    precios = {
+      economica: {
+        base: economico - tasa,
+        total: economico,
+        comida: 'Sin refrigerio',
+        icono: '🍪'
+      },
+      premium: {
+        base: premium - tasa,
+        total: premium,
+        comida: 'Snack incluido',
+        icono: '🍱'
       }
+    };
 
-      try {
-        const res = await fetch('/api/viajes/' + encodeURIComponent(idViaje));
-        if (!res.ok) throw new Error('Viaje no encontrado (' + res.status + ')');
-        const v = await res.json();
+    setText('precioEconomico', fmt(economico));
+    setText('precioPremium', fmt(premium));
+    setText('tasaTrayecto', fmt(tasa));
 
-        // Datos del trayecto
-        setText('horaSalida',      v.horaSalida);
-        setText('ciudadOrigen',    v.ciudadOrigen);
-        setText('terminalOrigen',  v.terminalOrigen);
-        setText('fechaSalida',     v.fechaSalida);
-        setText('duracion',        v.duracion);
-        setText('placa',           v.placa);
-        setText('horaLlegada',     v.horaLlegada);
-        setText('ciudadDestino',   v.ciudadDestino);
-        setText('terminalDestino', v.terminalDestino);
-        setText('fechaLlegada',    v.fechaLlegada ?? v.fechaSalida);
+    pintarResumen('economica');
 
-        // Precios reales
-        const tasa    = Number(v.tasa ?? 0);
-        const economico = Number(v.precio);
-        const premium   = Number(v.precioPremium ?? Math.round(economico * 1.27));
+    actualizarEnlaceContinuar('economica');
 
-        precios = {
-          economica: { base: economico - tasa, total: economico, comida: 'Sin refrigerio', icono: '🍪' },
-          premium:   { base: premium - tasa,   total: premium,   comida: 'Snack incluido', icono: '🍱' }
-        };
+    viajeCargado = true;
 
-        setText('precioEconomico', fmt(economico));
-        setText('precioPremium',   fmt(premium));
-        setText('tasaTrayecto',    fmt(tasa));
-        pintarResumen('economica');
+  } catch (error) {
 
-        // Pasar el viaje a los siguientes pasos
-        actualizarEnlaceContinuar('economica');
-      } catch (e) {
-        console.error(e);
-        UI.mostrarToast('No se pudo cargar el trayecto', 'error');
-      }
+    console.error('Error cargando viaje:', error);
+
+    if (typeof UI !== 'undefined' && UI.mostrarToast) {
+      UI.mostrarToast('No se pudo cargar el trayecto: ' + error.message, 'error');
+    } else {
+      alert('No se pudo cargar el trayecto: ' + error.message);
     }
 
-    function pintarResumen(clase) {
-      const d = precios[clase];
-      setText('tarifaBase', fmt(d.base));
-      setText('totalPrecio', fmt(d.total));
-      setText('textoComida', d.comida);
-      setText('iconoComida', d.icono);
+  }
+}
+
+// ================== RESUMEN ==================
+
+function pintarResumen(clase) {
+
+  const d = precios[clase];
+
+  setText('tarifaBase', fmt(d.base));
+  setText('totalPrecio', fmt(d.total));
+  setText('textoComida', d.comida);
+  setText('iconoComida', d.icono);
+
+}
+
+// ================== CONTINUAR ==================
+
+function actualizarEnlaceContinuar(clase) {
+
+  const p = new URLSearchParams(params);
+
+  p.set('idViaje', idViaje);
+  p.set('clase', clase);
+  p.set('total', precios[clase].total);
+
+  document.getElementById('btnContinuar').href =
+    'p06-pasajero.html?' + p.toString();
+
+}
+
+// ================== SELECTOR DE CLASE ==================
+
+document.querySelectorAll('input[name="clase"]').forEach(radio => {
+
+  radio.addEventListener('change', () => {
+
+    if (!viajeCargado) return;
+
+    pintarResumen(radio.value);
+    actualizarEnlaceContinuar(radio.value);
+
+    const esEco = radio.value === 'economica';
+
+    document.getElementById('labelEconomica').style.background =
+      esEco ? 'rgba(0,53,128,0.06)' : '';
+
+    document.getElementById('labelEconomica').style.borderColor =
+      esEco ? 'var(--azul-principal)' : '';
+
+    document.getElementById('labelPremium').style.background =
+      !esEco ? 'rgba(245,166,35,0.1)' : '';
+
+    document.getElementById('labelPremium').style.borderColor =
+      !esEco ? 'var(--dorado)' : '';
+
+    if (typeof UI !== 'undefined' && UI.mostrarToast) {
+      UI.mostrarToast(
+        'Servicio ' + radio.value + ' seleccionado: ' +
+        fmt(precios[radio.value].total),
+        'info'
+      );
     }
 
-    function actualizarEnlaceContinuar(clase) {
-      const p = new URLSearchParams(params);
-      p.set('clase', clase);
-      p.set('total', precios[clase].total);
-      document.getElementById('btnContinuar').href = 'p06-pasajero.html?' + p.toString();
-    }
+  });
 
-    // ================== SELECTOR DE CLASE ==================
-    document.querySelectorAll('input[name="clase"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        pintarResumen(radio.value);
-        actualizarEnlaceContinuar(radio.value);
+});
 
-        const esEco = radio.value === 'economica';
-        document.getElementById('labelEconomica').style.background  = esEco ? 'rgba(0,53,128,0.06)' : '';
-        document.getElementById('labelEconomica').style.borderColor = esEco ? 'var(--azul-principal)' : '';
-        document.getElementById('labelPremium').style.background    = !esEco ? 'rgba(245,166,35,0.1)' : '';
-        document.getElementById('labelPremium').style.borderColor   = !esEco ? 'var(--dorado)' : '';
-        UI.mostrarToast('Servicio ' + radio.value + ' seleccionado: ' + fmt(precios[radio.value].total), 'info');
-      });
-    });
+// ================== INICIAR ==================
 
-    document.querySelectorAll('label[for^="clase"]').forEach(lbl => {
-      lbl.addEventListener('click', () => {
-        const radio = document.getElementById(lbl.getAttribute('for'));
-        radio.checked = true;
-        radio.dispatchEvent(new Event('change'));
-      });
-    });
+cargarViaje();
 
-    cargarViaje();
-  </script>
+</script>
+
 </body>
 </html>

@@ -146,7 +146,7 @@
           <div id="listaViajes" aria-live="polite">
             <div class="text-center text-muted py-5">
               <div class="spinner-border" role="status" aria-hidden="true"></div>
-              <p class="mt-3 mb-0">Cargando trayectos...</p>
+              <p class="mt-3 mb-0" id="textoCarga">Cargando trayectos...</p>
             </div>
           </div>
         </section>
@@ -170,7 +170,7 @@
     // ================== UTILIDADES ==================
     const esc = t => String(t ?? '').replace(/[&<>"']/g,
       c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-    const fmt = n => '$' + Number(n).toLocaleString('es-CO');
+    const fmt = n => '$' + Number(n || 0).toLocaleString('es-CO');
     const sinTildes = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
     const capitalizar = t => String(t || '').toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
 
@@ -179,6 +179,12 @@
       const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
       if (!m) return '';
       return parseInt(m[3], 10) + ' de ' + MESES[parseInt(m[2], 10) - 1];
+    }
+
+    // Id del viaje: el modelo Java usa "idViaje"; se aceptan otros nombres por seguridad
+    function idDe(v) {
+      const id = v.idViaje ?? v.id ?? v.id_viaje;
+      return (id === undefined || id === null || id === '') ? null : id;
     }
 
     // "3h 30min" -> 210
@@ -228,21 +234,52 @@
     // ================== CARGA DE VIAJES ==================
     let viajes = [];
 
+    function mostrarError(html) {
+      document.getElementById('listaViajes').innerHTML = `<div class="alert alert-danger">${html}</div>`;
+      document.getElementById('contador').textContent = '0';
+    }
+
     async function cargarViajes() {
       const lista = document.getElementById('listaViajes');
+
+      if (!origen || !destino) {
+        lista.innerHTML = `
+          <div class="alert alert-warning">
+            Faltan el origen o el destino de la búsqueda.
+            <a href="index.html" class="alert-link">Volver al inicio</a> para buscar de nuevo,
+            o usa "Modificar búsqueda" a la izquierda.
+          </div>`;
+        document.getElementById('contador').textContent = '0';
+        return;
+      }
+
+      // El plan gratis de Render se duerme: avisar si tarda
+      const avisoLento = setTimeout(() => {
+        const t = document.getElementById('textoCarga');
+        if (t) t.textContent = 'El servidor está despertando, puede tardar hasta un minuto...';
+      }, 6000);
+      const ctrl = new AbortController();
+      const corte = setTimeout(() => ctrl.abort(), 90000);
+
       try {
         const q = new URLSearchParams({ origen, destino, fecha: fechaIda });
-        const res = await fetch('/api/viajes?' + q.toString());
-        if (!res.ok) throw new Error('Error ' + res.status);
-        viajes = await res.json();
+        const res = await fetch('/api/viajes?' + q.toString(), { signal: ctrl.signal });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        viajes = Array.isArray(data) ? data : (data.content || data.viajes || []);
         aplicar();
       } catch (e) {
         console.error(e);
-        lista.innerHTML = `
-          <div class="alert alert-danger">
-            No se pudieron cargar los trayectos. Intenta de nuevo en unos minutos.
-          </div>`;
-        document.getElementById('contador').textContent = '0';
+        if (e.name === 'AbortError') {
+          mostrarError('El servidor tardó demasiado en responder. Recarga la página en un momento.');
+        } else if (String(e.message).includes('403')) {
+          mostrarError('Sin permiso para consultar los trayectos (403). Inicia sesión de nuevo e inténtalo otra vez.');
+        } else {
+          mostrarError('No se pudieron cargar los trayectos (' + esc(e.message) + '). Intenta de nuevo en unos minutos.');
+        }
+      } finally {
+        clearTimeout(avisoLento);
+        clearTimeout(corte);
       }
     }
 
@@ -260,15 +297,17 @@
 
       let lista = viajes.filter(v => {
         const esPremium = String(v.tipoServicio || '').toUpperCase() === 'PREMIUM';
-        return Number(v.precio) <= precioMax
+        const precio = Number(v.precio);
+        const precioOk = isNaN(precio) ? true : precio <= precioMax;
+        return precioOk
             && turnos[turnoDe(v.horaSalida)]
             && (esPremium ? pre : eco);
       });
 
       const orden = document.getElementById('ordenar').value;
       lista.sort((a, b) => {
-        if (orden === 'precioAsc')  return a.precio - b.precio;
-        if (orden === 'precioDesc') return b.precio - a.precio;
+        if (orden === 'precioAsc')  return (Number(a.precio) || 0) - (Number(b.precio) || 0);
+        if (orden === 'precioDesc') return (Number(b.precio) || 0) - (Number(a.precio) || 0);
         if (orden === 'duracion')   return duracionAMinutos(a) - duracionAMinutos(b);
         return String(a.horaSalida).localeCompare(String(b.horaSalida));
       });
@@ -277,8 +316,10 @@
     }
 
     function urlSeleccionar(v) {
+      const id = idDe(v);
+      if (id === null) return null;
       const p = new URLSearchParams(window.location.search);
-      p.set('idViaje', v.id);
+      p.set('idViaje', id);
       return 'p05-detalle-viaje.html?' + p.toString();
     }
 
@@ -309,9 +350,15 @@
         const agotado = v.asientosDisponibles !== undefined && Number(v.asientosDisponibles) <= 0;
         const asientos = v.asientosDisponibles !== undefined
           ? `<div class="small text-muted mb-2">Asientos disponibles: ${esc(v.asientosDisponibles)}</div>` : '';
-        const boton = agotado
-          ? '<button class="btn btn-secondary btn-sm px-3" disabled>Agotado</button>'
-          : `<a href="${esc(urlSeleccionar(v))}" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>`;
+        const url = urlSeleccionar(v);
+        let boton;
+        if (agotado) {
+          boton = '<button class="btn btn-secondary btn-sm px-3" disabled>Agotado</button>';
+        } else if (!url) {
+          boton = '<button class="btn btn-secondary btn-sm px-3" disabled title="Viaje sin identificador">No disponible</button>';
+        } else {
+          boton = `<a href="${esc(url)}" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>`;
+        }
 
         return `
         <article class="card-vuelo fade-in-up" aria-label="Bus a las ${esc(v.horaSalida)}, precio ${esc(fmt(v.precio))}">

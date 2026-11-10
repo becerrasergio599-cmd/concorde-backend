@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Resumen de compra - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Resumen de Compra</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-4">
+    <div class="container">
+      <nav class="stepper" aria-label="Pasos del proceso de compra">
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Detalle</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Pasajeros</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Asientos</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step activo" aria-current="step"><div class="step-numero">5</div><span class="step-label">Resumen</span></div>
+      </nav>
+
+      <h1 class="h4 fw-bold texto-azul mb-4"><i class="bi bi-cart-check me-2" aria-hidden="true"></i>Resumen de tu compra</h1>
+
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <!-- Vuelo -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-airplane me-2" aria-hidden="true"></i>Vuelo</div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
+                <div>
+                  <p class="mb-1 fw-bold">Bogotá Bogotá Salitre → Cartagena Cartagena</p>
+                  <p class="mb-1 text-muted small">Jue, 2 Ene 2025 · 05:30 – 09:00 · Directo · Bus TXB-724</p>
+                  <span class="badge-clase badge-economica">Clase Económica</span>
+                </div>
+                <div class="texto-azul fw-bold fs-5">$22.000</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Pasajero -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-person me-2" aria-hidden="true"></i>Pasajero</div>
+            <div class="card-body">
+              <div class="row g-2 small">
+                <div class="col-md-6"><strong>Nombre:</strong> Juan Carlos García López</div>
+                <div class="col-md-6"><strong>Documento:</strong> CC 1234567890</div>
+                <div class="col-md-6"><strong>Asiento:</strong> 10B</div>
+                <div class="col-md-6"><strong>Contacto:</strong> juangarcia@email.com</div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Equipaje -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-luggage me-2" aria-hidden="true"></i>Equipaje incluido</div>
+            <div class="card-body d-flex gap-4 flex-wrap">
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🎒</div><small class="text-muted">Artículo personal<br>10 kg</small></div>
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🧳</div><small class="text-muted">Equipaje de mano<br>10 kg</small></div>
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🛄</div><small class="text-muted">Maleta bodega 20 kg</small></div>
+            </div>
+          </article>
+
+          <!-- Código de descuento -->
+          <article class="card-concorde">
+            <div class="card-header-concorde"><i class="bi bi-tag me-2" aria-hidden="true"></i>Código de descuento</div>
+            <div class="card-body">
+              <div class="row g-2 align-items-end">
+                <div class="col-8">
+                  <label class="form-label" for="codigoDesc">¿Tienes un código?</label>
+                  <input type="text" class="form-control" id="codigoDesc" placeholder="Ej: BIENVENIDO10" aria-label="Código de descuento">
+                </div>
+                <div class="col-4">
+                  <button type="button" id="btnAplicar" onclick="aplicarDescuento()" class="btn btn-concorde-primario w-100">
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+              <div id="msgDescuento" class="mt-2 small d-none" role="status" aria-live="polite"></div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Total -->
+        <aside class="col-lg-4" aria-label="Total a pagar">
+          <div class="card-concorde" style="position:sticky;top:80px">
+            <div class="card-header-concorde"><i class="bi bi-receipt me-2" aria-hidden="true"></i>Total a pagar</div>
+            <div class="card-body">
+              <table class="table table-sm mb-3" aria-label="Resumen de precios">
+                <tbody>
+                  <tr><td>Tarifa base</td><td class="text-end">$18.700</td></tr>
+                  <tr><td>Tasas aeroportuarias</td><td class="text-end">$2.200</td></tr>
+                  <tr><td>IVA</td><td class="text-end">$1.100</td></tr>
+                  <tr id="filaDescuento" class="text-success d-none">
+                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$2.200</td>
+                  </tr>
+                  <tr class="table-light fw-bold">
+                    <td>Total</td>
+                    <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$22.000</td>
+                  </tr>
+                </tbody>
+              </table>
+              <a href="p09-pago.html" class="btn btn-concorde-dorado w-100 py-2">
+                <i class="bi bi-credit-card me-1" aria-hidden="true"></i>Ir al pago
+              </a>
+              <a href="p07-asientos.html" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
+                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script>// Proteger: requiere sesión de cliente
+  (function(){ var u=Auth.getUsuario(); if(!u) window.location.href="p03-login.html"; else if(u.rol==="administrador") window.location.href="admin-panel.html"; })();
+  </script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    function aplicarDescuento() {
+      const codigo = document.getElementById('codigoDesc').value.trim().toUpperCase();
+      const msg = document.getElementById('msgDescuento');
+      const fila = document.getElementById('filaDescuento');
+      const total = document.getElementById('totalFinal');
+      msg.classList.remove('d-none','text-success','text-danger');
+
+      if (codigo === 'BIENVENIDO10') {
+        fila.classList.remove('d-none');
+        total.textContent = '$19.800';
+        msg.textContent = '✓ Descuento del 10% aplicado correctamente.';
+        msg.classList.add('text-success');
+        document.getElementById('btnAplicar').disabled = true;
+        UI.mostrarToast('¡Descuento aplicado! Ahorras $2.200', 'success');
+      } else if (codigo === '') {
+        msg.textContent = 'Ingresa un código de descuento.';
+        msg.classList.add('text-danger');
+      } else {
+        msg.textContent = `El código "${codigo}" no es válido o ya expiró.`;
+        msg.classList.add('text-danger');
+        UI.mostrarToast('Código no válido', 'danger');
+      }
+      msg.classList.remove('d-none');
+    }
+
+    document.getElementById('codigoDesc').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') aplicarDescuento();
+    });
+  </script>
+</body>
+</html>

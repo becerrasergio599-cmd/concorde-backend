@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cancelación exitosa - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Cancelación Exitosa</title>
+  <link rel="icon" type="image/png" href="img/LogoConcorde.png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <main id="contenido-principal" class="py-5">
+    <div class="container">
+      <section aria-label="Resultado de cancelación"><div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 text-center">
+          <div class="card-concorde p-5">
+            <div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#dc3545,#c0392b);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;font-size:3rem;color:white;box-shadow:0 8px 30px rgba(220,53,69,0.3)" aria-hidden="true">✕</div>
+            <h1 class="h3 fw-bold mb-2" style="color:var(--rojo-error)">Reserva Cancelada</h1>
+            <p class="text-muted mb-2">Tu reserva <strong>CC-8472</strong> ha sido cancelada exitosamente.</p>
+
+            <!-- Crédito con botón copiar -->
+            <div class="alerta-advertencia alerta-concorde text-start mb-4">
+              <i class="bi bi-gift me-2" aria-hidden="true"></i>
+              Como cortesía, generamos un <strong>crédito de viaje de $11.000</strong> válido por 12 meses.
+              <div class="mt-2">
+                Código: <strong id="codigoCredito">CRED-2025-0847</strong>
+                <button type="button" onclick="copiarCredito()" class="btn btn-sm btn-outline-warning ms-2" aria-label="Copiar código de crédito">
+                  <i class="bi bi-clipboard" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Calificación del servicio -->
+            <div class="card-concorde p-3 mb-4">
+              <h2 class="h6 fw-bold mb-3">¿Cómo fue tu experiencia con nosotros?</h2>
+              <div class="d-flex justify-content-center gap-2" role="group" aria-label="Calificar experiencia" id="estrellas">
+                <button type="button" onclick="calificar(1)" class="btn btn-outline-warning" aria-label="1 estrella">★</button>
+                <button type="button" onclick="calificar(2)" class="btn btn-outline-warning" aria-label="2 estrellas">★</button>
+                <button type="button" onclick="calificar(3)" class="btn btn-outline-warning" aria-label="3 estrellas">★</button>
+                <button type="button" onclick="calificar(4)" class="btn btn-outline-warning" aria-label="4 estrellas">★</button>
+                <button type="button" onclick="calificar(5)" class="btn btn-outline-warning" aria-label="5 estrellas">★</button>
+              </div>
+              <div id="msgCalificacion" class="mt-2 small text-muted" aria-live="polite"></div>
+            </div>
+
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+              <a href="p11-reservas.html" class="btn btn-concorde-primario px-4">Ver mis reservas</a>
+              <a href="index.html" class="btn btn-outline-concorde px-4">Buscar nuevo vuelo</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  </main>
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/componentes.js"></script><script src="js/main.js"></script>
+  <script>
+    function copiarCredito() {
+      const codigo = document.getElementById('codigoCredito').textContent;
+      navigator.clipboard?.writeText(codigo).then(() => UI.mostrarToast('¡Código de crédito copiado!', 'success'))
+        .catch(() => UI.mostrarToast('Código: ' + codigo, 'info'));
+    }
+
+    function calificar(num) {
+      const btns = document.querySelectorAll('#estrellas button');
+      btns.forEach((btn, i) => {
+        btn.classList.toggle('btn-warning', i < num);
+        btn.classList.toggle('btn-outline-warning', i >= num);
+      });
+      const msgs = ['Lamentamos tu experiencia 😞', 'Gracias por tu opinión 🙁', 'Gracias, trabajaremos para mejorar 😊', 'Nos alegra que fue buena 😄', '¡Nos alegra mucho! 🌟'];
+      document.getElementById('msgCalificacion').textContent = msgs[num - 1];
+      UI.mostrarToast('¡Gracias por tu calificación!', 'success');
+    }
+  </script>
+</body>
+</html>

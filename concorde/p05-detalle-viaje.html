@@ -22,15 +22,34 @@
 <div class="container">
 
   <nav class="stepper" aria-label="Pasos del proceso de compra">
-    <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
+    <div class="step completado">
+      <div class="step-numero">✓</div>
+      <span class="step-label">Buscar</span>
+    </div>
     <div class="step-linea completado"></div>
-    <div class="step activo" aria-current="step"><div class="step-numero">2</div><span class="step-label">Detalle</span></div>
+
+    <div class="step activo" aria-current="step">
+      <div class="step-numero">2</div>
+      <span class="step-label">Detalle</span>
+    </div>
     <div class="step-linea"></div>
-    <div class="step"><div class="step-numero">3</div><span class="step-label">Pasajero</span></div>
+
+    <div class="step">
+      <div class="step-numero">3</div>
+      <span class="step-label">Pasajero</span>
+    </div>
     <div class="step-linea"></div>
-    <div class="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
+
+    <div class="step">
+      <div class="step-numero">4</div>
+      <span class="step-label">Asientos</span>
+    </div>
     <div class="step-linea"></div>
-    <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
+
+    <div class="step">
+      <div class="step-numero">5</div>
+      <span class="step-label">Pago</span>
+    </div>
   </nav>
 
   <div class="row g-4">
@@ -38,8 +57,10 @@
     <div class="col-lg-8">
 
       <article class="card-concorde mb-4">
+
         <div class="card-header-concorde">
-          <i class="bi bi-bus-front me-2"></i>Trayecto seleccionado
+          <i class="bi bi-bus-front me-2"></i>
+          Trayecto seleccionado
         </div>
 
         <div class="card-body">
@@ -47,7 +68,11 @@
           <div class="row align-items-center text-center g-3">
 
             <div class="col-4">
-              <div id="horaSalida" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
+              <div id="horaSalida"
+                style="font-size:2rem;font-weight:700;color:var(--azul-principal)">
+                --:--
+              </div>
+
               <div class="fw-bold" id="ciudadOrigen">Cargando...</div>
               <small class="text-muted" id="terminalOrigen"></small>
               <div class="small text-muted mt-1" id="fechaSalida"></div>
@@ -55,19 +80,28 @@
 
             <div class="col-4">
               <div class="text-muted small mb-1" id="duracion"></div>
+
               <div class="linea-vuelo justify-content-center">
                 <span class="avion-icono">🚌</span>
               </div>
+
               <div class="small mt-1">
-                <span class="badge-clase badge-economica" id="tipoRuta">Directo</span>
+                <span class="badge-clase badge-economica" id="tipoRuta">
+                  Directo
+                </span>
               </div>
+
               <div class="small text-muted mt-1">
                 Placa: <span id="placa">--</span>
               </div>
             </div>
 
             <div class="col-4">
-              <div id="horaLlegada" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
+              <div id="horaLlegada"
+                style="font-size:2rem;font-weight:700;color:var(--azul-principal)">
+                --:--
+              </div>
+
               <div class="fw-bold" id="ciudadDestino">Cargando...</div>
               <small class="text-muted" id="terminalDestino"></small>
               <div class="small text-muted mt-1" id="fechaLlegada"></div>
@@ -78,37 +112,58 @@
           <hr>
 
           <fieldset>
-            <legend class="h6 fw-bold mb-3">Selecciona tu tipo de servicio</legend>
+            <legend class="h6 fw-bold mb-3">
+              Selecciona tu tipo de servicio
+            </legend>
 
             <div class="row g-2" id="selectorClase">
 
               <div class="col-md-6">
-                <label class="d-block p-3 rounded border-2 border text-center"
+                <label
+                  class="d-block p-3 rounded border-2 border text-center"
                   id="labelEconomica"
                   style="cursor:pointer;border-color:var(--azul-principal)!important;background:rgba(0,53,128,0.06)"
                   for="claseEconomica">
 
-                  <input type="radio" name="clase" id="claseEconomica" value="economica" checked class="d-none">
+                  <input
+                    type="radio"
+                    name="clase"
+                    id="claseEconomica"
+                    value="economica"
+                    checked
+                    class="d-none">
 
                   <div style="font-size:1.5rem">🚌</div>
                   <strong>Económico</strong>
                   <div class="texto-azul fw-bold fs-5" id="precioEconomico">$0</div>
-                  <small class="text-muted">Asiento reclinable · 1 maleta</small>
+                  <small class="text-muted">
+                    Asiento reclinable · 1 maleta
+                  </small>
+
                 </label>
               </div>
 
               <div class="col-md-6">
-                <label class="d-block p-3 rounded border-2 border text-center"
+                <label
+                  class="d-block p-3 rounded border-2 border text-center"
                   id="labelPremium"
                   style="cursor:pointer"
                   for="clasePremium">
 
-                  <input type="radio" name="clase" id="clasePremium" value="premium" class="d-none">
+                  <input
+                    type="radio"
+                    name="clase"
+                    id="clasePremium"
+                    value="premium"
+                    class="d-none">
 
                   <div style="font-size:1.5rem">⭐</div>
                   <strong>Premium</strong>
                   <div class="texto-dorado fw-bold fs-5" id="precioPremium">$0</div>
-                  <small class="text-muted">Asiento cama · WiFi · Snack · 2 maletas</small>
+                  <small class="text-muted">
+                    Asiento cama · WiFi · Snack · 2 maletas
+                  </small>
+
                 </label>
               </div>
 
@@ -147,30 +202,43 @@
             </div>
 
           </div>
+
         </div>
       </article>
 
       <article class="card-concorde">
+
         <div class="card-header-concorde">
-          <i class="bi bi-info-circle me-2"></i>Política de la tarifa
+          <i class="bi bi-info-circle me-2"></i>
+          Política de la tarifa
         </div>
 
         <div class="card-body">
+
           <div class="row g-3">
 
             <div class="col-md-4 text-center">
               <i class="bi bi-pencil-square fs-4 texto-azul"></i>
-              <p class="small mt-1 mb-0"><strong>Cambios</strong><br>Hasta 2h antes de salida, cargo de $5.000</p>
+              <p class="small mt-1 mb-0">
+                <strong>Cambios</strong><br>
+                Hasta 2h antes de salida, cargo de $5.000
+              </p>
             </div>
 
             <div class="col-md-4 text-center">
               <i class="bi bi-x-circle fs-4 text-danger"></i>
-              <p class="small mt-1 mb-0"><strong>Cancelación</strong><br>Hasta 4h antes, reembolso del 80%</p>
+              <p class="small mt-1 mb-0">
+                <strong>Cancelación</strong><br>
+                Hasta 4h antes, reembolso del 80%
+              </p>
             </div>
 
             <div class="col-md-4 text-center">
               <i class="bi bi-check-circle fs-4 text-success"></i>
-              <p class="small mt-1 mb-0"><strong>Selección de asiento</strong><br>Incluida sin costo adicional</p>
+              <p class="small mt-1 mb-0">
+                <strong>Selección de asiento</strong><br>
+                Incluida sin costo adicional
+              </p>
             </div>
 
           </div>
@@ -184,13 +252,15 @@
       <div class="card-concorde" style="position:sticky;top:80px">
 
         <div class="card-header-concorde">
-          <i class="bi bi-receipt me-2"></i>Resumen
+          <i class="bi bi-receipt me-2"></i>
+          Resumen
         </div>
 
         <div class="card-body">
 
           <table class="table table-sm mb-0">
             <tbody>
+
               <tr>
                 <td>Tarifa base (1 pax)</td>
                 <td class="text-end" id="tarifaBase">$0</td>
@@ -207,17 +277,27 @@
                   <strong class="texto-azul" id="totalPrecio">$0</strong>
                 </td>
               </tr>
+
             </tbody>
           </table>
 
-          <a href="p06-pasajero.html" id="btnContinuar"
-             class="btn btn-concorde-dorado w-100 mt-3 py-2">
-            Continuar <i class="bi bi-arrow-right ms-1"></i>
+          <a href="#"
+            id="btnContinuar"
+            class="btn btn-concorde-dorado w-100 mt-3 py-2"
+            aria-disabled="true">
+
+            Continuar
+            <i class="bi bi-arrow-right ms-1"></i>
+
           </a>
 
-          <a href="p02-resultados.html" id="btnVolver"
-             class="btn btn-outline-secondary w-100 mt-2 py-2 small">
-            <i class="bi bi-arrow-left me-1"></i>Ver otros trayectos
+          <a href="p02-resultados.html"
+            id="btnVolver"
+            class="btn btn-outline-secondary w-100 mt-2 py-2 small">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Ver otros trayectos
+
           </a>
 
         </div>
@@ -238,87 +318,307 @@
 
 <script>
 
-// ================== PARÁMETROS ==================
+// ==================================================
+// 1. RECIBIR PARÁMETROS DE P02
+// ==================================================
 
 const params = new URLSearchParams(window.location.search);
+
 const idViaje = params.get('idViaje');
 
+const origenBuscado = params.get('origen') || '';
+const destinoBuscado = params.get('destino') || '';
+
+const btnContinuar = document.getElementById('btnContinuar');
+
+// ==================================================
+// 2. CONSERVAR PARÁMETROS DE BÚSQUEDA
+// ==================================================
+
 const paramsBusqueda = new URLSearchParams(params);
+
 paramsBusqueda.delete('idViaje');
+paramsBusqueda.delete('clase');
+paramsBusqueda.delete('total');
 
 document.getElementById('btnVolver').href =
   'p02-resultados.html?' + paramsBusqueda.toString();
 
-// ================== UTILIDADES ==================
+// ==================================================
+// 3. UTILIDADES
+// ==================================================
 
-const fmt = n => '$' + Number(n).toLocaleString('es-CO');
+const fmt = numero =>
+  '$' + Number(numero).toLocaleString('es-CO');
 
-const setText = (id, valor) => {
-  const el = document.getElementById(id);
-  if (el) el.textContent = valor ?? '';
-};
+function setText(id, valor) {
 
-let precios = {
-  economica: {base: 0, total: 0, comida: 'Sin refrigerio', icono: '🍪'},
-  premium: {base: 0, total: 0, comida: 'Snack incluido', icono: '🍱'}
-};
+  const elemento = document.getElementById(id);
+
+  if (elemento) {
+    elemento.textContent = valor ?? '';
+  }
+
+}
+
+function normalizarCiudad(ciudad) {
+
+  return String(ciudad || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, ' ');
+
+}
 
 let viajeCargado = false;
 
-// ================== CARGAR VIAJE ==================
+let precios = {
+  economica: {
+    base: 0,
+    total: 0,
+    tasa: 0,
+    comida: 'Sin refrigerio',
+    icono: '🍪'
+  },
+
+  premium: {
+    base: 0,
+    total: 0,
+    tasa: 0,
+    comida: 'Snack incluido',
+    icono: '🍱'
+  }
+};
+
+// Bloquear inicialmente el botón.
+
+function bloquearContinuar() {
+
+  btnContinuar.style.pointerEvents = 'none';
+  btnContinuar.style.opacity = '0.5';
+
+  btnContinuar.setAttribute('aria-disabled', 'true');
+
+}
+
+function habilitarContinuar() {
+
+  btnContinuar.style.pointerEvents = 'auto';
+  btnContinuar.style.opacity = '1';
+
+  btnContinuar.setAttribute('aria-disabled', 'false');
+
+}
+
+bloquearContinuar();
+
+// ==================================================
+// 4. MOSTRAR ERRORES
+// ==================================================
+
+function mostrarError(mensaje) {
+
+  viajeCargado = false;
+
+  bloquearContinuar();
+
+  console.error(mensaje);
+
+  if (typeof UI !== 'undefined' && UI.mostrarToast) {
+
+    UI.mostrarToast(mensaje, 'error');
+
+  } else {
+
+    alert(mensaje);
+
+  }
+
+}
+
+// ==================================================
+// 5. CARGAR VIAJE
+// ==================================================
 
 async function cargarViaje() {
 
-  setText('ciudadOrigen', params.get('origen') || 'Cargando...');
-  setText('ciudadDestino', params.get('destino') || 'Cargando...');
+  setText('ciudadOrigen', origenBuscado || 'Cargando...');
+  setText('ciudadDestino', destinoBuscado || 'Cargando...');
 
   if (!idViaje) {
-    console.error('No se recibió idViaje');
-    alert('No se seleccionó ningún trayecto');
+
+    mostrarError('No se recibió el identificador del viaje.');
+
     return;
+
+  }
+
+  if (!origenBuscado || !destinoBuscado) {
+
+    mostrarError(
+      'No se recibieron las ciudades de búsqueda de P02. Regresa y selecciona nuevamente el trayecto.'
+    );
+
+    return;
+
   }
 
   try {
 
-    const res = await fetch('/api/viajes/' + encodeURIComponent(idViaje));
+    console.log('========== BÚSQUEDA ORIGINAL ==========');
 
-    if (!res.ok) {
-      throw new Error('Error al consultar viaje: ' + res.status);
+    console.log('ID:', idViaje);
+    console.log('Origen:', origenBuscado);
+    console.log('Destino:', destinoBuscado);
+
+    const respuesta = await fetch(
+      '/api/viajes/' + encodeURIComponent(idViaje),
+      {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        },
+        cache: 'no-store'
+      }
+    );
+
+    if (!respuesta.ok) {
+
+      throw new Error(
+        'Error al consultar el viaje: ' + respuesta.status
+      );
+
     }
 
-    const v = await res.json();
+    const v = await respuesta.json();
 
-    console.log('Viaje recibido:', v);
+    console.log('========== RESPUESTA BACKEND ==========');
 
-    // ESTRUCTURA REAL DEL BACKEND
+    console.log(v);
+
+    // ==================================================
+    // 6. EXTRAER DATOS DEL BACKEND
+    // ==================================================
 
     const ruta = v.ruta || {};
-    const origen = ruta.terminalOrigen || {};
-    const destino = ruta.terminalDestino || {};
+
+    const terminalOrigen = ruta.terminalOrigen || {};
+    const terminalDestino = ruta.terminalDestino || {};
+
     const vehiculo = v.vehiculo || {};
 
-    // DATOS DEL TRAYECTO
+    const origenBackend =
+      terminalOrigen.ciudad ||
+      v.ciudadOrigen ||
+      '';
 
-    setText('horaSalida', (v.horaSalida || '--:--').substring(0,5));
+    const destinoBackend =
+      terminalDestino.ciudad ||
+      v.ciudadDestino ||
+      '';
 
-    setText('ciudadOrigen', origen.ciudad || params.get('origen') || 'No disponible');
-    setText('terminalOrigen', origen.nombre || '');
+    // ==================================================
+    // 7. VALIDAR QUE EL VIAJE SEA EL CORRECTO
+    // ==================================================
 
-    setText('ciudadDestino', destino.ciudad || params.get('destino') || 'No disponible');
-    setText('terminalDestino', destino.nombre || '');
+    const origenCoincide =
+      normalizarCiudad(origenBuscado) ===
+      normalizarCiudad(origenBackend);
 
-    setText('fechaSalida', v.fechaViaje || '');
-    setText('fechaLlegada', v.fechaLlegada || v.fechaViaje || '');
+    const destinoCoincide =
+      normalizarCiudad(destinoBuscado) ===
+      normalizarCiudad(destinoBackend);
 
-    setText('duracion', v.duracion || 'Trayecto directo');
+    console.log('========== VALIDACIÓN ==========');
 
-    setText('placa', vehiculo.placa || '--');
+    console.log('Origen buscado:', origenBuscado);
+    console.log('Origen backend:', origenBackend);
+    console.log('Origen coincide:', origenCoincide);
 
-    setText('horaLlegada', v.horaLlegada ? v.horaLlegada.substring(0,5) : '--:--');
+    console.log('Destino buscado:', destinoBuscado);
+    console.log('Destino backend:', destinoBackend);
+    console.log('Destino coincide:', destinoCoincide);
 
-    // ================== PRECIOS ==================
+    if (!origenCoincide || !destinoCoincide) {
 
-    const economico = Number(v.precio ?? ruta.valorTiquete ?? 0);
+      throw new Error(
+        'El viaje seleccionado no corresponde a tu búsqueda. Buscaste ' +
+        origenBuscado + ' → ' + destinoBuscado +
+        ', pero el servidor devolvió ' +
+        (origenBackend || 'origen desconocido') + ' → ' +
+        (destinoBackend || 'destino desconocido') +
+        '. No es posible continuar con este trayecto.'
+      );
+
+    }
+
+    // ==================================================
+    // 8. MOSTRAR CIUDADES DE P02
+    // ==================================================
+
+    setText('ciudadOrigen', origenBuscado);
+    setText('ciudadDestino', destinoBuscado);
+
+    setText(
+      'terminalOrigen',
+      terminalOrigen.nombre || ''
+    );
+
+    setText(
+      'terminalDestino',
+      terminalDestino.nombre || ''
+    );
+
+    // ==================================================
+    // 9. MOSTRAR INFORMACIÓN DEL VIAJE
+    // ==================================================
+
+    setText(
+      'horaSalida',
+      (v.horaSalida || '--:--').substring(0, 5)
+    );
+
+    setText(
+      'horaLlegada',
+      v.horaLlegada
+        ? v.horaLlegada.substring(0, 5)
+        : '--:--'
+    );
+
+    setText(
+      'fechaSalida',
+      v.fechaViaje || ''
+    );
+
+    setText(
+      'fechaLlegada',
+      v.fechaLlegada || v.fechaViaje || ''
+    );
+
+    setText(
+      'duracion',
+      v.duracion || 'Trayecto directo'
+    );
+
+    setText(
+      'placa',
+      vehiculo.placa || '--'
+    );
+
+    setText(
+      'tipoRuta',
+      v.tipoRuta || 'Directo'
+    );
+
+    // ==================================================
+    // 10. CALCULAR PRECIOS
+    // ==================================================
+
+    const economico = Number(
+      v.precio ?? ruta.valorTiquete ?? 0
+    );
 
     const tasa = Number(v.tasa ?? 0);
 
@@ -326,77 +626,141 @@ async function cargarViaje() {
       v.precioPremium ?? Math.round(economico * 1.27)
     );
 
-    if (!economico || !Number.isFinite(economico)) {
-      throw new Error('El viaje no tiene un precio válido');
+    if (
+      !Number.isFinite(economico) ||
+      economico <= 0 ||
+      !Number.isFinite(tasa) ||
+      tasa < 0 ||
+      tasa > economico ||
+      !Number.isFinite(premium) ||
+      premium <= 0
+    ) {
+
+      throw new Error('El viaje tiene un precio inválido.');
+
     }
 
     precios = {
+
       economica: {
         base: economico - tasa,
         total: economico,
+        tasa: tasa,
         comida: 'Sin refrigerio',
         icono: '🍪'
       },
+
       premium: {
         base: premium - tasa,
         total: premium,
+        tasa: tasa,
         comida: 'Snack incluido',
         icono: '🍱'
       }
+
     };
 
     setText('precioEconomico', fmt(economico));
     setText('precioPremium', fmt(premium));
-    setText('tasaTrayecto', fmt(tasa));
+
+    // ==================================================
+    // 11. MOSTRAR RESUMEN
+    // ==================================================
 
     pintarResumen('economica');
 
     actualizarEnlaceContinuar('economica');
 
+    // ==================================================
+    // 12. CONFIRMAR CARGA
+    // ==================================================
+
     viajeCargado = true;
+
+    habilitarContinuar();
+
+    console.log('========== VIAJE VALIDADO ==========');
+
+    console.log(
+      'Ruta correcta:',
+      origenBuscado,
+      '→',
+      destinoBuscado
+    );
+
+    console.log('ID:', idViaje);
+    console.log('Precio:', economico);
+
+    if (typeof UI !== 'undefined' && UI.mostrarToast) {
+
+      UI.mostrarToast(
+        'Trayecto cargado correctamente.',
+        'success'
+      );
+
+    }
 
   } catch (error) {
 
-    console.error('Error cargando viaje:', error);
-
-    if (typeof UI !== 'undefined' && UI.mostrarToast) {
-      UI.mostrarToast('No se pudo cargar el trayecto: ' + error.message, 'error');
-    } else {
-      alert('No se pudo cargar el trayecto: ' + error.message);
-    }
+    mostrarError(
+      'No se pudo cargar el trayecto: ' + error.message
+    );
 
   }
+
 }
 
-// ================== RESUMEN ==================
+// ==================================================
+// 13. PINTAR RESUMEN
+// ==================================================
 
 function pintarResumen(clase) {
 
   const d = precios[clase];
 
   setText('tarifaBase', fmt(d.base));
+
+  setText('tasaTrayecto', fmt(d.tasa));
+
   setText('totalPrecio', fmt(d.total));
+
   setText('textoComida', d.comida);
+
   setText('iconoComida', d.icono);
 
 }
 
-// ================== CONTINUAR ==================
+// ==================================================
+// 14. ACTUALIZAR ENLACE A P06
+// ==================================================
 
 function actualizarEnlaceContinuar(clase) {
 
-  const p = new URLSearchParams(params);
+  if (!viajeCargado || !idViaje) return;
 
-  p.set('idViaje', idViaje);
-  p.set('clase', clase);
-  p.set('total', precios[clase].total);
+  const parametros = new URLSearchParams(params);
 
-  document.getElementById('btnContinuar').href =
-    'p06-pasajero.html?' + p.toString();
+  parametros.set('idViaje', idViaje);
+
+  parametros.set('origen', origenBuscado);
+
+  parametros.set('destino', destinoBuscado);
+
+  parametros.set('clase', clase);
+
+  parametros.set(
+    'total',
+    String(precios[clase].total)
+  );
+
+  btnContinuar.href =
+    'p06-pasajero.html?' + parametros.toString();
 
 }
 
-// ================== SELECTOR DE CLASE ==================
+// ==================================================
+// 15. SELECCIONAR TIPO DE SERVICIO
+// ==================================================
 
 document.querySelectorAll('input[name="clase"]').forEach(radio => {
 
@@ -404,36 +768,69 @@ document.querySelectorAll('input[name="clase"]').forEach(radio => {
 
     if (!viajeCargado) return;
 
-    pintarResumen(radio.value);
-    actualizarEnlaceContinuar(radio.value);
+    const clase = radio.value;
 
-    const esEco = radio.value === 'economica';
+    pintarResumen(clase);
+
+    actualizarEnlaceContinuar(clase);
+
+    const esEconomica = clase === 'economica';
 
     document.getElementById('labelEconomica').style.background =
-      esEco ? 'rgba(0,53,128,0.06)' : '';
+      esEconomica
+        ? 'rgba(0,53,128,0.06)'
+        : '';
 
     document.getElementById('labelEconomica').style.borderColor =
-      esEco ? 'var(--azul-principal)' : '';
+      esEconomica
+        ? 'var(--azul-principal)'
+        : '';
 
     document.getElementById('labelPremium').style.background =
-      !esEco ? 'rgba(245,166,35,0.1)' : '';
+      !esEconomica
+        ? 'rgba(245,166,35,0.1)'
+        : '';
 
     document.getElementById('labelPremium').style.borderColor =
-      !esEco ? 'var(--dorado)' : '';
+      !esEconomica
+        ? 'var(--dorado)'
+        : '';
 
     if (typeof UI !== 'undefined' && UI.mostrarToast) {
+
       UI.mostrarToast(
-        'Servicio ' + radio.value + ' seleccionado: ' +
-        fmt(precios[radio.value].total),
+        'Servicio ' + clase + ' seleccionado: ' +
+        fmt(precios[clase].total),
         'info'
       );
+
     }
 
   });
 
 });
 
-// ================== INICIAR ==================
+// ==================================================
+// 16. PROTEGER BOTÓN CONTINUAR
+// ==================================================
+
+btnContinuar.addEventListener('click', function(event) {
+
+  if (!viajeCargado) {
+
+    event.preventDefault();
+
+    alert(
+      'No puedes continuar porque el trayecto todavía no ha sido validado.'
+    );
+
+  }
+
+});
+
+// ==================================================
+// 17. INICIAR
+// ==================================================
 
 cargarViaje();
 

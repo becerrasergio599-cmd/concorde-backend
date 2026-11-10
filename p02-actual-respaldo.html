@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Resultados de búsqueda de tiquetes - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Resultados</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main id="contenido-principal">
+    <div class="bg-azul-gradiente text-white py-3">
+      <div class="container">
+        <nav aria-label="Ruta de navegación">
+          <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a href="index.html" class="text-white-50">Inicio</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Resultados</li>
+          </ol>
+        </nav>
+        <h1 class="h4 mt-2 fw-bold">
+          <i class="bi bi-search me-2" aria-hidden="true"></i>
+          <span id="rutaBusqueda">Buscando trayectos...</span>
+        </h1>
+      </div>
+    </div>
+
+    <div class="container py-4">
+      <div class="row g-3">
+
+        <!-- FILTROS -->
+        <aside class="col-lg-3" aria-label="Filtros de búsqueda">
+          <div class="card-concorde mb-3">
+            <div class="card-header-concorde">
+              <i class="bi bi-funnel me-1" aria-hidden="true"></i>Filtros
+            </div>
+            <div class="card-body">
+
+              <!-- Precio -->
+              <fieldset class="mb-3">
+                <legend class="form-label fw-bold">Precio máximo</legend>
+                <input type="range" class="form-range" min="10000" max="150000"
+                  step="5000" value="150000" id="filtroPrecio" data-filtro
+                  aria-label="Filtrar por precio máximo">
+                <div class="d-flex justify-content-between small text-muted">
+                  <span>$10k</span>
+                  <span id="valorPrecio" class="fw-bold texto-azul">$150k</span>
+                  <span>$150k</span>
+                </div>
+              </fieldset>
+
+              <!-- Hora de salida -->
+              <fieldset class="mb-3">
+                <legend class="form-label fw-bold">Hora de salida</legend>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="turno1" checked data-filtro>
+                  <label class="form-check-label" for="turno1">🌅 Madrugada (00–06)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="turno2" checked data-filtro>
+                  <label class="form-check-label" for="turno2">☀️ Mañana (06–12)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="turno3" checked data-filtro>
+                  <label class="form-check-label" for="turno3">🌤️ Tarde (12–18)</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="turno4" checked data-filtro>
+                  <label class="form-check-label" for="turno4">🌙 Noche (18–00)</label>
+                </div>
+              </fieldset>
+
+              <!-- Clase de servicio -->
+              <fieldset>
+                <legend class="form-label fw-bold">Tipo de servicio</legend>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="claseEconomica" checked data-filtro>
+                  <label class="form-check-label" for="claseEconomica">Económico</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="clasePremium" checked data-filtro>
+                  <label class="form-check-label" for="clasePremium">Premium</label>
+                </div>
+              </fieldset>
+            </div>
+          </div>
+
+          <!-- Mini buscador rápido -->
+          <div class="card-concorde">
+            <div class="card-header-concorde">
+              <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Modificar búsqueda
+            </div>
+            <div class="card-body">
+              <div class="form-concorde">
+                <label class="form-label" for="origenFiltro">Origen</label>
+                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen">
+                  <option value="TUNJA">Tunja</option>
+                  <option value="SOGAMOSO">Sogamoso</option>
+                  <option value="DUITAMA">Duitama</option>
+                  <option value="PAIPA">Paipa</option>
+                  <option value="YOPAL">Yopal</option>
+                  <option value="AGUAZUL">Aguazul</option>
+                </select>
+                <label class="form-label" for="destinoFiltro">Destino</label>
+                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino">
+                  <option value="BOGOTA SALITRE">Bogotá Salitre</option>
+                  <option value="BOGOTA NORTE">Bogotá Norte</option>
+                  <option value="BUCARAMANGA">Bucaramanga</option>
+                  <option value="BARRANQUILLA">Barranquilla</option>
+                  <option value="CARTAGENA">Cartagena</option>
+                  <option value="CUCUTA">Cúcuta</option>
+                  <option value="PAMPLONA">Pamplona</option>
+                  <option value="ONZAGA">Onzaga</option>
+                  <option value="AGUAZUL">Aguazul</option>
+                  <option value="TUNJA">Tunja</option>
+                </select>
+                <button type="button" id="btnBuscar" class="btn btn-concorde-primario w-100 btn-sm">
+                  <i class="bi bi-search me-1"></i>Buscar
+                </button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- RESULTADOS -->
+        <section class="col-lg-9" aria-label="Lista de trayectos disponibles">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <p class="mb-0 text-muted">
+              <strong class="texto-azul" id="contador">0</strong> <span id="textoContador">trayectos encontrados</span>
+            </p>
+            <div class="d-flex align-items-center gap-2">
+              <label for="ordenar" class="form-label mb-0 small fw-semibold">Ordenar por:</label>
+              <select class="form-select form-select-sm" id="ordenar" style="width:auto" aria-label="Ordenar resultados">
+                <option value="precioAsc">Precio (menor)</option>
+                <option value="precioDesc">Precio (mayor)</option>
+                <option value="duracion">Duración</option>
+                <option value="salida">Salida más temprana</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Aquí se pintan los trayectos reales -->
+          <div id="listaViajes" aria-live="polite">
+            <div class="text-center text-muted py-5">
+              <div class="spinner-border" role="status" aria-hidden="true"></div>
+              <p class="mt-3 mb-0">Cargando trayectos...</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/componentes.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    // ================== PARÁMETROS DE LA BÚSQUEDA ==================
+    const params    = new URLSearchParams(window.location.search);
+    const origen    = (params.get('origen')  || '').trim();
+    const destino   = (params.get('destino') || '').trim();
+    const fechaIda  = params.get('ida') || '';
+    const pasajeros = params.get('pasajeros') || params.get('pasajeros_total') || '1';
+
+    // ================== UTILIDADES ==================
+    const esc = t => String(t ?? '').replace(/[&<>"']/g,
+      c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+    const fmt = n => '$' + Number(n).toLocaleString('es-CO');
+    const sinTildes = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
+    const capitalizar = t => String(t || '').toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+
+    const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    function fechaCorta(iso) {
+      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+      if (!m) return '';
+      return parseInt(m[3], 10) + ' de ' + MESES[parseInt(m[2], 10) - 1];
+    }
+
+    // "3h 30min" -> 210
+    function duracionAMinutos(v) {
+      if (typeof v.duracionMinutos === 'number') return v.duracionMinutos;
+      const m = /(\d+)\s*h(?:\s*(\d+))?/i.exec(v.duracion || '');
+      return m ? parseInt(m[1], 10) * 60 + parseInt(m[2] || 0, 10) : 0;
+    }
+
+    const turnoDe = hora => {
+      const h = parseInt(String(hora || '0').split(':')[0], 10);
+      if (h < 6)  return 1;
+      if (h < 12) return 2;
+      if (h < 18) return 3;
+      return 4;
+    };
+
+    // ================== ENCABEZADO Y SELECTS ==================
+    function asignarSelect(select, valor) {
+      if (!valor) return;
+      const norm = sinTildes(valor);
+      let opt = [...select.options].find(o => sinTildes(o.value) === norm || sinTildes(o.text) === norm);
+      if (!opt) {                         // si la ciudad no estaba en la lista, la agregamos
+        opt = new Option(capitalizar(valor), valor);
+        select.add(opt);
+      }
+      select.value = opt.value;
+    }
+
+    asignarSelect(document.getElementById('origenFiltro'),  origen);
+    asignarSelect(document.getElementById('destinoFiltro'), destino);
+
+    document.getElementById('rutaBusqueda').textContent =
+      (capitalizar(origen) || 'Origen') + ' → ' + (capitalizar(destino) || 'Destino') +
+      (fechaIda ? ' · ' + fechaCorta(fechaIda) : '') +
+      ' · ' + pasajeros + (Number(pasajeros) === 1 ? ' pasajero' : ' pasajeros');
+
+    // Botón "Modificar búsqueda": recarga con los nuevos parámetros
+    document.getElementById('btnBuscar').addEventListener('click', () => {
+      const p = new URLSearchParams(window.location.search);
+      p.delete('idViaje');
+      p.set('origen',  document.getElementById('origenFiltro').value);
+      p.set('destino', document.getElementById('destinoFiltro').value);
+      window.location.href = 'p02-resultados.html?' + p.toString();
+    });
+
+    // ================== CARGA DE VIAJES ==================
+    let viajes = [];
+
+    async function cargarViajes() {
+      const lista = document.getElementById('listaViajes');
+      try {
+        const q = new URLSearchParams({ origen, destino, fecha: fechaIda });
+        const res = await fetch('/api/viajes?' + q.toString());
+        if (!res.ok) throw new Error('Error ' + res.status);
+        viajes = await res.json();
+        aplicar();
+      } catch (e) {
+        console.error(e);
+        lista.innerHTML = `
+          <div class="alert alert-danger">
+            No se pudieron cargar los trayectos. Intenta de nuevo en unos minutos.
+          </div>`;
+        document.getElementById('contador').textContent = '0';
+      }
+    }
+
+    // ================== FILTRAR + ORDENAR + PINTAR ==================
+    function aplicar() {
+      const precioMax = parseInt(document.getElementById('filtroPrecio').value, 10);
+      const turnos = {
+        1: document.getElementById('turno1').checked,
+        2: document.getElementById('turno2').checked,
+        3: document.getElementById('turno3').checked,
+        4: document.getElementById('turno4').checked
+      };
+      const eco = document.getElementById('claseEconomica').checked;
+      const pre = document.getElementById('clasePremium').checked;
+
+      let lista = viajes.filter(v => {
+        const esPremium = String(v.tipoServicio || '').toUpperCase() === 'PREMIUM';
+        return Number(v.precio) <= precioMax
+            && turnos[turnoDe(v.horaSalida)]
+            && (esPremium ? pre : eco);
+      });
+
+      const orden = document.getElementById('ordenar').value;
+      lista.sort((a, b) => {
+        if (orden === 'precioAsc')  return a.precio - b.precio;
+        if (orden === 'precioDesc') return b.precio - a.precio;
+        if (orden === 'duracion')   return duracionAMinutos(a) - duracionAMinutos(b);
+        return String(a.horaSalida).localeCompare(String(b.horaSalida));
+      });
+
+      pintar(lista);
+    }
+
+    function urlSeleccionar(v) {
+      const p = new URLSearchParams(window.location.search);
+      p.set('idViaje', v.id);
+      return 'p05-detalle-viaje.html?' + p.toString();
+    }
+
+    function pintar(lista) {
+      const cont = document.getElementById('listaViajes');
+      document.getElementById('contador').textContent = lista.length;
+      document.getElementById('textoContador').textContent =
+        lista.length === 1 ? 'trayecto encontrado' : 'trayectos encontrados';
+
+      if (!lista.length) {
+        cont.innerHTML = `
+          <div class="card-concorde">
+            <div class="card-body text-center py-5">
+              <div style="font-size:2.5rem" aria-hidden="true">🚌</div>
+              <h2 class="h5 mt-2">No encontramos trayectos</h2>
+              <p class="text-muted mb-0">Prueba con otra fecha, otra ciudad o ajusta los filtros.</p>
+            </div>
+          </div>`;
+        return;
+      }
+
+      cont.innerHTML = lista.map(v => {
+        const esPremium = String(v.tipoServicio || '').toUpperCase() === 'PREMIUM';
+        const badge = esPremium
+          ? '<span class="badge-clase badge-ejecutiva">Premium</span>'
+          : '<span class="badge-clase badge-economica">Económico</span>';
+        const directo = v.paradas ? esc(v.paradas) : 'Directo';
+        const agotado = v.asientosDisponibles !== undefined && Number(v.asientosDisponibles) <= 0;
+        const asientos = v.asientosDisponibles !== undefined
+          ? `<div class="small text-muted mb-2">Asientos disponibles: ${esc(v.asientosDisponibles)}</div>` : '';
+        const boton = agotado
+          ? '<button class="btn btn-secondary btn-sm px-3" disabled>Agotado</button>'
+          : `<a href="${esc(urlSeleccionar(v))}" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>`;
+
+        return `
+        <article class="card-vuelo fade-in-up" aria-label="Bus a las ${esc(v.horaSalida)}, precio ${esc(fmt(v.precio))}">
+          <div class="row align-items-center g-2">
+            <div class="col-md-3">
+              <div class="hora">${esc(v.horaSalida)}</div>
+              <div class="ciudad">${esc(v.ciudadOrigen)}${v.terminalOrigen ? ' · ' + esc(v.terminalOrigen) : ''}</div>
+              <div class="small text-muted">Bus 🚌 ${esc(v.tipoBus || '')}</div>
+            </div>
+            <div class="col-md-3 text-center">
+              <div class="linea-vuelo justify-content-center" aria-hidden="true">
+                <span class="avion-icono">🚌</span>
+              </div>
+              <small class="text-muted d-block">${esc(v.duracion || '')} · ${directo}</small>
+              ${badge}
+            </div>
+            <div class="col-md-3">
+              <div class="hora">${esc(v.horaLlegada)}</div>
+              <div class="ciudad">${esc(v.ciudadDestino)}</div>
+              <div class="small text-muted">${esc(v.terminalDestino || '')}</div>
+            </div>
+            <div class="col-md-3 text-end">
+              <div class="precio">${esc(fmt(v.precio))}<small>/persona</small></div>
+              ${asientos}
+              ${boton}
+            </div>
+          </div>
+        </article>`;
+      }).join('');
+    }
+
+    // ================== EVENTOS DE FILTROS ==================
+    const slider = document.getElementById('filtroPrecio');
+    const valorPrecio = document.getElementById('valorPrecio');
+    slider.addEventListener('input', () => {
+      valorPrecio.textContent = '$' + (parseInt(slider.value, 10) / 1000) + 'k';
+    });
+
+    document.querySelectorAll('[data-filtro]').forEach(el => el.addEventListener('change', aplicar));
+    slider.addEventListener('input', aplicar);
+    document.getElementById('ordenar').addEventListener('change', aplicar);
+
+    cargarViajes();
+  </script>
+  <script src="js/aviso-agotados.js"></script>
+</body>
+</html>

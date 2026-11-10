@@ -1,0 +1,21 @@
+[33m637a1b1[m Frontend actualizado en static
+[33m408d0e4[m[33m ([m[1;32mprueba-version-funcional[m[33m, [m[1;32mbackup-respaldo[m[33m)[m funcionaaaaaaa
+[33m465888b[m Busqueda de viajes conectada a la base de datos
+[33mf386535[m Add custom query method to ViajeRepository
+[33m3d0283b[m Refactor security rules and access permissions
+[33m86f2bdf[m Add search functionality for viajes by parameters
+[33m7e63708[m Change API URL to relative path
+[33m7437e9b[m Add CORS configuration for Spring Boot application
+[33m3e12f8c[m Refactor application structure and add CORS support
+[33ma218005[m Move CORS configuration to CorsConfig class
+[33mef28be0[m Enhance form validation and URL parameter handling
+[33mf37f70f[m Refactor search results and filters in HTML
+[33mef53028[m Enhance index.html with responsive styles and layout
+[33m21f33a7[m Fix API constant definition in admin-panel.html
+[33m7e2b14b[m Update API endpoint to relative path
+[33m7927e3d[m Update p11-reservas.html
+[33m043524c[m Update API_PERFIL URL to relative path
+[33mb7570d0[m Change API URL to relative path
+[33m87d7cfc[m Change API_REG URL to relative path
+[33m0ca32ed[m Change AUTH_API URL to relative path
+[33m9578e6c[m backend concorde

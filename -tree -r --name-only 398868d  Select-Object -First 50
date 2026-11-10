@@ -1,0 +1,41 @@
+[33m5a386b1[m Merge branch 'main' into respaldo-bueno # Please enter a commit message to explain why this merge is necessary, # especially if it merges an updated upstream into a topic branch. # # Lines starting with '#' will be ignored, and an empty message aborts # the commit.
+
+ README.md                                |  Bin [31m0[m -> [32m42[m bytes
+ concorde/admin-panel.html                | 1687 [32m++++++++++++++++++++++++++++++[m
+ concorde/agente-panel.html               | 1052 [32m+++++++++++++++++++[m
+ concorde/css/styles.css                  | 1328 [32m+++++++++++++++++++++++[m
+ concorde/img/Bogota.jpg                  |  Bin [31m0[m -> [32m1917096[m bytes
+ concorde/img/Bucaramanga.jpg             |  Bin [31m0[m -> [32m57860[m bytes
+ concorde/img/Cartagena.jpg               |  Bin [31m0[m -> [32m74462[m bytes
+ concorde/img/LogoConcorde.png            |  Bin [31m0[m -> [32m13494[m bytes
+ concorde/img/Sogamoso.jpg                |  Bin [31m0[m -> [32m84797[m bytes
+ concorde/img/Tunja.jpg                   |  Bin [31m0[m -> [32m234787[m bytes
+ concorde/img/Yopal.jpg                   |  Bin [31m0[m -> [32m62666[m bytes
+ concorde/index.html                      |  308 [32m++++++[m
+ concorde/js/auth.js                      |  133 [32m+++[m
+ concorde/js/aviso-agotados.js            |   45 [32m+[m
+ concorde/js/chatbot.js                   |  265 [32m+++++[m
+ concorde/js/componentes.js               |  211 [32m++++[m
+ concorde/js/main.js                      |  460 [32m++++++++[m
+ concorde/js/passwordPolicy.js            |   62 [32m++[m
+ concorde/p02-resultados.html             |  361 [32m+++++++[m
+ concorde/p03-login.html                  |  206 [32m++++[m
+ concorde/p04-registro.html               |  220 [32m++++[m
+ concorde/p04b-confirmacion-registro.html |   99 [32m++[m
+ concorde/p05-detalle-viaje.html          |  294 [32m++++++[m
+ concorde/p06-pasajero.html               |  232 [32m++++[m
+ concorde/p07-asientos.html               |  275 [32m+++++[m
+ concorde/p08-resumen-compra.html         |  160 [32m+++[m
+ concorde/p09-pago.html                   |  178 [32m++++[m
+ concorde/p10-confirmacion.html           |  101 [32m++[m
+ concorde/p11-reservas.html               |  190 [32m++++[m
+ concorde/p12-atencion.html               |  172 [32m+++[m
+ concorde/p13-recuperar.html              |  169 [32m+++[m
+ concorde/p14-detalle-reserva.html        |  136 [32m+++[m
+ concorde/p15-cancelacion.html            |  125 [32m+++[m
+ concorde/p15b-cancelacion-ok.html        |   82 [32m++[m
+ concorde/p16-perfil.html                 |  392 [32m+++++++[m
+ concorde/p17-confirmacion-mensaje.html   |  101 [32m++[m
+ concorde/p99-accesibilidad.html          |  167 [32m+++[m
+ no funciona                              |    2 [32m+[m
+ 38 files changed, 9213 insertions(+)

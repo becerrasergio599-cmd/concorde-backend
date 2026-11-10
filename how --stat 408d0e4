@@ -1,0 +1,66 @@
+[1mdiff --git a/.vscode/launch.json b/.vscode/launch.json[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9275b68[m
+[1m--- /dev/null[m
+[1m+++ b/.vscode/launch.json[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32m{[m
+[32m+[m[32m    // Use IntelliSense para saber los atributos posibles.[m
+[32m+[m[32m    // Mantenga el puntero para ver las descripciones de los existentes atributos.[m
+[32m+[m[32m    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387[m
+[32m+[m[32m    "version": "0.2.0",[m
+[32m+[m[32m    "configurations": [[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "type": "editor-browser",[m
+[32m+[m[32m            "request": "launch",[m
+[32m+[m[32m            "name": "Open p02-resultados.html",[m
+[32m+[m[32m            "url": "file:///c%3A/Users/Flex/Documents/proyecto/Proyecto_Concorde/Proyecto_HTML/Proyecto_HTML/concorde-springboot/src/main/resources/static/p02-resultados.html"[m
+[32m+[m[32m        }[m
+[32m+[m[32m    ][m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/concorde/.vscode/launch.json b/concorde/.vscode/launch.json[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ddfdb2b[m
+[1m--- /dev/null[m
+[1m+++ b/concorde/.vscode/launch.json[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32m{[m
+[32m+[m[32m    // Use IntelliSense para saber los atributos posibles.[m
+[32m+[m[32m    // Mantenga el puntero para ver las descripciones de los existentes atributos.[m
+[32m+[m[32m    // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387[m
+[32m+[m[32m    "version": "0.2.0",[m
+[32m+[m[32m    "configurations": [[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "type": "editor-browser",[m
+[32m+[m[32m            "request": "launch",[m
+[32m+[m[32m            "name": "Open p02-resultados.html",[m
+[32m+[m[32m            "url": "file:///c%3A/Users/Flex/Documents/proyecto/Proyecto_Concorde/Proyecto_HTML/Proyecto_HTML/concorde/p02-resultados.html"[m
+[32m+[m[32m        }[m
+[32m+[m[32m    ][m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/concorde/Test/RegistroTest.php b/concorde/Test/RegistroTest.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e69de29[m
+[1mdiff --git a/witch recuperar-deploy b/witch recuperar-deploy[m
+[1mnew file mode 100644[m
+[1mindex 0000000..95df1c0[m
+[1m--- /dev/null[m
+[1m+++ b/witch recuperar-deploy[m	
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32m[33mde326c0[m[33m ([m[1;31morigin/respaldo-bueno[m[33m, [m[1;32mrespaldo-bueno[m[33m)[m arreglo[m
+[32m+[m[32m[33mf69f489[m funcionaa[m
+[32m+[m[32m[33m01836ac[m atras[m
+[32m+[m[32m[33m85b05e3[m ayuda[m
+[32m+[m[32m[33m00977c6[m salucion[m
+[32m+[m[32m[33m57eeb1d[m resultadoss[m
+[32m+[m[32m[33m718c90b[m repuesta[m
+[32m+[m[32m[33mea00986[m solucion[m
+[32m+[m[32m[33m637a1b1[m Frontend actualizado en static[m
+[32m+[m[32m[33m73c43b5[m Merge branch 'main' into respaldo-bueno[m
+[32m+[m[32m[33m7c51b8d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mbackup-main[m[33m)[m resultados dinamicos y detalle de viaje[m
+[32m+[m[32m[33m408d0e4[m[33m ([m[1;32mrecuperar-deploy[m[33m, [m[1;32mprueba-version-funcional[m[33m, [m[1;32mbackup-respaldo[m[33m)[m funcionaaaaaaa[m
+[32m+[m[32m[33m465888b[m Busqueda de viajes conectada a la base de datos[m
+[32m+[m[32m[33mf386535[m Add custom query method to ViajeRepository[m
+[32m+[m[32m[33m3d0283b[m Refactor security rules and access permissions[m

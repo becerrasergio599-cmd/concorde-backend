@@ -23,7 +23,7 @@
         </nav>
         <h1 class="h4 mt-2 fw-bold">
           <i class="bi bi-search me-2" aria-hidden="true"></i>
-          <span id="rutaBusqueda">Buscando trayectos...</span>
+          <span id="rutaBusqueda">Cargando búsqueda...</span>
         </h1>
       </div>
     </div>
@@ -88,7 +88,7 @@
             </div>
           </div>
 
-          <!-- Mini buscador rápido -->
+          <!-- Mini buscador rápido (las ciudades se llenan por JS) -->
           <div class="card-concorde">
             <div class="card-header-concorde">
               <i class="bi bi-arrow-repeat me-1" aria-hidden="true"></i>Modificar búsqueda
@@ -96,28 +96,10 @@
             <div class="card-body">
               <div class="form-concorde">
                 <label class="form-label" for="origenFiltro">Origen</label>
-                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen">
-                  <option value="TUNJA">Tunja</option>
-                  <option value="SOGAMOSO">Sogamoso</option>
-                  <option value="DUITAMA">Duitama</option>
-                  <option value="PAIPA">Paipa</option>
-                  <option value="YOPAL">Yopal</option>
-                  <option value="AGUAZUL">Aguazul</option>
-                </select>
+                <select class="form-select form-select-sm mb-2" id="origenFiltro" aria-label="Cambiar ciudad de origen"></select>
                 <label class="form-label" for="destinoFiltro">Destino</label>
-                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino">
-                  <option value="BOGOTA SALITRE">Bogotá Salitre</option>
-                  <option value="BOGOTA NORTE">Bogotá Norte</option>
-                  <option value="BUCARAMANGA">Bucaramanga</option>
-                  <option value="BARRANQUILLA">Barranquilla</option>
-                  <option value="CARTAGENA">Cartagena</option>
-                  <option value="CUCUTA">Cúcuta</option>
-                  <option value="PAMPLONA">Pamplona</option>
-                  <option value="ONZAGA">Onzaga</option>
-                  <option value="AGUAZUL">Aguazul</option>
-                  <option value="TUNJA">Tunja</option>
-                </select>
-                <button type="button" id="btnBuscar" class="btn btn-concorde-primario w-100 btn-sm">
+                <select class="form-select form-select-sm mb-3" id="destinoFiltro" aria-label="Cambiar ciudad de destino"></select>
+                <button type="button" id="btnModificar" class="btn btn-concorde-primario w-100 btn-sm">
                   <i class="bi bi-search me-1"></i>Buscar
                 </button>
               </div>
@@ -129,26 +111,21 @@
         <section class="col-lg-9" aria-label="Lista de trayectos disponibles">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <p class="mb-0 text-muted">
-              <strong class="texto-azul" id="contador">0</strong> <span id="textoContador">trayectos encontrados</span>
+              <strong class="texto-azul" id="totalTrayectos">0</strong> trayectos encontrados
             </p>
             <div class="d-flex align-items-center gap-2">
               <label for="ordenar" class="form-label mb-0 small fw-semibold">Ordenar por:</label>
               <select class="form-select form-select-sm" id="ordenar" style="width:auto" aria-label="Ordenar resultados">
-                <option value="precioAsc">Precio (menor)</option>
-                <option value="precioDesc">Precio (mayor)</option>
+                <option value="precio-asc">Precio (menor)</option>
+                <option value="precio-desc">Precio (mayor)</option>
                 <option value="duracion">Duración</option>
                 <option value="salida">Salida más temprana</option>
               </select>
             </div>
           </div>
 
-          <!-- Aquí se pintan los trayectos reales -->
-          <div id="listaViajes" aria-live="polite">
-            <div class="text-center text-muted py-5">
-              <div class="spinner-border" role="status" aria-hidden="true"></div>
-              <p class="mt-3 mb-0">Cargando trayectos...</p>
-            </div>
-          </div>
+          <!-- Aquí JS dibuja los trayectos -->
+          <div id="listaTrayectos"></div>
         </section>
       </div>
     </div>
@@ -160,202 +137,140 @@
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ================== PARÁMETROS DE LA BÚSQUEDA ==================
-    const params    = new URLSearchParams(window.location.search);
-    const origen    = (params.get('origen')  || '').trim();
-    const destino   = (params.get('destino') || '').trim();
-    const fechaIda  = params.get('ida') || '';
-    const pasajeros = params.get('pasajeros') || params.get('pasajeros_total') || '1';
-
-    // ================== UTILIDADES ==================
-    const esc = t => String(t ?? '').replace(/[&<>"']/g,
-      c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-    const fmt = n => '$' + Number(n).toLocaleString('es-CO');
-    const sinTildes = t => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().toUpperCase();
-    const capitalizar = t => String(t || '').toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
-
-    const MESES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
-    function fechaCorta(iso) {
-      const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
-      if (!m) return '';
-      return parseInt(m[3], 10) + ' de ' + MESES[parseInt(m[2], 10) - 1];
-    }
-
-    // "3h 30min" -> 210
-    function duracionAMinutos(v) {
-      if (typeof v.duracionMinutos === 'number') return v.duracionMinutos;
-      const m = /(\d+)\s*h(?:\s*(\d+))?/i.exec(v.duracion || '');
-      return m ? parseInt(m[1], 10) * 60 + parseInt(m[2] || 0, 10) : 0;
-    }
-
-    const turnoDe = hora => {
-      const h = parseInt(String(hora || '0').split(':')[0], 10);
-      if (h < 6)  return 1;
-      if (h < 12) return 2;
-      if (h < 18) return 3;
-      return 4;
+  (function () {
+    const NOMBRES = {
+      AGUAZUL: 'Aguazul', BARRANQUILLA: 'Barranquilla', BOGOTA_NORTE: 'Bogotá Norte',
+      BOGOTA_SALITRE: 'Bogotá Salitre', BUCARAMANGA: 'Bucaramanga', CARTAGENA: 'Cartagena',
+      CUCUTA: 'Cúcuta', DUITAMA: 'Duitama', ONZAGA: 'Onzaga', PAIPA: 'Paipa',
+      PAMPLONA: 'Pamplona', SOGAMOSO: 'Sogamoso', TUNJA: 'Tunja', YOPAL: 'Yopal'
     };
 
-    // ================== ENCABEZADO Y SELECTS ==================
-    function asignarSelect(select, valor) {
-      if (!valor) return;
-      const norm = sinTildes(valor);
-      let opt = [...select.options].find(o => sinTildes(o.value) === norm || sinTildes(o.text) === norm);
-      if (!opt) {                         // si la ciudad no estaba en la lista, la agregamos
-        opt = new Option(capitalizar(valor), valor);
-        select.add(opt);
-      }
-      select.value = opt.value;
+    let TRAYECTOS = [];
+
+    function hoyLocal() {
+      const d = new Date();
+      return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
     }
 
-    asignarSelect(document.getElementById('origenFiltro'),  origen);
-    asignarSelect(document.getElementById('destinoFiltro'), destino);
+    const params = new URLSearchParams(location.search);
+    const origen = params.get('origen') || 'TUNJA';
+    const destino = params.get('destino') || 'BOGOTA_SALITRE';
+    const pasajeros = parseInt(params.get('pasajeros')) || 1;
+    const ida = params.get('ida') || hoyLocal();
+    const fecha = new Date(ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short' });
 
     document.getElementById('rutaBusqueda').textContent =
-      (capitalizar(origen) || 'Origen') + ' → ' + (capitalizar(destino) || 'Destino') +
-      (fechaIda ? ' · ' + fechaCorta(fechaIda) : '') +
-      ' · ' + pasajeros + (Number(pasajeros) === 1 ? ' pasajero' : ' pasajeros');
+            (NOMBRES[origen] || origen) + ' → ' + (NOMBRES[destino] || destino) +
+            ' · ' + fecha + ' · ' + pasajeros + ' pasajero' + (pasajeros > 1 ? 's' : '');
 
-    // Botón "Modificar búsqueda": recarga con los nuevos parámetros
-    document.getElementById('btnBuscar').addEventListener('click', () => {
-      const p = new URLSearchParams(window.location.search);
-      p.delete('idViaje');
-      p.set('origen',  document.getElementById('origenFiltro').value);
-      p.set('destino', document.getElementById('destinoFiltro').value);
-      window.location.href = 'p02-resultados.html?' + p.toString();
-    });
+    const contenedor = document.getElementById('listaTrayectos');
+    const total = document.getElementById('totalTrayectos');
+    const slider = document.getElementById('filtroPrecio');
+    const valorPrecio = document.getElementById('valorPrecio');
+    const ordenar = document.getElementById('ordenar');
+    const turnos = [1, 2, 3, 4].map(function (n) { return document.getElementById('turno' + n); });
 
-    // ================== CARGA DE VIAJES ==================
-    let viajes = [];
-
-    async function cargarViajes() {
-      const lista = document.getElementById('listaViajes');
-      try {
-        const q = new URLSearchParams({ origen, destino, fecha: fechaIda });
-        const res = await fetch('/api/viajes?' + q.toString());
-        if (!res.ok) throw new Error('Error ' + res.status);
-        viajes = await res.json();
-        aplicar();
-      } catch (e) {
-        console.error(e);
-        lista.innerHTML = `
-          <div class="alert alert-danger">
-            No se pudieron cargar los trayectos. Intenta de nuevo en unos minutos.
-          </div>`;
-        document.getElementById('contador').textContent = '0';
-      }
+    function turnoDe(hora) {
+      const h = parseInt(hora.split(':')[0], 10);
+      return h < 6 ? 0 : h < 12 ? 1 : h < 18 ? 2 : 3;
     }
 
-    // ================== FILTRAR + ORDENAR + PINTAR ==================
-    function aplicar() {
-      const precioMax = parseInt(document.getElementById('filtroPrecio').value, 10);
-      const turnos = {
-        1: document.getElementById('turno1').checked,
-        2: document.getElementById('turno2').checked,
-        3: document.getElementById('turno3').checked,
-        4: document.getElementById('turno4').checked
-      };
-      const eco = document.getElementById('claseEconomica').checked;
-      const pre = document.getElementById('clasePremium').checked;
-
-      let lista = viajes.filter(v => {
-        const esPremium = String(v.tipoServicio || '').toUpperCase() === 'PREMIUM';
-        return Number(v.precio) <= precioMax
-            && turnos[turnoDe(v.horaSalida)]
-            && (esPremium ? pre : eco);
+    function dibujar() {
+      const maxPrecio = parseInt(slider.value, 10);
+      const lista = TRAYECTOS.filter(function (t) {
+        return Number(t.precio) <= maxPrecio && turnos[turnoDe(t.salida)].checked;
       });
 
-      const orden = document.getElementById('ordenar').value;
-      lista.sort((a, b) => {
-        if (orden === 'precioAsc')  return a.precio - b.precio;
-        if (orden === 'precioDesc') return b.precio - a.precio;
-        if (orden === 'duracion')   return duracionAMinutos(a) - duracionAMinutos(b);
-        return String(a.horaSalida).localeCompare(String(b.horaSalida));
+      lista.sort(function (a, b) {
+        if (ordenar.value === 'precio-desc') return b.precio - a.precio;
+        if (ordenar.value === 'precio-asc') return a.precio - b.precio;
+        return a.salida.localeCompare(b.salida);
       });
 
-      pintar(lista);
-    }
-
-    function urlSeleccionar(v) {
-      const p = new URLSearchParams(window.location.search);
-      p.set('idViaje', v.idViaje ?? v.id);
-      return 'p05-detalle-viaje.html?' + p.toString();
-    }
-
-    function pintar(lista) {
-      const cont = document.getElementById('listaViajes');
-      document.getElementById('contador').textContent = lista.length;
-      document.getElementById('textoContador').textContent =
-        lista.length === 1 ? 'trayecto encontrado' : 'trayectos encontrados';
+      total.textContent = lista.length;
 
       if (!lista.length) {
-        cont.innerHTML = `
-          <div class="card-concorde">
-            <div class="card-body text-center py-5">
-              <div style="font-size:2.5rem" aria-hidden="true">🚌</div>
-              <h2 class="h5 mt-2">No encontramos trayectos</h2>
-              <p class="text-muted mb-0">Prueba con otra fecha, otra ciudad o ajusta los filtros.</p>
-            </div>
-          </div>`;
+        contenedor.innerHTML =
+                '<div class="alert alert-info">No hay trayectos disponibles de ' +
+                (NOMBRES[origen] || origen) + ' a ' + (NOMBRES[destino] || destino) +
+                ' para el ' + fecha + ' con estos filtros. Prueba con otra fecha, otra ruta o ajusta los filtros.</div>';
         return;
       }
 
-      cont.innerHTML = lista.map(v => {
-        const esPremium = String(v.tipoServicio || '').toUpperCase() === 'PREMIUM';
-        const badge = esPremium
-          ? '<span class="badge-clase badge-ejecutiva">Premium</span>'
-          : '<span class="badge-clase badge-economica">Económico</span>';
-        const directo = v.paradas ? esc(v.paradas) : 'Directo';
-        const agotado = v.asientosDisponibles !== undefined && Number(v.asientosDisponibles) <= 0;
-        const asientos = v.asientosDisponibles !== undefined
-          ? `<div class="small text-muted mb-2">Asientos disponibles: ${esc(v.asientosDisponibles)}</div>` : '';
-        const boton = agotado
-          ? '<button class="btn btn-secondary btn-sm px-3" disabled>Agotado</button>'
-          : `<a href="${esc(urlSeleccionar(v))}" class="btn btn-concorde-primario btn-sm px-3">Seleccionar</a>`;
-
-        return `
-        <article class="card-vuelo fade-in-up" aria-label="Bus a las ${esc(v.horaSalida)}, precio ${esc(fmt(v.precio))}">
-          <div class="row align-items-center g-2">
-            <div class="col-md-3">
-              <div class="hora">${esc(v.horaSalida)}</div>
-              <div class="ciudad">${esc(v.ciudadOrigen)}${v.terminalOrigen ? ' · ' + esc(v.terminalOrigen) : ''}</div>
-              <div class="small text-muted">Bus 🚌 ${esc(v.tipoBus || '')}</div>
-            </div>
-            <div class="col-md-3 text-center">
-              <div class="linea-vuelo justify-content-center" aria-hidden="true">
-                <span class="avion-icono">🚌</span>
-              </div>
-              <small class="text-muted d-block">${esc(v.duracion || '')} · ${directo}</small>
-              ${badge}
-            </div>
-            <div class="col-md-3">
-              <div class="hora">${esc(v.horaLlegada)}</div>
-              <div class="ciudad">${esc(v.ciudadDestino)}</div>
-              <div class="small text-muted">${esc(v.terminalDestino || '')}</div>
-            </div>
-            <div class="col-md-3 text-end">
-              <div class="precio">${esc(fmt(v.precio))}<small>/persona</small></div>
-              ${asientos}
-              ${boton}
-            </div>
-          </div>
-        </article>`;
+      contenedor.innerHTML = lista.map(function (t) {
+        const p = new URLSearchParams(params);
+        p.set('idViaje', t.idViaje);
+        const precio = Number(t.precio).toLocaleString('es-CO');
+        return '' +
+                '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + precio + '">' +
+                '<div class="row align-items-center g-2">' +
+                '<div class="col-md-4">' +
+                '<div class="hora">' + t.salida + '</div>' +
+                '<div class="ciudad">' + t.terminalOrigen + '</div>' +
+                '<div class="small text-muted">Bus 🚌</div>' +
+                '</div>' +
+                '<div class="col-md-4">' +
+                '<div class="ciudad">' + t.terminalDestino + '</div>' +
+                '<div class="small text-muted">' + fecha + '</div>' +
+                '</div>' +
+                '<div class="col-md-4 text-end">' +
+                '<div class="precio">$' + precio + '<small>/persona</small></div>' +
+                '<a href="p05-detalle-viaje.html?' + p.toString() + '" class="btn btn-concorde-primario btn-sm px-3 mt-2">Seleccionar</a>' +
+                '</div>' +
+                '</div>' +
+                '</article>';
       }).join('');
     }
 
-    // ================== EVENTOS DE FILTROS ==================
-    const slider = document.getElementById('filtroPrecio');
-    const valorPrecio = document.getElementById('valorPrecio');
-    slider.addEventListener('input', () => {
+    async function cargar() {
+      contenedor.innerHTML = '<div class="alert alert-secondary">Buscando trayectos...</div>';
+      try {
+        const q = new URLSearchParams({
+          origen: NOMBRES[origen] || origen,
+          destino: NOMBRES[destino] || destino,
+          fecha: ida
+        });
+        const res = await fetch(AUTH_API + '/viajes/disponibles?' + q.toString());
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        TRAYECTOS = await res.json();
+        dibujar();
+      } catch (e) {
+        console.error(e);
+        total.textContent = 0;
+        contenedor.innerHTML = '<div class="alert alert-danger">No se pudieron consultar los trayectos. Intenta de nuevo.</div>';
+      }
+    }
+
+    slider.addEventListener('input', function () {
       valorPrecio.textContent = '$' + (parseInt(slider.value, 10) / 1000) + 'k';
+      dibujar();
+    });
+    turnos.forEach(function (el) { el.addEventListener('change', dibujar); });
+    ordenar.addEventListener('change', dibujar);
+
+    const selO = document.getElementById('origenFiltro');
+    const selD = document.getElementById('destinoFiltro');
+    const opciones = Object.keys(NOMBRES).map(function (k) {
+      return '<option value="' + k + '">' + NOMBRES[k] + '</option>';
+    }).join('');
+    selO.innerHTML = opciones;
+    selD.innerHTML = opciones;
+    selO.value = origen;
+    selD.value = destino;
+
+    document.getElementById('btnModificar').addEventListener('click', function () {
+      if (selO.value === selD.value) {
+        UI.mostrarToast('El origen y el destino deben ser distintos', 'warning');
+        return;
+      }
+      params.set('origen', selO.value);
+      params.set('destino', selD.value);
+      location.search = params.toString();
     });
 
-    document.querySelectorAll('[data-filtro]').forEach(el => el.addEventListener('change', aplicar));
-    slider.addEventListener('input', aplicar);
-    document.getElementById('ordenar').addEventListener('change', aplicar);
-
-    cargarViajes();
-  </script>
+    cargar();
+  })();
+</script>
   <script src="js/aviso-agotados.js"></script>
 </body>
 </html>

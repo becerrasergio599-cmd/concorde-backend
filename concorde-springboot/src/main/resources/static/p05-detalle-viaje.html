@@ -39,24 +39,24 @@
             <div class="card-body">
               <div class="row align-items-center text-center g-3">
                 <div class="col-4">
-                  <div id="horaSalida" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
-                  <div class="fw-bold" id="ciudadOrigen">Cargando...</div>
-                  <small class="text-muted" id="terminalOrigen"></small>
-                  <div class="small text-muted mt-1" id="fechaSalida"></div>
+                  <div style="font-size:2rem;font-weight:700;color:var(--azul-principal)">05:30</div>
+                  <div class="fw-bold">Tunja</div>
+                  <small class="text-muted">Terminal de Transporte</small>
+                  <div class="small text-muted mt-1">Jue, 2 Ene 2025</div>
                 </div>
                 <div class="col-4">
-                  <div class="text-muted small mb-1" id="duracion"></div>
+                  <div class="text-muted small mb-1">3h 30min</div>
                   <div class="linea-vuelo justify-content-center" aria-hidden="true">
                     <span class="avion-icono">🚌</span>
                   </div>
-                  <div class="small mt-1"><span class="badge-clase badge-economica" id="tipoRuta">Directo</span></div>
-                  <div class="small text-muted mt-1">Placa: <span id="placa">--</span></div>
+                  <div class="small mt-1"><span class="badge-clase badge-economica">Directo</span></div>
+                  <div class="small text-muted mt-1">Placa: TXB-724</div>
                 </div>
                 <div class="col-4">
-                  <div id="horaLlegada" style="font-size:2rem;font-weight:700;color:var(--azul-principal)">--:--</div>
-                  <div class="fw-bold" id="ciudadDestino">Cargando...</div>
-                  <small class="text-muted" id="terminalDestino"></small>
-                  <div class="small text-muted mt-1" id="fechaLlegada"></div>
+                  <div style="font-size:2rem;font-weight:700;color:var(--azul-principal)">09:00</div>
+                  <div class="fw-bold">Bogotá Salitre</div>
+                  <small class="text-muted">Terminal Salitre</small>
+                  <div class="small text-muted mt-1">Jue, 2 Ene 2025</div>
                 </div>
               </div>
 
@@ -73,7 +73,7 @@
                       <input type="radio" name="clase" id="claseEconomica" value="economica" checked class="d-none">
                       <div style="font-size:1.5rem" aria-hidden="true">🚌</div>
                       <strong>Económico</strong>
-                      <div class="texto-azul fw-bold fs-5" id="precioEconomico">$0</div>
+                      <div class="texto-azul fw-bold fs-5">$22.000</div>
                       <small class="text-muted">Asiento reclinable · 1 maleta</small>
                     </label>
                   </div>
@@ -83,7 +83,7 @@
                       <input type="radio" name="clase" id="clasePremium" value="premium" class="d-none">
                       <div style="font-size:1.5rem" aria-hidden="true">⭐</div>
                       <strong>Premium</strong>
-                      <div class="texto-dorado fw-bold fs-5" id="precioPremium">$0</div>
+                      <div class="texto-dorado fw-bold fs-5">$28.000</div>
                       <small class="text-muted">Asiento cama · WiFi · Snack · 2 maletas</small>
                     </label>
                   </div>
@@ -149,18 +149,18 @@
             <div class="card-body">
               <table class="table table-sm mb-0" aria-label="Desglose de precios">
                 <tbody>
-                  <tr><td>Tarifa base (1 pax)</td><td class="text-end" id="tarifaBase">$0</td></tr>
-                  <tr><td>Tasa de trayecto</td><td class="text-end" id="tasaTrayecto">$0</td></tr>
+                  <tr><td>Tarifa base (1 pax)</td><td class="text-end" id="tarifaBase">$18.700</td></tr>
+                  <tr><td>Tasa de trayecto</td><td class="text-end">$3.300</td></tr>
                   <tr class="table-light">
                     <td><strong>Total</strong></td>
-                    <td class="text-end"><strong class="texto-azul" id="totalPrecio" aria-live="polite">$0</strong></td>
+                    <td class="text-end"><strong class="texto-azul" id="totalPrecio" aria-live="polite">$22.000</strong></td>
                   </tr>
                 </tbody>
               </table>
-              <a href="p06-pasajero.html" id="btnContinuar" class="btn btn-concorde-dorado w-100 mt-3 py-2">
+              <a href="p06-pasajero.html" class="btn btn-concorde-dorado w-100 mt-3 py-2">
                 Continuar <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
               </a>
-              <a href="p02-resultados.html" id="btnVolver" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
+              <a href="p02-resultados.html" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
                 <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Ver otros trayectos
               </a>
             </div>
@@ -176,107 +176,25 @@
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ================== PARÁMETROS DE LA URL ==================
-    const params  = new URLSearchParams(window.location.search);
-    const idViaje = params.get('idViaje');
-
-    // El botón "Ver otros trayectos" conserva la búsqueda original
-    const paramsBusqueda = new URLSearchParams(params);
-    paramsBusqueda.delete('idViaje');
-    document.getElementById('btnVolver').href = 'p02-resultados.html?' + paramsBusqueda.toString();
-
-    // ================== UTILIDADES ==================
-    const fmt = n => '$' + Number(n).toLocaleString('es-CO');
-    const setText = (id, valor) => {
-      const el = document.getElementById(id);
-      if (el) el.textContent = valor ?? '';
-    };
-    const capitalizar = t => t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : '';
-
-    let precios = {
-      economica: { base: 0, total: 0, comida: 'Sin refrigerio', icono: '🍪' },
-      premium:   { base: 0, total: 0, comida: 'Snack incluido', icono: '🍱' }
+    const precios = {
+      economica: { base: '$18.700', total: '$22.000', comida: 'Sin refrigerio', icono: '🍪' },
+      premium:   { base: '$23.700', total: '$28.000', comida: 'Snack incluido',  icono: '🍱' }
     };
 
-    // ================== CARGAR EL VIAJE REAL ==================
-    async function cargarViaje() {
-      // Mientras carga (o si falla), al menos mostramos las ciudades buscadas
-      setText('ciudadOrigen',  capitalizar(params.get('origen')));
-      setText('ciudadDestino', capitalizar(params.get('destino')));
-
-      if (!idViaje) {
-        UI.mostrarToast('No se seleccionó ningún trayecto', 'error');
-        setTimeout(() => window.location.href = 'p02-resultados.html?' + paramsBusqueda.toString(), 1500);
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/viajes/' + encodeURIComponent(idViaje));
-        if (!res.ok) throw new Error('Viaje no encontrado (' + res.status + ')');
-        const v = await res.json();
-
-        // Datos del trayecto
-        setText('horaSalida',      v.horaSalida);
-        setText('ciudadOrigen',    v.ciudadOrigen);
-        setText('terminalOrigen',  v.terminalOrigen);
-        setText('fechaSalida',     v.fechaSalida);
-        setText('duracion',        v.duracion);
-        setText('placa',           v.placa);
-        setText('horaLlegada',     v.horaLlegada);
-        setText('ciudadDestino',   v.ciudadDestino);
-        setText('terminalDestino', v.terminalDestino);
-        setText('fechaLlegada',    v.fechaLlegada ?? v.fechaSalida);
-
-        // Precios reales
-        const tasa    = Number(v.tasa ?? 0);
-        const economico = Number(v.precio);
-        const premium   = Number(v.precioPremium ?? Math.round(economico * 1.27));
-
-        precios = {
-          economica: { base: economico - tasa, total: economico, comida: 'Sin refrigerio', icono: '🍪' },
-          premium:   { base: premium - tasa,   total: premium,   comida: 'Snack incluido', icono: '🍱' }
-        };
-
-        setText('precioEconomico', fmt(economico));
-        setText('precioPremium',   fmt(premium));
-        setText('tasaTrayecto',    fmt(tasa));
-        pintarResumen('economica');
-
-        // Pasar el viaje a los siguientes pasos
-        actualizarEnlaceContinuar('economica');
-      } catch (e) {
-        console.error(e);
-        UI.mostrarToast('No se pudo cargar el trayecto', 'error');
-      }
-    }
-
-    function pintarResumen(clase) {
-      const d = precios[clase];
-      setText('tarifaBase', fmt(d.base));
-      setText('totalPrecio', fmt(d.total));
-      setText('textoComida', d.comida);
-      setText('iconoComida', d.icono);
-    }
-
-    function actualizarEnlaceContinuar(clase) {
-      const p = new URLSearchParams(params);
-      p.set('clase', clase);
-      p.set('total', precios[clase].total);
-      document.getElementById('btnContinuar').href = 'p06-pasajero.html?' + p.toString();
-    }
-
-    // ================== SELECTOR DE CLASE ==================
     document.querySelectorAll('input[name="clase"]').forEach(radio => {
       radio.addEventListener('change', () => {
-        pintarResumen(radio.value);
-        actualizarEnlaceContinuar(radio.value);
+        const d = precios[radio.value];
+        document.getElementById('tarifaBase').textContent  = d.base;
+        document.getElementById('totalPrecio').textContent = d.total;
+        document.getElementById('textoComida').textContent = d.comida;
+        document.getElementById('iconoComida').textContent = d.icono;
 
         const esEco = radio.value === 'economica';
-        document.getElementById('labelEconomica').style.background  = esEco ? 'rgba(0,53,128,0.06)' : '';
-        document.getElementById('labelEconomica').style.borderColor = esEco ? 'var(--azul-principal)' : '';
-        document.getElementById('labelPremium').style.background    = !esEco ? 'rgba(245,166,35,0.1)' : '';
-        document.getElementById('labelPremium').style.borderColor   = !esEco ? 'var(--dorado)' : '';
-        UI.mostrarToast('Servicio ' + radio.value + ' seleccionado: ' + fmt(precios[radio.value].total), 'info');
+        document.getElementById('labelEconomica').style.background   = esEco ? 'rgba(0,53,128,0.06)' : '';
+        document.getElementById('labelEconomica').style.borderColor   = esEco ? 'var(--azul-principal)' : '';
+        document.getElementById('labelPremium').style.background      = !esEco ? 'rgba(245,166,35,0.1)' : '';
+        document.getElementById('labelPremium').style.borderColor     = !esEco ? 'var(--dorado)' : '';
+        UI.mostrarToast('Servicio ' + radio.value + ' seleccionado: ' + d.total, 'info');
       });
     });
 
@@ -287,8 +205,6 @@
         radio.dispatchEvent(new Event('change'));
       });
     });
-
-    cargarViaje();
   </script>
 </body>
 </html>

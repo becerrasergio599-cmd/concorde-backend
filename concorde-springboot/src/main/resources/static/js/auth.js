@@ -114,9 +114,6 @@ const Auth = {
 (function interceptarFetchConToken() {
   const fetchOriginal = window.fetch.bind(window);
   window.fetch = function (recurso, opciones) {
-        if (typeof recurso === 'string') {
-     recurso = recurso.replace(/^https?:\/\/(localhost|127\.0\.0\.1):8082/, '');
-   }
     const url = typeof recurso === 'string' ? recurso : (recurso && recurso.url) || '';
     const esApi = url.includes('/api/');
     const esPublica = url.includes('/api/login') || url.includes('/api/registro');

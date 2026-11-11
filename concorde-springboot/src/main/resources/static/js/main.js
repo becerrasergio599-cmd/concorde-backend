@@ -63,15 +63,29 @@ const BusquedaVuelos = {
       });
     }
 
-    // Validación y submit
+    // Validación y submit: envía la búsqueda a la página de resultados por URL
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      if (this.validarFormBusqueda(form)) {
-        UI.mostrarLoader('Buscando trayectos disponibles...');
-        setTimeout(() => {
-          window.location.href = 'p02-resultados.html';
-        }, 1500);
+      if (!this.validarFormBusqueda(form)) return;
+
+      if (form.origen.value === form.destino.value) {
+        UI.mostrarToast('El origen y el destino deben ser distintos', 'warning');
+        return;
       }
+
+      const soloIda = grupoFechaVuelta && grupoFechaVuelta.classList.contains('d-none');
+      const params = new URLSearchParams({
+        origen: form.origen.value,
+        destino: form.destino.value,
+        ida: form.fechaIda.value,
+        vuelta: soloIda ? '' : form.fechaVuelta.value,
+        pasajeros: form.pasajeros.value
+      });
+
+      UI.mostrarLoader('Buscando trayectos disponibles...');
+      setTimeout(() => {
+        window.location.href = 'p02-resultados.html?' + params.toString();
+      }, 800);
     });
   },
 
@@ -181,12 +195,15 @@ const Validacion = {
         });
       });
 
-      form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (this.validarForm(form)) {
-          this.procesarForm(form);
-        }
-      });
+      // El buscador (#formBusqueda) tiene su propio submit en BusquedaVuelos
+      if (form.id !== 'formBusqueda') {
+        form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          if (this.validarForm(form)) {
+            this.procesarForm(form);
+          }
+        });
+      }
     });
 
     // Validación especial de email
@@ -276,6 +293,8 @@ const UI = {
   },
 
   mostrarLoader(mensaje = 'Cargando...') {
+    // Evita duplicar el loader si ya hay uno visible
+    this.ocultarLoader();
     const loader = document.createElement('div');
     loader.className = 'loader-overlay';
     loader.id = 'loaderGlobal';
@@ -366,6 +385,9 @@ const UI = {
   },
 
   initFiltrosResultados() {
+    // Los filtros de p02-resultados.html se aplican en el script de esa página.
+    // Aquí solo se deja el aviso visual en las demás páginas que usen data-filtro.
+    if (document.getElementById('listaTrayectos')) return;
     const filtros = document.querySelectorAll('[data-filtro]');
     filtros.forEach(filtro => {
       filtro.addEventListener('change', () => {

@@ -12,6 +12,71 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Ajustes: formulario compacto + imágenes de destinos -->
+  <style>
+    /* Título y texto del hero */
+    .hero-titulo { font-size: 1.9rem; }
+    @media (min-width: 992px) { .hero-titulo { font-size: 3rem; } }
+
+    /* Formulario compacto en celular */
+    @media (max-width: 767px) {
+      .hero-section { padding-top: 1rem !important; padding-bottom: 1.5rem !important; }
+      .hero-section .row.mb-4 { margin-bottom: .75rem !important; }
+
+      .card-busqueda { padding: .75rem !important; border-radius: 14px; }
+      .card-busqueda .nav-link { padding: .4rem .5rem; font-size: .9rem; }
+
+      .form-concorde .form-label { font-size: .75rem; margin-bottom: .15rem; }
+      .form-concorde .form-select,
+      .form-concorde .form-control {
+        font-size: .85rem;
+        padding: .35rem .5rem;
+        min-height: 38px;
+      }
+      .form-concorde .btn-concorde-dorado { padding: .45rem !important; }
+      .form-concorde .contador-pasajeros .btn { padding: .2rem .55rem; }
+    }
+
+    /* Botón de intercambiar ciudades: flota entre Origen y Destino */
+    .fila-ciudades .btn-swap {
+      position: absolute;
+      left: 50%;
+      top: 37px;                 /* escritorio: debajo de la etiqueta */
+      transform: translateX(-50%);
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      line-height: 1;
+      color: #003580;
+      background: #fff;
+      border: 1px solid #b6c2d6;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,.18);
+      z-index: 5;
+      cursor: pointer;
+    }
+    .fila-ciudades .btn-swap:hover,
+    .fila-ciudades .btn-swap:active { background: #003580; color: #fff; }
+    @media (max-width: 767px) {
+      .fila-ciudades .btn-swap { top: 25px; }   /* celular: etiqueta más pequeña */
+    }
+
+    /* Imágenes de destinos */
+    .destino-card { position: relative; overflow: hidden; border-radius: 12px; height: 180px; }
+    .destino-bg { position: absolute; inset: 0; }
+    .destino-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .destino-overlay { position: absolute; left: 0; right: 0; bottom: 0; }
+  </style>
 </head>
 <body>
 
@@ -24,10 +89,10 @@
       <div class="container position-relative">
         <div class="row justify-content-center text-center mb-4">
           <div class="col-lg-8">
-            <h1 class="display-4 fw-bold mb-3">
+            <h1 class="hero-titulo fw-bold mb-2">
               Viaja con <span style="color:var(--dorado)">Concorde</span>
             </h1>
-            <p class="lead opacity-90">
+            <p class="opacity-90 small mb-0">
               La empresa de transporte terrestre más confiable de Colombia.
               Rutas seguras, buses modernos y los mejores precios.
             </p>
@@ -56,10 +121,14 @@
               </ul>
 
               <form id="formBusqueda" class="form-concorde" novalidate aria-label="Buscar tiquetes de bus">
-                <div class="row g-3 align-items-end mt-1">
+                <div class="row g-2 align-items-end mt-1">
+
+                  <!-- Origen + Destino (el botón de intercambio flota entre ambos, sin ocupar espacio) -->
+                  <div class="col-12 col-lg-6">
+                  <div class="row gx-4 gy-0 position-relative fila-ciudades">
 
                   <!-- Origen -->
-                  <div class="col-lg-3 col-md-6">
+                  <div class="col-6">
                     <label class="form-label" for="origen">
                       <i class="bi bi-geo-alt me-1" aria-hidden="true"></i>Origen
                     </label>
@@ -83,17 +152,14 @@
                     <div class="invalid-feedback">Selecciona la ciudad de origen</div>
                   </div>
 
-                  <!-- Swap -->
-                  <div class="col-auto d-flex align-items-end pb-1">
-                    <button type="button" id="btnSwap" class="btn btn-outline-secondary rounded-circle"
-                      aria-label="Intercambiar origen y destino"
-                      data-bs-toggle="tooltip" title="Intercambiar ciudades">
-                      <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
-                    </button>
-                  </div>
+                  <!-- Swap: flotante, no ocupa espacio en el layout -->
+                  <button type="button" id="btnSwap" class="btn-swap"
+                    aria-label="Intercambiar origen y destino">
+                    <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+                  </button>
 
                   <!-- Destino -->
-                  <div class="col-lg-3 col-md-6">
+                  <div class="col-6">
                     <label class="form-label" for="destino">
                       <i class="bi bi-geo me-1" aria-hidden="true"></i>Destino
                     </label>
@@ -117,8 +183,11 @@
                     <div class="invalid-feedback">Selecciona la ciudad de destino</div>
                   </div>
 
+                  </div><!-- /fila-ciudades -->
+                  </div>
+
                   <!-- Fecha Ida -->
-                  <div class="col-lg-2 col-md-6">
+                  <div class="col-6 col-lg-2">
                     <label class="form-label" for="fechaIda">
                       <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Ida
                     </label>
@@ -128,7 +197,7 @@
                   </div>
 
                   <!-- Fecha Vuelta -->
-                  <div class="col-lg-2 col-md-6" id="grupoFechaVuelta">
+                  <div class="col-6 col-lg-2" id="grupoFechaVuelta">
                     <label class="form-label" for="fechaVuelta">
                       <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>Vuelta
                     </label>
@@ -136,7 +205,7 @@
                   </div>
 
                   <!-- Pasajeros -->
-                  <div class="col-lg-2 col-md-4">
+                  <div class="col-6 col-lg-2">
                     <label class="form-label" for="pasajeros">
                       <i class="bi bi-people me-1" aria-hidden="true"></i>Pasajeros
                     </label>
@@ -149,7 +218,7 @@
                   </div>
 
                   <!-- Botón -->
-                  <div class="col-12 col-md-3 col-lg-2">
+                  <div class="col-6 col-lg-2">
                     <button type="submit" class="btn btn-concorde-dorado w-100 py-2">
                       <i class="bi bi-search me-1" aria-hidden="true"></i><strong>Buscar</strong>
                     </button>
@@ -170,7 +239,7 @@
         <div class="row g-3">
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Tunja desde $18.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#1a3c6e,#2563eb);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/tunja.jpg" alt="Tunja" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#1a3c6e,#2563eb);"><img src="img/Tunja.jpg" alt="Tunja" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Tunja</h5>
                 <span class="precio-desde">Desde $18.000 COP</span>
@@ -179,7 +248,7 @@
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bucaramanga desde $55.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#7c3aed,#a855f7);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/bucaramanga.jpg" alt="Bucaramanga" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#7c3aed,#a855f7);"><img src="img/Bucaramanga.jpg" alt="Bucaramanga" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Bucaramanga</h5>
                 <span class="precio-desde">Desde $55.000 COP</span>
@@ -188,7 +257,7 @@
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bogotá Salitre desde $22.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#0f766e,#14b8a6);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/bogota.jpg" alt="Bogotá Salitre" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#0f766e,#14b8a6);"><img src="img/Bogota.jpg" alt="Bogotá Salitre" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Bogotá Salitre</h5>
                 <span class="precio-desde">Desde $22.000 COP</span>
@@ -197,7 +266,7 @@
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Sogamoso desde $15.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#b45309,#d97706);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/sogamoso.jpg" alt="Sogamoso" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#b45309,#d97706);"><img src="img/Sogamoso.jpg" alt="Sogamoso" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Sogamoso</h5>
                 <span class="precio-desde">Desde $15.000 COP</span>
@@ -206,7 +275,7 @@
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Yopal desde $45.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#166534,#16a34a);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/yopal.jpg" alt="Yopal" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#166534,#16a34a);"><img src="img/Yopal.jpg" alt="Yopal" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Yopal</h5>
                 <span class="precio-desde">Desde $45.000 COP</span>
@@ -215,7 +284,7 @@
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
             <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Cartagena desde $120.000">
-              <div class="destino-bg" style="background:linear-gradient(135deg,#0369a1,#0ea5e9);height:100%;display:flex;align-items:center;justify-content:center;font-size:4rem;"><img src="img/cartagena.jpg" alt="Cartagena" class="img-fluid"></div>
+              <div class="destino-bg" style="background:linear-gradient(135deg,#0369a1,#0ea5e9);"><img src="img/Cartagena.jpg" alt="Cartagena" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Cartagena</h5>
                 <span class="precio-desde">Desde $120.000 COP</span>

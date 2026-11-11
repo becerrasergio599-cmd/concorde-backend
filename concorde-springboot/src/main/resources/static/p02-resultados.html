@@ -200,6 +200,11 @@
       contenedor.innerHTML = lista.map(function (t) {
         const p = new URLSearchParams(params);
         p.set('idViaje', t.idViaje);
+        // Datos del viaje elegido: p05-detalle-viaje.html los lee desde la URL
+        p.set('salida', t.salida);
+        p.set('precio', t.precio);
+        p.set('terminalOrigen', t.terminalOrigen);
+        p.set('terminalDestino', t.terminalDestino);
         const precio = Number(t.precio).toLocaleString('es-CO');
         return '' +
                 '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + precio + '">' +

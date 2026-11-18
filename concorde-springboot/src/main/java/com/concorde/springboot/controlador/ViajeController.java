@@ -1,3 +1,4 @@
+
 package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.Viaje;
@@ -19,17 +20,27 @@ public class ViajeController {
     private ViajeRepository repository;
 
     @GetMapping
-    public List<Viaje> listar() { return repository.findAll(); }
-
-    // Busqueda publica: /api/viajes/buscar?origen=TUNJA&destino=DUITAMA&fecha=2026-10-24
-    @GetMapping("/buscar")
-    public List<Viaje> buscar(@RequestParam String origen,
-                              @RequestParam String destino,
-                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
-        return repository.buscar(ciudadDe(origen), ciudadDe(destino), fecha);
+    public List<Viaje> listar() {
+        return repository.findAll(
+                org.springframework.data.domain.PageRequest.of(0, 100)
+        ).getContent();
     }
 
-    // La pagina envia claves como TUNJA o BOGOTA_SALITRE; la tabla guarda la ciudad
+    @GetMapping("/buscar")
+    public List<Viaje> buscar(
+            @RequestParam String origen,
+            @RequestParam String destino,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate fecha) {
+
+        return repository.buscar(
+                ciudadDe(origen),
+                ciudadDe(destino),
+                fecha
+        );
+    }
+
     private String ciudadDe(String clave) {
         String c = clave.trim().toUpperCase();
         if (c.startsWith("BOGOTA")) return "Bogota";
@@ -38,16 +49,22 @@ public class ViajeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Viaje> obtener(@PathVariable Integer id) {
-        return repository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return repository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
     public ResponseEntity<Viaje> crear(@RequestBody Viaje v) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(v));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(repository.save(v));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Viaje> actualizar(@PathVariable Integer id, @RequestBody Viaje datos) {
+    public ResponseEntity<Viaje> actualizar(
+            @PathVariable Integer id,
+            @RequestBody Viaje datos) {
+
         return repository.findById(id).map(e -> {
             e.setRuta(datos.getRuta());
             e.setVehiculo(datos.getVehiculo());
@@ -56,13 +73,17 @@ public class ViajeController {
             e.setHoraSalida(datos.getHoraSalida());
             e.setPrecio(datos.getPrecio());
             e.setEstadoViaje(datos.getEstadoViaje());
+
             return ResponseEntity.ok(repository.save(e));
         }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
-        if (!repository.existsById(id)) return ResponseEntity.notFound().build();
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
         repository.deleteById(id);
         return ResponseEntity.noContent().build();
     }

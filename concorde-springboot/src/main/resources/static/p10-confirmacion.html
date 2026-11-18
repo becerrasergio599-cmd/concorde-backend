@@ -40,6 +40,7 @@
               <div class="col-6"><small class="text-muted d-block">Hora de salida</small><strong id="cfHora">—</strong></div>
               <div class="col-6"><small class="text-muted d-block">Asiento</small><strong id="cfAsiento">—</strong></div>
               <div class="col-6"><small class="text-muted d-block">Pasajero</small><strong id="cfPasajero">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Servicio</small><strong id="cfClase">—</strong></div>
               <div class="col-6"><small class="text-muted d-block">Total pagado</small><strong class="texto-azul" id="cfTotal">—</strong></div>
             </div>
 
@@ -87,6 +88,7 @@
       document.getElementById('cfHora').textContent = c.hora;
       document.getElementById('cfAsiento').textContent = c.asiento;
       document.getElementById('cfPasajero').textContent = c.pasajero;
+      document.getElementById('cfClase').textContent = (c.clase === 'Premium' ? '⭐ ' : '') + (c.clase || 'Económico');
       document.getElementById('cfTotal').textContent = c.total + ' COP';
     })();
 

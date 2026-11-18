@@ -30,9 +30,9 @@
 
       <div class="row g-4">
         <div class="col-lg-8">
-          <!-- Trayecto -->
+          <!-- Trayecto (ida) -->
           <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto</div>
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i><span id="tituloIda">Trayecto</span></div>
             <div class="card-body">
               <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
                 <div>
@@ -45,22 +45,32 @@
             </div>
           </article>
 
-          <!-- Pasajero -->
-          <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-person me-2" aria-hidden="true"></i>Pasajero</div>
+          <!-- Trayecto de vuelta (solo si la compra es de ida y vuelta) -->
+          <article class="card-concorde mb-3 d-none" id="cardVuelta">
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto de vuelta</div>
             <div class="card-body">
-              <div class="row g-2 small">
-                <div class="col-md-6"><strong>Nombre:</strong> <span id="rsNombre">—</span></div>
-                <div class="col-md-6"><strong>Documento:</strong> <span id="rsDocumento">—</span></div>
-                <div class="col-md-6"><strong>Asiento:</strong> <span id="rsAsiento">—</span></div>
-                <div class="col-md-6"><strong>Contacto:</strong> <span id="rsContacto">—</span></div>
+              <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
+                <div>
+                  <p class="mb-1 fw-bold" id="rsRutaV">—</p>
+                  <p class="mb-1 text-muted small" id="rsDetalleV">—</p>
+                  <span class="badge-clase badge-economica" id="rsClaseV">Clase Económica</span>
+                </div>
+                <div class="texto-azul fw-bold fs-5" id="rsPrecioV">$0</div>
               </div>
+            </div>
+          </article>
+
+          <!-- Pasajeros (uno por cada pasajero de la compra) -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-people me-2" aria-hidden="true"></i>Pasajeros</div>
+            <div class="card-body">
+              <div id="rsListaPasajeros"></div>
             </div>
           </article>
 
           <!-- Equipaje -->
           <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-luggage me-2" aria-hidden="true"></i>Equipaje incluido</div>
+            <div class="card-header-concorde"><i class="bi bi-luggage me-2" aria-hidden="true"></i>Equipaje incluido (por pasajero)</div>
             <div class="card-body d-flex gap-4 flex-wrap">
               <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🎒</div><small class="text-muted">Artículo personal<br>10 kg</small></div>
               <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🧳</div><small class="text-muted">Equipaje de mano<br>10 kg</small></div>
@@ -95,7 +105,7 @@
             <div class="card-body">
               <table class="table table-sm mb-3" aria-label="Resumen de precios">
                 <tbody>
-                  <tr><td>Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
+                  <tr><td id="lblTarifa">Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
                   <tr><td>Pasajeros</td><td class="text-end" id="rsPasajeros">1</td></tr>
                   <tr id="filaDescuento" class="text-success d-none">
                     <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$0</td>
@@ -131,14 +141,35 @@
     if (!viaje) { window.location.href = 'index.html'; }
 
     const usuario = Auth.getUsuario() || {};
-    const pax = JSON.parse(sessionStorage.getItem('concorde_pasajero') || 'null');
-    const asiento = sessionStorage.getItem('concorde_asiento');
 
-    // Tarifa elegida en p05 (Económico o Premium)
+    function leerJSON(k) { try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+
+    // Vuelta (solo si la compra es de ida y vuelta)
+    const viajeV = leerJSON('concorde_viaje_vuelta');
+    const hayVuelta = !!viajeV;
+
+    // Pasajeros: acepta arreglo (nuevo) u objeto único (formato anterior)
+    const paxRaw = leerJSON('concorde_pasajeros') || leerJSON('concorde_pasajero');
+    const listaPax = Array.isArray(paxRaw) ? paxRaw : (paxRaw ? [paxRaw] : []);
+
+    // Asientos de la ida: acepta arreglo (nuevo) o texto (formato anterior)
+    const asRaw = leerJSON('concorde_asientos') || sessionStorage.getItem('concorde_asiento');
+    const listaAsientos = Array.isArray(asRaw) ? asRaw : (asRaw ? String(asRaw).split(',').map(s => s.trim()) : []);
+
+    // Asientos de la vuelta
+    const asRawV = leerJSON('concorde_asientos_vuelta');
+    const listaAsientosV = Array.isArray(asRawV) ? asRawV : [];
+
+    // Tarifas elegidas en p05 (Económico o Premium)
     const esPremium = !!viaje && viaje.clase === 'premium';
+    const esPremiumV = hayVuelta && viajeV.clase === 'premium';
     const tarifa = Number(viaje ? (viaje.precioUnitario || viaje.precio) : 0);
+    const tarifaV = hayVuelta ? Number(viajeV.precioUnitario || viajeV.precio || 0) : 0;
     const numPasajeros = Number(viaje ? viaje.pasajeros : 1) || 1;
-    const subtotal = tarifa * numPasajeros;
+    const subtotal = (tarifa + tarifaV) * numPasajeros;
     let totalActual = subtotal;
 
     function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
@@ -147,32 +178,74 @@
       sessionStorage.setItem('concorde_total', String(Math.round(totalActual)));
     }
 
+    function fechaLarga(v) {
+      return new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+    }
+
+    function pintarBadge(el, premium) {
+      if (premium) {
+        el.textContent = '⭐ Clase Premium';
+        el.classList.remove('badge-economica');
+        el.classList.add('badge-premium');
+        el.style.background = 'rgba(245,166,35,0.18)';
+        el.style.color = '#b9770e';
+      } else {
+        el.textContent = 'Clase Económica';
+      }
+    }
+
     if (viaje) {
-      const fecha = new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      // Trayecto de ida
       document.getElementById('rsRuta').textContent = viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
-      document.getElementById('rsDetalle').textContent = fecha + ' · Salida ' + viaje.salida + ' · Directo';
-      document.getElementById('rsPrecio').textContent = dinero(subtotal);
-      document.getElementById('rsTarifa').textContent = dinero(tarifa);
+      document.getElementById('rsDetalle').textContent = fechaLarga(viaje) + ' · Salida ' + viaje.salida + ' · Directo';
+      document.getElementById('rsPrecio').textContent = dinero(tarifa * numPasajeros);
+      pintarBadge(document.getElementById('rsClase'), esPremium);
+
+      // Trayecto de vuelta
+      if (hayVuelta) {
+        document.getElementById('tituloIda').textContent = 'Trayecto de ida';
+        document.getElementById('cardVuelta').classList.remove('d-none');
+        document.getElementById('rsRutaV').textContent = viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino;
+        document.getElementById('rsDetalleV').textContent = fechaLarga(viajeV) + ' · Salida ' + viajeV.salida + ' · Directo';
+        document.getElementById('rsPrecioV').textContent = dinero(tarifaV * numPasajeros);
+        pintarBadge(document.getElementById('rsClaseV'), esPremiumV);
+        document.getElementById('lblTarifa').textContent = 'Tarifa por pasajero (ida + vuelta)';
+      }
+
+      document.getElementById('rsTarifa').textContent = dinero(tarifa + tarifaV);
       document.getElementById('rsPasajeros').textContent = numPasajeros;
       document.getElementById('totalFinal').textContent = dinero(subtotal);
 
-      // Clase del servicio
-      const badge = document.getElementById('rsClase');
-      if (esPremium) {
-        badge.textContent = '⭐ Clase Premium';
-        badge.classList.remove('badge-economica');
-        badge.classList.add('badge-premium');
-        badge.style.background = 'rgba(245,166,35,0.18)';
-        badge.style.color = '#b9770e';
-        document.getElementById('rsMaletas').innerHTML = 'Maletas bodega<br>2 × 20 kg';
+      // Equipaje de bodega según la clase de cada tramo
+      const maletas = p => p ? '2 × 20 kg' : '20 kg';
+      const elMaletas = document.getElementById('rsMaletas');
+      if (!hayVuelta) {
+        if (esPremium) elMaletas.innerHTML = 'Maletas bodega<br>2 × 20 kg';
+      } else if (esPremium === esPremiumV) {
+        elMaletas.innerHTML = (esPremium ? 'Maletas bodega' : 'Maleta bodega') + '<br>' + maletas(esPremium) + ' por tramo';
       } else {
-        badge.textContent = 'Clase Económica';
+        elMaletas.innerHTML = 'Maleta bodega<br>Ida: ' + maletas(esPremium) + ' · Vuelta: ' + maletas(esPremiumV);
       }
 
-      document.getElementById('rsNombre').textContent = pax ? pax.nombre : (usuario.nombre || '—');
-      document.getElementById('rsDocumento').textContent = pax ? pax.documento : '—';
-      document.getElementById('rsAsiento').textContent = asiento || '—';
-      document.getElementById('rsContacto').textContent = pax ? pax.email : (usuario.email || '—');
+      // Un bloque por pasajero
+      document.getElementById('rsListaPasajeros').innerHTML = Array.from({ length: numPasajeros }, (_, i) => {
+        const p = listaPax[i] || {};
+        const nombre = p.nombre || (i === 0 ? usuario.nombre : '') || '—';
+        const contacto = p.email || (listaPax[0] && listaPax[0].email) || usuario.email || '—';
+        const asientoTxt = hayVuelta
+          ? 'Ida ' + (listaAsientos[i] || '—') + ' · Vuelta ' + (listaAsientosV[i] || '—')
+          : (listaAsientos[i] || '—');
+        return `<div class="border rounded p-2 mb-2 small">
+          <div class="fw-bold mb-1">Pasajero ${i + 1}</div>
+          <div class="row g-2">
+            <div class="col-md-6"><strong>Nombre:</strong> ${esc(nombre)}</div>
+            <div class="col-md-6"><strong>Documento:</strong> ${esc(p.documento || '—')}</div>
+            <div class="col-md-6"><strong>Asiento:</strong> ${esc(asientoTxt)}</div>
+            <div class="col-md-6"><strong>Contacto:</strong> ${esc(contacto)}</div>
+          </div>
+        </div>`;
+      }).join('');
+
       guardarTotal();
     }
 

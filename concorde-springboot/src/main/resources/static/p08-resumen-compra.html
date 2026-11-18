@@ -30,17 +30,17 @@
 
       <div class="row g-4">
         <div class="col-lg-8">
-          <!-- Vuelo -->
+          <!-- Trayecto -->
           <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-airplane me-2" aria-hidden="true"></i>Vuelo</div>
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto</div>
             <div class="card-body">
               <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
                 <div>
-                  <p class="mb-1 fw-bold">Bogotá Bogotá Salitre → Cartagena Cartagena</p>
-                  <p class="mb-1 text-muted small">Jue, 2 Ene 2025 · 05:30 – 09:00 · Directo · Bus TXB-724</p>
+                  <p class="mb-1 fw-bold" id="rsRuta">—</p>
+                  <p class="mb-1 text-muted small" id="rsDetalle">—</p>
                   <span class="badge-clase badge-economica">Clase Económica</span>
                 </div>
-                <div class="texto-azul fw-bold fs-5">$22.000</div>
+                <div class="texto-azul fw-bold fs-5" id="rsPrecio">$0</div>
               </div>
             </div>
           </article>
@@ -50,10 +50,10 @@
             <div class="card-header-concorde"><i class="bi bi-person me-2" aria-hidden="true"></i>Pasajero</div>
             <div class="card-body">
               <div class="row g-2 small">
-                <div class="col-md-6"><strong>Nombre:</strong> Juan Carlos García López</div>
-                <div class="col-md-6"><strong>Documento:</strong> CC 1234567890</div>
-                <div class="col-md-6"><strong>Asiento:</strong> 10B</div>
-                <div class="col-md-6"><strong>Contacto:</strong> juangarcia@email.com</div>
+                <div class="col-md-6"><strong>Nombre:</strong> <span id="rsNombre">—</span></div>
+                <div class="col-md-6"><strong>Documento:</strong> <span id="rsDocumento">—</span></div>
+                <div class="col-md-6"><strong>Asiento:</strong> <span id="rsAsiento">—</span></div>
+                <div class="col-md-6"><strong>Contacto:</strong> <span id="rsContacto">—</span></div>
               </div>
             </div>
           </article>
@@ -95,15 +95,14 @@
             <div class="card-body">
               <table class="table table-sm mb-3" aria-label="Resumen de precios">
                 <tbody>
-                  <tr><td>Tarifa base</td><td class="text-end">$18.700</td></tr>
-                  <tr><td>Tasas aeroportuarias</td><td class="text-end">$2.200</td></tr>
-                  <tr><td>IVA</td><td class="text-end">$1.100</td></tr>
+                  <tr><td>Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
+                  <tr><td>Pasajeros</td><td class="text-end" id="rsPasajeros">1</td></tr>
                   <tr id="filaDescuento" class="text-success d-none">
-                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$2.200</td>
+                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$0</td>
                   </tr>
                   <tr class="table-light fw-bold">
                     <td>Total</td>
-                    <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$22.000</td>
+                    <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$0</td>
                   </tr>
                 </tbody>
               </table>
@@ -127,6 +126,41 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
+    // ===== Datos reales del flujo de compra =====
+    const viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
+    if (!viaje) { window.location.href = 'index.html'; }
+
+    const usuario = Auth.getUsuario() || {};
+    const pax = JSON.parse(sessionStorage.getItem('concorde_pasajero') || 'null');
+    const asiento = sessionStorage.getItem('concorde_asiento');
+
+    const tarifa = Number(viaje ? viaje.precio : 0);
+    const numPasajeros = Number(viaje ? viaje.pasajeros : 1) || 1;
+    const subtotal = tarifa * numPasajeros;
+    let totalActual = subtotal;
+
+    function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+
+    function guardarTotal() {
+      sessionStorage.setItem('concorde_total', String(Math.round(totalActual)));
+    }
+
+    if (viaje) {
+      const fecha = new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      document.getElementById('rsRuta').textContent = viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
+      document.getElementById('rsDetalle').textContent = fecha + ' · Salida ' + viaje.salida + ' · Directo';
+      document.getElementById('rsPrecio').textContent = dinero(subtotal);
+      document.getElementById('rsTarifa').textContent = dinero(tarifa);
+      document.getElementById('rsPasajeros').textContent = numPasajeros;
+      document.getElementById('totalFinal').textContent = dinero(subtotal);
+
+      document.getElementById('rsNombre').textContent = pax ? pax.nombre : (usuario.nombre || '—');
+      document.getElementById('rsDocumento').textContent = pax ? pax.documento : '—';
+      document.getElementById('rsAsiento').textContent = asiento || '—';
+      document.getElementById('rsContacto').textContent = pax ? pax.email : (usuario.email || '—');
+      guardarTotal();
+    }
+
     function aplicarDescuento() {
       const codigo = document.getElementById('codigoDesc').value.trim().toUpperCase();
       const msg = document.getElementById('msgDescuento');
@@ -135,12 +169,16 @@
       msg.classList.remove('d-none','text-success','text-danger');
 
       if (codigo === 'BIENVENIDO10') {
+        const descuento = subtotal * 0.10;
+        totalActual = subtotal - descuento;
+        document.getElementById('valorDescuento').textContent = '-' + dinero(descuento);
         fila.classList.remove('d-none');
-        total.textContent = '$19.800';
+        total.textContent = dinero(totalActual);
+        guardarTotal();
         msg.textContent = '✓ Descuento del 10% aplicado correctamente.';
         msg.classList.add('text-success');
         document.getElementById('btnAplicar').disabled = true;
-        UI.mostrarToast('¡Descuento aplicado! Ahorras $2.200', 'success');
+        UI.mostrarToast('¡Descuento aplicado! Ahorras ' + dinero(descuento), 'success');
       } else if (codigo === '') {
         msg.textContent = 'Ingresa un código de descuento.';
         msg.classList.add('text-danger');

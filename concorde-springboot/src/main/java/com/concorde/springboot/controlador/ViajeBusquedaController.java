@@ -1,4 +1,3 @@
-
 package com.concorde.springboot.controlador;
 
 import java.util.List;
@@ -28,13 +27,16 @@ public class ViajeBusquedaController {
                    to_char(v.hora_salida,'HH24:MI') AS "salida",
                    v.precio AS "precio",
                    t_o.nombre AS "terminalOrigen",
-                   t_d.nombre AS "terminalDestino"
+                   t_d.nombre AS "terminalDestino",
+                   COALESCE(ve.clase, 'ECONOMICO') AS "clase"
             FROM viaje v
             JOIN ruta r ON v.id_ruta = r.id_ruta
             JOIN terminal t_o
                 ON r.id_terminal_origen = t_o.id_terminal
             JOIN terminal t_d
                 ON r.id_terminal_destino = t_d.id_terminal
+            LEFT JOIN vehiculo ve
+                ON v.id_vehiculo = ve.id_vehiculo
             WHERE t_o.ciudad = ?
               AND t_d.ciudad = ?
               AND v.fecha_viaje = ?

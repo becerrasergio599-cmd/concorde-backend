@@ -107,19 +107,19 @@
                     <div class="row g-2">
                       <div class="col-md-4">
                         <div class="form-check">
-                          <input type="checkbox" class="form-abordajeput" id="necesidadSillaRuedas">
+                          <input type="checkbox" class="form-check-input" id="necesidadSillaRuedas">
                           <label class="form-check-label" for="necesidadSillaRuedas">♿ Silla de ruedas</label>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-check">
-                          <input type="checkbox" class="form-abordajeput" id="necesidadVegano">
+                          <input type="checkbox" class="form-check-input" id="necesidadVegano">
                           <label class="form-check-label" for="necesidadVegano">🥗 Comida especial</label>
                         </div>
                       </div>
                       <div class="col-md-4">
                         <div class="form-check">
-                          <input type="checkbox" class="form-abordajeput" id="necesidadMenorSolo">
+                          <input type="checkbox" class="form-check-input" id="necesidadMenorSolo">
                           <label class="form-check-label" for="necesidadMenorSolo">👶 Menor sin acompañante</label>
                         </div>
                       </div>
@@ -129,11 +129,11 @@
                   <!-- Progreso de llenado -->
                   <div class="col-12">
                     <label class="form-label small text-muted">Progreso del formulario</label>
-                    <div class="progress" style="height:8px" role="progressbar" 
+                    <div class="progress" style="height:8px" role="progressbar"
                       aria-label="Progreso del formulario" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                       <div class="progress-bar bg-success" id="barraProgreso" style="width:0%;transition:width 0.4s ease"></div>
                     </div>
-                    <small class="text-muted" id="textoProgreso" aria-live="polite">0 de 6 campos requeridos completados</small>
+                    <small class="text-muted" id="textoProgreso" aria-live="polite">0 de 7 campos requeridos completados</small>
                   </div>
 
                   <div class="col-12">
@@ -148,16 +148,16 @@
           </div>
         </div>
 
-        <aside class="col-lg-4" aria-label="Resumen del vuelo">
+        <aside class="col-lg-4" aria-label="Resumen del trayecto">
           <div class="card-concorde" style="position:sticky;top:80px">
-            <div class="card-header-concorde"><i class="bi bi-airplane me-2" aria-hidden="true"></i>Tu trayecto</div>
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Tu trayecto</div>
             <div class="card-body small">
-              <p class="mb-1"><strong>BOG → CTG</strong></p>
-              <p class="mb-1 text-muted">Jue, 2 Ene · 06:00 – 07:30</p>
-              <p class="mb-1 text-muted">Directo · 1h 30min</p>
+              <p class="mb-1 fw-bold" id="tuRuta">—</p>
+              <p class="mb-1 text-muted" id="tuFecha">—</p>
+              <p class="mb-1 text-muted">Directo</p>
               <hr>
               <div class="d-flex justify-content-between fw-bold">
-                <span>Total</span><span class="texto-azul">$280.000</span>
+                <span>Total</span><span class="texto-azul" id="tuTotal">$0</span>
               </div>
             </div>
           </div>
@@ -173,6 +173,16 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
+    // Resumen real del viaje elegido en la página de resultados
+    (function () {
+      var v = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
+      if (!v) { window.location.href = 'index.html'; return; }
+      var f = new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+      document.getElementById('tuRuta').textContent = v.terminalOrigen + ' → ' + v.terminalDestino;
+      document.getElementById('tuFecha').textContent = f + ' · ' + v.salida;
+      document.getElementById('tuTotal').textContent = '$' + (Number(v.precio) * Number(v.pasajeros || 1)).toLocaleString('es-CO');
+    })();
+
     const camposRequeridos = ['primerNombre','primerApellido','tipoDocPax','numDocPax','fechaNac','emailContacto','telefonoPax'];
 
     function validarCampoVivo(campo) {
@@ -211,12 +221,25 @@
     }
 
     function autocompletarDatos() {
-      const datos = { primerNombre:'Juan', segundoNombre:'Carlos', primerApellido:'García', segundoApellido:'López',
-        tipoDocPax:'CC', numDocPax:'1234567890', emailContacto:'juangarcia@email.com', telefonoPax:'3001234567' };
+      // Nombre y correo reales de la cuenta; el resto son datos de ejemplo
+      const u = Auth.getUsuario() || {};
+      const partes = (u.nombre || 'Juan García').split(' ').filter(Boolean);
+      const datos = {
+        primerNombre: partes[0] || 'Juan',
+        segundoNombre: '',
+        primerApellido: partes[1] || 'García',
+        segundoApellido: partes[2] || '',
+        tipoDocPax: 'CC',
+        numDocPax: '1234567890',
+        fechaNac: '1995-05-15',
+        emailContacto: u.email || 'juangarcia@email.com',
+        telefonoPax: '3001234567'
+      };
       Object.entries(datos).forEach(([id, val]) => {
         const el = document.getElementById(id);
-        if (el) { el.value = val; el.classList.add('is-valid'); }
+        if (el) { el.value = val; if (val) el.classList.add('is-valid'); }
       });
+      calcularEdad(document.getElementById('fechaNac'));
       document.getElementById('msgAutocompletar').textContent = '✓ Datos completados desde tu cuenta';
       actualizarProgreso();
       UI.mostrarToast('Datos de cuenta cargados exitosamente', 'success');

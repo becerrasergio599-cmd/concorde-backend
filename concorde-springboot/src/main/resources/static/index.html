@@ -18,6 +18,16 @@
     .hero-titulo { font-size: 1.9rem; }
     @media (min-width: 992px) { .hero-titulo { font-size: 3rem; } }
 
+    /* Subtítulo del hero: más aire respecto a la tarjeta de búsqueda */
+    .hero-subtitulo {
+      font-size: 1rem;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+    @media (max-width: 767px) {
+      .hero-subtitulo { font-size: .9rem; margin-bottom: 1.5rem; }
+    }
+
     @media (max-width: 767px) {
       .hero-section { padding-top: 1rem !important; padding-bottom: 1.5rem !important; }
       .hero-section .row.mb-4 { margin-bottom: .75rem !important; }
@@ -80,7 +90,7 @@
             <h1 class="hero-titulo fw-bold mb-2">
               Viaja con <span style="color:var(--dorado)">Concorde</span>
             </h1>
-            <p class="opacity-90 small mb-0">
+            <p class="opacity-90 hero-subtitulo">
               La empresa de transporte terrestre más confiable de Colombia.
               Rutas seguras, buses modernos y los mejores precios.
             </p>

@@ -132,7 +132,7 @@
               </div>
 
               <!-- Bus layout -->
-              <div class="bus-body" aria-label="Mapa interactivo de asientos del bus" data-pasajeros="1">
+              <div class="bus-body" aria-label="Mapa interactivo de asientos del bus" id="busBody" data-pasajeros="1">
                 <div class="bus-frente">🚌 FRENTE · CONDUCTOR</div>
 
                 <!-- Referencia de columnas -->
@@ -171,7 +171,7 @@
                 Continuar al resumen
                 <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
               </a>
-              <p class="small text-muted mt-2 text-center">Selecciona 1 asiento para continuar</p>
+              <p class="small text-muted mt-2 text-center" id="textoAyuda"></p>
             </div>
           </div>
         </div>
@@ -201,6 +201,40 @@
     const ocupados = ['1A','1C','2B','3D','4A','4B','5C','6D','7A','8B','9C','10D','11A'];
     const premium  = ['1A','1B','1C','1D','2A','2B','2C','2D']; // primeras 2 filas
     let seleccionados = [];
+
+    // ── Cantidad de pasajeros ──────────────────────────────────────────
+    // Busca el número de pasajeros en el viaje guardado, en la URL o en
+    // sessionStorage. Si no lo encuentra, usa 1.
+    function getNumPasajeros() {
+      let v = {};
+      try { v = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null') || {}; } catch (e) {}
+      const params = new URLSearchParams(location.search);
+      const candidatos = [
+        v.pasajeros, v.numPasajeros, v.numeroPasajeros, v.cantidad, v.cantidadPasajeros,
+        params.get('pasajeros'), params.get('numPasajeros'),
+        sessionStorage.getItem('concorde_pasajeros'),
+        sessionStorage.getItem('concorde_num_pasajeros')
+      ];
+      for (const c of candidatos) {
+        // Si es una lista de pasajeros, cuenta sus elementos
+        let n = Array.isArray(c) ? c.length : parseInt(c, 10);
+        if (n > 0) return n;
+      }
+      // Última opción: lista de pasajeros guardada como JSON
+      try {
+        const lista = JSON.parse(sessionStorage.getItem('concorde_pasajeros') || 'null');
+        if (Array.isArray(lista) && lista.length > 0) return lista.length;
+      } catch (e) {}
+      return 1;
+    }
+
+    const NUM_PASAJEROS = getNumPasajeros();
+    // Para revisar en F12 → Console qué se detectó y qué hay guardado
+    console.log('Pasajeros detectados:', NUM_PASAJEROS, Object.assign({}, sessionStorage));
+
+    document.getElementById('busBody').dataset.pasajeros = NUM_PASAJEROS;
+    document.getElementById('textoAyuda').textContent =
+      'Selecciona ' + NUM_PASAJEROS + ' asiento' + (NUM_PASAJEROS > 1 ? 's' : '') + ' para continuar';
 
     function generarFilas() {
       const contenedor = document.getElementById('filasAsientos');
@@ -246,15 +280,20 @@
 
     function toggleAsiento(btn) {
       const id = btn.dataset.numero;
-      const esPremium = btn.classList.contains('asiento-premium');
+      const esPremium = premium.includes(id);
 
       if (btn.classList.contains('asiento-seleccionado')) {
+        // Quitar selección
         btn.classList.remove('asiento-seleccionado');
         btn.classList.add(esPremium ? 'asiento-premium' : 'asiento-libre');
         seleccionados = seleccionados.filter(s => s !== id);
       } else {
-        if (seleccionados.length >= 1) {
-          UI.mostrarToast('Solo puedes seleccionar 1 asiento', 'warning');
+        // Agregar selección (hasta el número de pasajeros)
+        if (seleccionados.length >= NUM_PASAJEROS) {
+          UI.mostrarToast(
+            'Solo puedes seleccionar ' + NUM_PASAJEROS + ' asiento' + (NUM_PASAJEROS > 1 ? 's' : ''),
+            'warning'
+          );
           return;
         }
         btn.classList.remove('asiento-libre','asiento-premium');
@@ -265,19 +304,26 @@
     }
 
     function actualizarResumen() {
-      const el   = document.getElementById('resumenAsientos');
-      const btn  = document.getElementById('btnContinuarAsientos');
+      const el  = document.getElementById('resumenAsientos');
+      const btn = document.getElementById('btnContinuarAsientos');
+      const completo = seleccionados.length === NUM_PASAJEROS;
+
       if (seleccionados.length === 0) {
         el.textContent = 'Ningún asiento seleccionado';
-        btn.style.pointerEvents = 'none'; btn.style.opacity = '0.6';
-        btn.setAttribute('aria-disabled','true');
         sessionStorage.removeItem('concorde_asiento');
+        sessionStorage.removeItem('concorde_asientos');
       } else {
-        el.textContent = `Asiento seleccionado: ${seleccionados[0]}`;
-        btn.style.pointerEvents = ''; btn.style.opacity = '';
-        btn.removeAttribute('aria-disabled');
+        el.textContent = 'Asientos (' + seleccionados.length + '/' + NUM_PASAJEROS + '): ' + seleccionados.join(', ');
+        // Primer asiento: compatibilidad con las páginas que leen un solo asiento
         sessionStorage.setItem('concorde_asiento', seleccionados[0]);
+        // Lista completa de asientos
+        sessionStorage.setItem('concorde_asientos', JSON.stringify(seleccionados));
       }
+
+      btn.style.pointerEvents = completo ? '' : 'none';
+      btn.style.opacity = completo ? '' : '0.6';
+      if (completo) btn.removeAttribute('aria-disabled');
+      else btn.setAttribute('aria-disabled', 'true');
     }
 
     generarFilas();

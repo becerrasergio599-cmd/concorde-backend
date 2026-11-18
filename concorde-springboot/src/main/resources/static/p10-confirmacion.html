@@ -26,27 +26,27 @@
             <div style="background:var(--gris-claro);border-radius:var(--radio-md);padding:1.5rem;margin-bottom:1.5rem" role="region" aria-label="Código de reserva">
               <p class="text-muted small mb-1">Código de reserva</p>
               <div style="font-family:monospace;font-size:2.2rem;font-weight:700;color:var(--azul-principal);letter-spacing:6px" id="codigoReserva">
-                CC-8472
+                R-
               </div>
               <button type="button" onclick="copiarCodigo()" class="btn btn-outline-concorde btn-sm mt-2" aria-label="Copiar código de reserva">
                 <i class="bi bi-clipboard me-1" aria-hidden="true"></i>Copiar código
               </button>
             </div>
 
-            <!-- Resumen vuelo -->
+            <!-- Resumen del trayecto -->
             <div class="row g-3 text-start mb-4">
-              <div class="col-6"><small class="text-muted d-block">Vuelo</small><strong>Tunja → Bogotá Salitre</strong></div>
-              <div class="col-6"><small class="text-muted d-block">Fecha</small><strong>Jue, 2 Ene 2025</strong></div>
-              <div class="col-6"><small class="text-muted d-block">Hora</small><strong>05:30 – 09:00</strong></div>
-              <div class="col-6"><small class="text-muted d-block">Asiento</small><strong>12C · Económico</strong></div>
-              <div class="col-6"><small class="text-muted d-block">Pasajero</small><strong>Juan C. García</strong></div>
-              <div class="col-6"><small class="text-muted d-block">Total pagado</small><strong class="texto-azul">$22.000 COP</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Trayecto</small><strong id="cfRuta">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Fecha</small><strong id="cfFecha">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Hora de salida</small><strong id="cfHora">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Asiento</small><strong id="cfAsiento">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Pasajero</small><strong id="cfPasajero">—</strong></div>
+              <div class="col-6"><small class="text-muted d-block">Total pagado</small><strong class="texto-azul" id="cfTotal">—</strong></div>
             </div>
 
             <!-- Abordaje online -->
             <div class="alerta-info alerta-concorde text-start mb-4">
               <i class="bi bi-phone me-2" aria-hidden="true"></i>
-              <strong>Abordaje online disponible</strong> desde 24 horas antes del vuelo.
+              <strong>Abordaje online disponible</strong> desde 24 horas antes del viaje.
               <div id="estadoCheckin" class="mt-2" aria-live="polite"></div>
               <button type="button" onclick="hacerCheckin()" class="btn btn-sm btn-concorde-primario mt-2" id="btnCheckin">
                 <i class="bi bi-qr-code me-1" aria-hidden="true"></i>Hacer abordaje ahora
@@ -67,8 +67,7 @@
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
   </main>
   <div id="footer-placeholder"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -78,11 +77,24 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
+    // Muestra la reserva real guardada al pagar
+    (function () {
+      var c = JSON.parse(sessionStorage.getItem('concorde_confirmacion') || 'null');
+      if (!c) { window.location.href = 'p11-reservas.html'; return; }
+      document.getElementById('codigoReserva').textContent = 'R-' + c.idReserva;
+      document.getElementById('cfRuta').textContent = c.ruta;
+      document.getElementById('cfFecha').textContent = c.fecha;
+      document.getElementById('cfHora').textContent = c.hora;
+      document.getElementById('cfAsiento').textContent = c.asiento;
+      document.getElementById('cfPasajero').textContent = c.pasajero;
+      document.getElementById('cfTotal').textContent = c.total + ' COP';
+    })();
+
     function copiarCodigo() {
       const codigo = document.getElementById('codigoReserva').textContent.trim();
       navigator.clipboard?.writeText(codigo).then(() => {
-        UI.mostrarToast('¡Código CC-8472 copiado!', 'success');
-      }).catch(() => UI.mostrarToast('Código: CC-8472', 'info'));
+        UI.mostrarToast('¡Código ' + codigo + ' copiado!', 'success');
+      }).catch(() => UI.mostrarToast('Código: ' + codigo, 'info'));
     }
 
     function hacerCheckin() {

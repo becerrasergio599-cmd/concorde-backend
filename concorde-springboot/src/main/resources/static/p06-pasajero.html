@@ -101,6 +101,29 @@
     const form = document.getElementById('formPasajero');
     const contenedor = document.getElementById('contenedorPasajeros');
 
+    // ===== Pasajeros guardados (se recuerdan en este navegador para próximas compras) =====
+    const usuarioActual = Auth.getUsuario() || {};
+    const claveGuardados = 'concorde_guardados_' + (usuarioActual.email || usuarioActual.id || 'anon');
+    let guardados = [];
+    try {
+      const g = JSON.parse(localStorage.getItem(claveGuardados) || '[]');
+      if (Array.isArray(g)) guardados = g;
+    } catch (e) { /* sin guardados */ }
+
+    function esc(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function nombreCompleto(g) {
+      return [g.primerNombre, g.segundoNombre, g.primerApellido, g.segundoApellido].filter(Boolean).join(' ');
+    }
+    function guardadosHTML(i) {
+      if (!guardados.length) return '';
+      return `<select class="form-select form-select-sm w-auto" data-guardado="${i}" aria-label="Elegir un pasajero guardado">
+        <option value="">👥 Pasajeros guardados...</option>
+        ${guardados.map((g, k) => `<option value="${k}">${esc(nombreCompleto(g))} — ${esc((g.tipoDoc || '') + ' ' + (g.numDoc || ''))}</option>`).join('')}
+      </select>`;
+    }
+
     // ===== Plantilla de un pasajero =====
     function plantilla(i) {
       const n = i + 1;
@@ -113,13 +136,17 @@
         </div>
         <div class="card-body">
           <div class="row g-3">
-            ${primero ? `
-            <div class="col-12">
+            <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
+              ${primero ? `
               <button type="button" id="btnAutocompletar" class="btn btn-outline-concorde btn-sm">
                 <i class="bi bi-person-check me-1" aria-hidden="true"></i>Usar mis datos de cuenta
-              </button>
-              <span class="text-muted small ms-2" id="msgAutocompletar" aria-live="polite"></span>
-            </div>` : ''}
+              </button>` : `
+              <button type="button" class="btn btn-outline-concorde btn-sm" data-copiar-apellidos="${i}">
+                <i class="bi bi-people me-1" aria-hidden="true"></i>Copiar apellidos del pasajero 1
+              </button>`}
+              ${guardadosHTML(i)}
+              ${primero ? '<span class="text-muted small" id="msgAutocompletar" aria-live="polite"></span>' : ''}
+            </div>
 
             <div class="col-md-6">
               <label class="form-label" for="primerNombre_${i}">Primer nombre <span class="text-danger" aria-hidden="true">*</span></label>
@@ -265,11 +292,7 @@
         segundoNombre: '',
         primerApellido: partes[1] || 'García',
         segundoApellido: partes[2] || '',
-        tipoDoc: 'CC',
-        numDoc: '1234567890',
-        fechaNac: '1995-05-15',
-        email: u.email || 'juangarcia@email.com',
-        telefono: '3001234567'
+        email: u.email || ''
       };
       const card = form.querySelector('[data-pax="0"]');
       Object.entries(datos).forEach(([campo, val]) => {
@@ -277,9 +300,45 @@
         if (el) { el.value = val; if (val) el.classList.add('is-valid'); }
       });
       calcularEdad(card.querySelector('[data-fecha]'));
-      document.getElementById('msgAutocompletar').textContent = '✓ Datos completados desde tu cuenta';
+      document.getElementById('msgAutocompletar').textContent = '✓ Nombre y correo completados desde tu cuenta';
       actualizarProgreso();
       UI.mostrarToast('Datos de cuenta cargados exitosamente', 'success');
+    });
+
+    // ===== Atajos para no repetir datos =====
+    function rellenarCard(card, datos) {
+      Object.entries(datos).forEach(([campo, val]) => {
+        const el = card.querySelector('[data-campo="' + campo + '"]');
+        if (!el || el.type === 'checkbox' || val === undefined) return;
+        el.value = val;
+        if (val && el.dataset.req !== undefined) { el.classList.remove('is-invalid'); el.classList.add('is-valid'); }
+      });
+      const fecha = card.querySelector('[data-fecha]');
+      if (fecha) calcularEdad(fecha);
+      actualizarProgreso();
+    }
+
+    // Elegir un pasajero guardado
+    form.addEventListener('change', function (e) {
+      const sel = e.target.closest('[data-guardado]');
+      if (!sel || sel.value === '') return;
+      const g = guardados[Number(sel.value)];
+      if (!g) return;
+      rellenarCard(form.querySelector('[data-pax="' + sel.dataset.guardado + '"]'), g);
+      sel.value = '';
+      UI.mostrarToast('Datos de ' + g.primerNombre + ' cargados', 'success');
+    });
+
+    // Copiar apellidos del pasajero 1 (útil para familias)
+    form.addEventListener('click', function (e) {
+      const b = e.target.closest('[data-copiar-apellidos]');
+      if (!b) return;
+      const primero = form.querySelector('[data-pax="0"]');
+      const destino = form.querySelector('[data-pax="' + b.dataset.copiarApellidos + '"]');
+      rellenarCard(destino, {
+        primerApellido: primero.querySelector('[data-campo="primerApellido"]').value,
+        segundoApellido: primero.querySelector('[data-campo="segundoApellido"]').value
+      });
     });
 
     // ===== Recoger y restaurar lo escrito (por si el usuario vuelve atrás) =====
@@ -363,6 +422,23 @@
       sessionStorage.setItem('concorde_pasajeros', JSON.stringify(pasajeros));
       sessionStorage.setItem('concorde_pasajero', JSON.stringify(pasajeros[0])); // compatibilidad con páginas anteriores
       sessionStorage.setItem('concorde_pasajeros_form', JSON.stringify(campos));
+      // Recordar a los pasajeros en este navegador para próximas compras
+      try {
+        const lista = guardados.slice();
+        campos.forEach(o => {
+          const reg = {
+            primerNombre: o.primerNombre, segundoNombre: o.segundoNombre,
+            primerApellido: o.primerApellido, segundoApellido: o.segundoApellido,
+            tipoDoc: o.tipoDoc, numDoc: o.numDoc, fechaNac: o.fechaNac
+          };
+          if (o.telefono) reg.telefono = o.telefono;
+          if (o.email) reg.email = o.email;
+          const idx = lista.findIndex(g => g.tipoDoc === reg.tipoDoc && g.numDoc === reg.numDoc);
+          if (idx >= 0) lista[idx] = Object.assign({}, lista[idx], reg); else lista.push(reg);
+        });
+        localStorage.setItem(claveGuardados, JSON.stringify(lista.slice(-20)));
+      } catch (err) { /* el almacenamiento puede estar bloqueado; no impide continuar */ }
+
       window.location.href = 'p07-asientos.html';
     }, true);
   </script>

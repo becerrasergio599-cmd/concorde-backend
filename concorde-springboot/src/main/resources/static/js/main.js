@@ -37,6 +37,7 @@ const BusquedaVuelos = {
       const hoy = new Date().toISOString().split('T')[0];
       inputFecha.min = hoy;
       inputFecha.value = hoy;
+      if (inputFechaVuelta) inputFechaVuelta.min = hoy;
 
       inputFecha.addEventListener('change', () => {
         if (inputFechaVuelta) {
@@ -46,6 +47,9 @@ const BusquedaVuelos = {
           }
         }
       });
+    }
+    if (inputFechaVuelta) {
+      inputFechaVuelta.addEventListener('change', () => inputFechaVuelta.classList.remove('is-invalid'));
     }
 
     // Tab solo ida / ida y vuelta
@@ -74,6 +78,41 @@ const BusquedaVuelos = {
       }
 
       const soloIda = grupoFechaVuelta && grupoFechaVuelta.classList.contains('d-none');
+
+      // Ida y vuelta: la fecha de vuelta es obligatoria
+      if (!soloIda) {
+        if (!form.fechaVuelta.value) {
+          form.fechaVuelta.classList.add('is-invalid');
+          UI.mostrarToast('Selecciona la fecha de vuelta o elige "Solo ida"', 'warning');
+          form.fechaVuelta.focus();
+          return;
+        }
+        if (form.fechaVuelta.value < form.fechaIda.value) {
+          form.fechaVuelta.classList.add('is-invalid');
+          UI.mostrarToast('La fecha de vuelta no puede ser anterior a la de ida', 'warning');
+          return;
+        }
+      }
+      form.fechaVuelta.classList.remove('is-invalid');
+
+      // Nueva búsqueda = compra nueva: se limpia lo guardado de una compra anterior
+      [
+        'concorde_viaje', 'concorde_viaje_vuelta', 'concorde_ida_rt',
+        'concorde_asientos', 'concorde_asiento', 'concorde_asientos_vuelta',
+        'concorde_total', 'concorde_confirmacion', 'concorde_busqueda_rt'
+      ].forEach(k => sessionStorage.removeItem(k));
+
+      // Si es ida y vuelta, se recuerda la búsqueda completa para el paso de la vuelta
+      if (!soloIda) {
+        sessionStorage.setItem('concorde_busqueda_rt', JSON.stringify({
+          origen: form.origen.value,
+          destino: form.destino.value,
+          ida: form.fechaIda.value,
+          vuelta: form.fechaVuelta.value,
+          pasajeros: form.pasajeros.value
+        }));
+      }
+
       const params = new URLSearchParams({
         origen: form.origen.value,
         destino: form.destino.value,

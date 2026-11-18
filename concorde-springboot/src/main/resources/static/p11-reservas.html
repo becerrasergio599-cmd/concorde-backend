@@ -119,11 +119,27 @@
           const info = estadoInfo[reserva.estado] || estadoInfo.PENDIENTE;
           const extra = infoLocal[reserva.idReserva];
 
+          // Valor: 1) total guardado en la reserva, 2) respaldo local, 3) precio base del viaje
+          let valorTexto = '—';
+          if (reserva.total) {
+            valorTexto = '$' + Number(reserva.total).toLocaleString('es-CO');
+          } else if (extra && extra.total) {
+            valorTexto = extra.total;
+          } else if (viaje && viaje.precio) {
+            valorTexto = '$' + Number(viaje.precio).toLocaleString('es-CO');
+          }
+
+          // Clase: la de la reserva, o la del respaldo local
+          const claseCruda = reserva.clase || (extra && extra.clase ? String(extra.clase).toUpperCase().replace('Ó', 'O') : 'ECONOMICA');
+          const esPremium = claseCruda === 'PREMIUM';
+
           return {
             idReserva: reserva.idReserva,
             rutaTexto: origen && destino ? `${origen.ciudad} → ${destino.ciudad}` : (extra ? extra.ruta : 'Ruta no disponible'),
             fechaTexto: viaje && viaje.fechaViaje ? new Date(viaje.fechaViaje + 'T00:00:00').toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' }) : (extra ? extra.fecha : '—'),
-            valorTexto: viaje && viaje.precio ? '$' + Number(viaje.precio).toLocaleString('es-CO') : (extra ? extra.total : '—'),
+            valorTexto: valorTexto,
+            claseTexto: esPremium ? '⭐ Premium' : 'Económico',
+            esPremium: esPremium,
             estadoFiltro: info.filtro,
             estadoClase: info.clase,
             estadoTexto: info.texto,
@@ -157,7 +173,10 @@
           <td data-label="Fecha">${r.fechaTexto}</td>
           <td data-label="Pasajero">${usuario.nombre}</td>
           <td data-label="Estado"><span class="${r.estadoClase}">${r.estadoTexto}</span></td>
-          <td data-label="Valor">${r.valorTexto}</td>
+          <td data-label="Valor">
+            ${r.valorTexto}
+            <small class="d-block" style="color:${r.esPremium ? '#b9770e' : '#6c757d'};font-weight:${r.esPremium ? '700' : '400'}">${r.claseTexto}</small>
+          </td>
           <td data-label="Acciones">
             ${r.estadoCruda !== 'CANCELADA'
               ? `<button class="btn btn-sm btn-outline-danger" onclick="cancelarReserva(${r.idReserva})" aria-label="Cancelar reserva R-${r.idReserva}">
@@ -179,7 +198,9 @@
           body: JSON.stringify({
             usuario: { idUsuario: reserva.usuario.idUsuario },
             viaje: { idViaje: reserva.viaje.idViaje },
-            estado: 'CANCELADA'
+            estado: 'CANCELADA',
+            clase: reserva.clase,
+            total: reserva.total
           })
         });
         if (!res.ok) throw new Error('No se pudo cancelar');

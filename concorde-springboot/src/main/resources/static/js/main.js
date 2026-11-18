@@ -301,7 +301,7 @@ const UI = {
     loader.setAttribute('role', 'status');
     loader.setAttribute('aria-live', 'polite');
     loader.innerHTML = `
-      <div class="loader-avion" aria-hidden="true">✈️</div>
+            <div class="loader-avion" aria-hidden="true">✈️</div>
       <p class="mt-3 fw-semibold">${mensaje}</p>
     `;
     document.body.appendChild(loader);

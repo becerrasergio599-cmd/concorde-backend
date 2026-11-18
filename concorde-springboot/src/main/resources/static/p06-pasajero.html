@@ -29,12 +29,12 @@
       <div class="row g-4">
         <div class="col-lg-8">
           <form id="formPasajero" class="form-concorde" data-action="pasajero" novalidate aria-label="Formulario de datos de los pasajeros">
-            <div class="alerta-info alerta-concorde mb-3" role="note">
+            <div class="alerta-info alerta-concorde mb-3" role="note" id="avisoPasajeros">
               <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
-              Los datos deben coincidir exactamente con el documento de identidad de cada pasajero.
+              Los datos deben coincidir exactamente con el documento de identidad.
             </div>
 
-            <!-- Un bloque por pasajero, generado con JS -->
+            <!-- Pasajero 1 (obligatorio) y acompañantes (opcionales), generados con JS -->
             <div id="contenedorPasajeros"></div>
 
             <!-- Progreso de llenado -->
@@ -98,6 +98,14 @@
       document.getElementById('tuTotal').textContent = '$' + total.toLocaleString('es-CO');
     }
 
+    if (numPax > 1) {
+      document.getElementById('avisoPasajeros').innerHTML =
+        '<i class="bi bi-info-circle me-2" aria-hidden="true"></i>' +
+        'Basta con completar <strong>tus datos</strong>: la compra de los ' + numPax +
+        ' pasajes queda a tu nombre. Los datos de los acompañantes son opcionales; ' +
+        'agrégalos solo si quieres que cada tiquete lleve su nombre.';
+    }
+
     const form = document.getElementById('formPasajero');
     const contenedor = document.getElementById('contenedorPasajeros');
 
@@ -124,106 +132,126 @@
       </select>`;
     }
 
-    // ===== Plantilla de un pasajero =====
-    function plantilla(i) {
-      const n = i + 1;
+    // ===== Plantilla: campos de una persona =====
+    // Solo el pasajero 1 (i = 0) tiene campos obligatorios y contacto.
+    function cuerpo(i) {
       const primero = i === 0;
+      const req = primero ? 'data-req required aria-required="true"' : '';
+      const star = primero ? '<span class="text-danger" aria-hidden="true">*</span>' : '';
       return `
-      <div class="card-concorde mb-3" data-pax="${i}">
-        <div class="card-header-concorde d-flex justify-content-between align-items-center">
-          <span><i class="bi bi-person-fill me-2" aria-hidden="true"></i>Datos del Pasajero ${n}</span>
-          ${primero ? '<span class="small fw-normal">Contacto de la compra</span>' : ''}
+      <div class="row g-3">
+        <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
+          ${primero ? `
+          <button type="button" id="btnAutocompletar" class="btn btn-outline-concorde btn-sm">
+            <i class="bi bi-person-check me-1" aria-hidden="true"></i>Usar mis datos de cuenta
+          </button>` : `
+          <button type="button" class="btn btn-outline-concorde btn-sm" data-copiar-apellidos="${i}">
+            <i class="bi bi-people me-1" aria-hidden="true"></i>Copiar apellidos del pasajero 1
+          </button>`}
+          ${guardadosHTML(i)}
+          ${primero ? '<span class="text-muted small" id="msgAutocompletar" aria-live="polite"></span>' : ''}
         </div>
-        <div class="card-body">
-          <div class="row g-3">
-            <div class="col-12 d-flex flex-wrap gap-2 align-items-center">
-              ${primero ? `
-              <button type="button" id="btnAutocompletar" class="btn btn-outline-concorde btn-sm">
-                <i class="bi bi-person-check me-1" aria-hidden="true"></i>Usar mis datos de cuenta
-              </button>` : `
-              <button type="button" class="btn btn-outline-concorde btn-sm" data-copiar-apellidos="${i}">
-                <i class="bi bi-people me-1" aria-hidden="true"></i>Copiar apellidos del pasajero 1
-              </button>`}
-              ${guardadosHTML(i)}
-              ${primero ? '<span class="text-muted small" id="msgAutocompletar" aria-live="polite"></span>' : ''}
-            </div>
 
-            <div class="col-md-6">
-              <label class="form-label" for="primerNombre_${i}">Primer nombre <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="text" class="form-control" id="primerNombre_${i}" data-campo="primerNombre" data-req required aria-required="true" autocomplete="${primero ? 'given-name' : 'off'}">
-              <div class="invalid-feedback">Campo requerido</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label" for="segundoNombre_${i}">Segundo nombre</label>
-              <input type="text" class="form-control" id="segundoNombre_${i}" data-campo="segundoNombre" autocomplete="off">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label" for="primerApellido_${i}">Primer apellido <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="text" class="form-control" id="primerApellido_${i}" data-campo="primerApellido" data-req required aria-required="true" autocomplete="${primero ? 'family-name' : 'off'}">
-              <div class="invalid-feedback">Campo requerido</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label" for="segundoApellido_${i}">Segundo apellido</label>
-              <input type="text" class="form-control" id="segundoApellido_${i}" data-campo="segundoApellido" autocomplete="off">
-            </div>
-            <div class="col-md-4">
-              <label class="form-label" for="tipoDoc_${i}">Tipo documento <span class="text-danger" aria-hidden="true">*</span></label>
-              <select class="form-select" id="tipoDoc_${i}" data-campo="tipoDoc" data-req required aria-required="true">
-                <option value="">Selecciona...</option>
-                <option value="CC">Cédula de Ciudadanía</option>
-                <option value="CE">Cédula de Extranjería</option>
-                <option value="PA">Pasaporte</option>
-                <option value="TI">Tarjeta de Identidad</option>
-              </select>
-              <div class="invalid-feedback">Selecciona el tipo</div>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label" for="numDoc_${i}">Número de documento <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="text" class="form-control" id="numDoc_${i}" data-campo="numDoc" data-req required aria-required="true" autocomplete="off">
-              <div class="invalid-feedback">Campo requerido</div>
-            </div>
-            <div class="col-md-4">
-              <label class="form-label" for="fechaNac_${i}">Fecha de nacimiento <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="date" class="form-control" id="fechaNac_${i}" data-campo="fechaNac" data-req data-fecha required aria-required="true" autocomplete="${primero ? 'bday' : 'off'}">
-              <div class="invalid-feedback">Campo requerido</div>
-              <div id="edad_${i}" class="form-text" aria-live="polite"></div>
-            </div>
-            ${primero ? `
-            <div class="col-md-6">
-              <label class="form-label" for="email_${i}">Correo de contacto <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="email" class="form-control" id="email_${i}" data-campo="email" data-req required aria-required="true" autocomplete="email">
-              <div class="invalid-feedback">Correo inválido</div>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label" for="telefono_${i}">Teléfono de contacto <span class="text-danger" aria-hidden="true">*</span></label>
-              <input type="tel" class="form-control" id="telefono_${i}" data-campo="telefono" data-req required aria-required="true" autocomplete="tel">
-              <div class="invalid-feedback">Campo requerido</div>
-            </div>` : ''}
+        <div class="col-md-6">
+          <label class="form-label" for="primerNombre_${i}">Primer nombre ${star}</label>
+          <input type="text" class="form-control" id="primerNombre_${i}" data-campo="primerNombre" ${req} autocomplete="${primero ? 'given-name' : 'off'}">
+          <div class="invalid-feedback">Campo requerido</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="segundoNombre_${i}">Segundo nombre</label>
+          <input type="text" class="form-control" id="segundoNombre_${i}" data-campo="segundoNombre" autocomplete="off">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="primerApellido_${i}">Primer apellido ${star}</label>
+          <input type="text" class="form-control" id="primerApellido_${i}" data-campo="primerApellido" ${req} autocomplete="${primero ? 'family-name' : 'off'}">
+          <div class="invalid-feedback">Campo requerido</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="segundoApellido_${i}">Segundo apellido</label>
+          <input type="text" class="form-control" id="segundoApellido_${i}" data-campo="segundoApellido" autocomplete="off">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="tipoDoc_${i}">Tipo documento ${star}</label>
+          <select class="form-select" id="tipoDoc_${i}" data-campo="tipoDoc" ${req}>
+            <option value="">Selecciona...</option>
+            <option value="CC">Cédula de Ciudadanía</option>
+            <option value="CE">Cédula de Extranjería</option>
+            <option value="PA">Pasaporte</option>
+            <option value="TI">Tarjeta de Identidad</option>
+          </select>
+          <div class="invalid-feedback">Selecciona el tipo</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="numDoc_${i}">Número de documento ${star}</label>
+          <input type="text" class="form-control" id="numDoc_${i}" data-campo="numDoc" ${req} autocomplete="off">
+          <div class="invalid-feedback">Campo requerido</div>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="fechaNac_${i}">Fecha de nacimiento ${star}</label>
+          <input type="date" class="form-control" id="fechaNac_${i}" data-campo="fechaNac" data-fecha ${req} autocomplete="${primero ? 'bday' : 'off'}">
+          <div class="invalid-feedback">Campo requerido</div>
+          <div id="edad_${i}" class="form-text" aria-live="polite"></div>
+        </div>
+        ${primero ? `
+        <div class="col-md-6">
+          <label class="form-label" for="email_${i}">Correo de contacto ${star}</label>
+          <input type="email" class="form-control" id="email_${i}" data-campo="email" ${req} autocomplete="email">
+          <div class="invalid-feedback">Correo inválido</div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="telefono_${i}">Teléfono de contacto ${star}</label>
+          <input type="tel" class="form-control" id="telefono_${i}" data-campo="telefono" ${req} autocomplete="tel">
+          <div class="invalid-feedback">Campo requerido</div>
+        </div>` : ''}
 
-            <div class="col-12">
-              <h2 class="h6 fw-bold mb-2">Necesidades especiales (opcional)</h2>
-              <div class="row g-2">
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="silla_${i}" data-campo="sillaRuedas">
-                    <label class="form-check-label" for="silla_${i}">♿ Silla de ruedas</label>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="comida_${i}" data-campo="comidaEspecial">
-                    <label class="form-check-label" for="comida_${i}">🥗 Comida especial</label>
-                  </div>
-                </div>
-                <div class="col-md-4">
-                  <div class="form-check">
-                    <input type="checkbox" class="form-check-input" id="menor_${i}" data-campo="menorSolo">
-                    <label class="form-check-label" for="menor_${i}">👶 Menor sin acompañante</label>
-                  </div>
-                </div>
+        <div class="col-12">
+          <h2 class="h6 fw-bold mb-2">Necesidades especiales (opcional)</h2>
+          <div class="row g-2">
+            <div class="col-md-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="silla_${i}" data-campo="sillaRuedas">
+                <label class="form-check-label" for="silla_${i}">♿ Silla de ruedas</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="comida_${i}" data-campo="comidaEspecial">
+                <label class="form-check-label" for="comida_${i}">🥗 Comida especial</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="menor_${i}" data-campo="menorSolo">
+                <label class="form-check-label" for="menor_${i}">👶 Menor sin acompañante</label>
               </div>
             </div>
           </div>
+        </div>
+      </div>`;
+    }
+
+    function plantilla(i) {
+      if (i === 0) {
+        return `
+        <div class="card-concorde mb-3" data-pax="0">
+          <div class="card-header-concorde d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-person-fill me-2" aria-hidden="true"></i>Datos del Pasajero 1${numPax > 1 ? ' (titular de la compra)' : ''}</span>
+          </div>
+          <div class="card-body">${cuerpo(0)}</div>
+        </div>`;
+      }
+      // Acompañantes: plegados por defecto y sin campos obligatorios
+      return `
+      <div class="card-concorde mb-3" data-pax="${i}">
+        <div class="card-header-concorde d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-person me-2" aria-hidden="true"></i>Acompañante ${i + 1} <small class="fw-normal">(opcional)</small></span>
+          <button type="button" class="btn btn-sm btn-outline-light" id="btnAcomp_${i}"
+            data-bs-toggle="collapse" data-bs-target="#acomp_${i}" aria-expanded="false" aria-controls="acomp_${i}">
+            Agregar datos
+          </button>
+        </div>
+        <div class="collapse" id="acomp_${i}">
+          <div class="card-body">${cuerpo(i)}</div>
         </div>
       </div>`;
     }
@@ -274,7 +302,7 @@
       }
     }
 
-    // Un solo listener por tipo de evento para todos los pasajeros
+    // Un solo listener por tipo de evento para todos los formularios
     form.addEventListener('input', function (e) {
       if (e.target.matches('[data-req]')) validarCampoVivo(e.target);
     });
@@ -294,13 +322,28 @@
         segundoApellido: partes[2] || '',
         email: u.email || ''
       };
+
+      // Otros datos de la cuenta, si existen (se prueban nombres de campo comunes)
+      const pick = keys => { for (const k of keys) { if (u[k]) return String(u[k]).trim(); } return ''; };
+      const tel = pick(['telefono', 'celular', 'phone', 'telefonoContacto']);
+      if (tel) datos.telefono = tel;
+      const numDoc = pick(['numeroDocumento', 'numDocumento', 'documento', 'cedula', 'identificacion']);
+      if (numDoc) datos.numDoc = numDoc;
+      const tdRaw = pick(['tipoDocumento', 'tipoDoc']).toLowerCase();
+      const tipo = ['cc', 'ce', 'pa', 'ti'].includes(tdRaw) ? tdRaw.toUpperCase()
+        : /ciudad/.test(tdRaw) ? 'CC' : /extranj/.test(tdRaw) ? 'CE'
+        : /pasaporte/.test(tdRaw) ? 'PA' : /identidad/.test(tdRaw) ? 'TI' : '';
+      if (tipo) datos.tipoDoc = tipo;
+      const fn = pick(['fechaNacimiento', 'fechaNac', 'nacimiento']);
+      if (/^\d{4}-\d{2}-\d{2}/.test(fn)) datos.fechaNac = fn.slice(0, 10);
+
       const card = form.querySelector('[data-pax="0"]');
       Object.entries(datos).forEach(([campo, val]) => {
         const el = card.querySelector('[data-campo="' + campo + '"]');
         if (el) { el.value = val; if (val) el.classList.add('is-valid'); }
       });
       calcularEdad(card.querySelector('[data-fecha]'));
-      document.getElementById('msgAutocompletar').textContent = '✓ Nombre y correo completados desde tu cuenta';
+      document.getElementById('msgAutocompletar').textContent = '✓ Datos completados desde tu cuenta';
       actualizarProgreso();
       UI.mostrarToast('Datos de cuenta cargados exitosamente', 'success');
     });
@@ -359,20 +402,27 @@
         g.slice(0, numPax).forEach((o, i) => {
           const card = form.querySelector('[data-pax="' + i + '"]');
           if (!card) return;
+          let hayDatos = false;
           Object.entries(o).forEach(([campo, val]) => {
             const el = card.querySelector('[data-campo="' + campo + '"]');
             if (!el) return;
-            if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
+            if (el.type === 'checkbox') { el.checked = !!val; if (val) hayDatos = true; }
+            else { el.value = val; if (val) hayDatos = true; }
             if (el.dataset.req !== undefined && val) el.classList.add('is-valid');
           });
           const fecha = card.querySelector('[data-fecha]');
           if (fecha && fecha.value) calcularEdad(fecha);
+          // Si un acompañante ya tenía datos, se deja desplegado
+          if (i > 0 && hayDatos) {
+            document.getElementById('acomp_' + i).classList.add('show');
+            document.getElementById('btnAcomp_' + i).setAttribute('aria-expanded', 'true');
+          }
         });
       } catch (e) { /* sin datos previos */ }
     })();
     actualizarProgreso();
 
-    // ===== Envío: valida todos, guarda y avanza a p07 =====
+    // ===== Envío: valida al titular, guarda y avanza a p07 =====
     // Se escucha en "document" (fase de captura) para ejecutarse antes que main.js
     document.addEventListener('submit', function (e) {
       if (e.target !== form) return;
@@ -391,41 +441,46 @@
         }
       });
       if (primeroInvalido) {
-        UI.mostrarToast('Completa los campos requeridos de todos los pasajeros', 'warning');
+        UI.mostrarToast('Completa tus datos para continuar', 'warning');
         primeroInvalido.focus();
         return;
       }
 
       const campos = recogerCampos();
 
-      // Documentos repetidos entre pasajeros
-      const docs = campos.map(o => (o.tipoDoc + ' ' + o.numDoc).toUpperCase());
-      const repetido = docs.findIndex((d, i) => docs.indexOf(d) !== i);
+      // Documentos repetidos (solo entre los que se escribieron)
+      const docs = campos.map(o => o.numDoc ? ((o.tipoDoc || '') + ' ' + o.numDoc).trim().toUpperCase() : '');
+      const repetido = docs.findIndex((d, i) => d && docs.indexOf(d) !== i);
       if (repetido !== -1) {
         const el = form.querySelector('[data-pax="' + repetido + '"] [data-campo="numDoc"]');
-        el.classList.remove('is-valid');
         el.classList.add('is-invalid');
         UI.mostrarToast('El pasajero ' + (repetido + 1) + ' tiene un documento repetido', 'warning');
         el.focus();
         return;
       }
 
-      const pasajeros = campos.map((o, i) => ({
-        nombre: [o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido].filter(Boolean).join(' '),
-        documento: o.tipoDoc + ' ' + o.numDoc,
-        fechaNac: o.fechaNac,
-        email: i === 0 ? o.email : campos[0].email,
-        telefono: i === 0 ? o.telefono : campos[0].telefono,
-        necesidades: { sillaRuedas: !!o.sillaRuedas, comidaEspecial: !!o.comidaEspecial, menorSolo: !!o.menorSolo }
-      }));
+      // Un registro por pasajero; los acompañantes sin datos quedan como "Acompañante N"
+      const pasajeros = campos.map((o, i) => {
+        const nombre = [o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido].filter(Boolean).join(' ');
+        return {
+          nombre: nombre || ('Acompañante ' + (i + 1)),
+          documento: o.numDoc ? ((o.tipoDoc ? o.tipoDoc + ' ' : '') + o.numDoc) : '',
+          fechaNac: o.fechaNac || '',
+          email: i === 0 ? o.email : campos[0].email,
+          telefono: i === 0 ? o.telefono : campos[0].telefono,
+          necesidades: { sillaRuedas: !!o.sillaRuedas, comidaEspecial: !!o.comidaEspecial, menorSolo: !!o.menorSolo }
+        };
+      });
 
       sessionStorage.setItem('concorde_pasajeros', JSON.stringify(pasajeros));
       sessionStorage.setItem('concorde_pasajero', JSON.stringify(pasajeros[0])); // compatibilidad con páginas anteriores
       sessionStorage.setItem('concorde_pasajeros_form', JSON.stringify(campos));
-      // Recordar a los pasajeros en este navegador para próximas compras
+
+      // Recordar en este navegador a quienes tengan datos completos, para próximas compras
       try {
         const lista = guardados.slice();
         campos.forEach(o => {
+          if (!(o.primerNombre && o.primerApellido && o.tipoDoc && o.numDoc)) return;
           const reg = {
             primerNombre: o.primerNombre, segundoNombre: o.segundoNombre,
             primerApellido: o.primerApellido, segundoApellido: o.segundoApellido,

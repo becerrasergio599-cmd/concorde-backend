@@ -273,11 +273,28 @@
       location.search = params.toString();
     });
 
+    // Guarda el viaje elegido para usarlo en asientos, pago y confirmación
+    contenedor.addEventListener('click', function (e) {
+      var a = e.target.closest('a[href^="p05-detalle-viaje.html"]');
+      if (!a) return;
+      var q = new URL(a.href).searchParams;
+      sessionStorage.setItem('concorde_viaje', JSON.stringify({
+        idViaje: q.get('idViaje'),
+        salida: q.get('salida'),
+        precio: q.get('precio'),
+        terminalOrigen: q.get('terminalOrigen'),
+        terminalDestino: q.get('terminalDestino'),
+        origen: origen,
+        destino: destino,
+        ida: ida,
+        pasajeros: pasajeros
+      }));
+      sessionStorage.removeItem('concorde_asiento');
+    });
+
     cargar();
   })();
 </script>
   <script src="js/aviso-agotados.js"></script>
 </body>
-
-
 </html>

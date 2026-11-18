@@ -1,4 +1,3 @@
-
 package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.Reserva;
@@ -32,6 +31,10 @@ public class ReservaController {
 
     @PostMapping
     public ResponseEntity<Reserva> crear(@RequestBody Reserva r) {
+        // Si no llega la clase, se asume económica
+        if (r.getClase() == null || r.getClase().isBlank()) {
+            r.setClase("ECONOMICA");
+        }
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(repository.save(r));
     }
@@ -46,6 +49,14 @@ public class ReservaController {
             e.setViaje(datos.getViaje());
             e.setFechaInicial(datos.getFechaInicial());
             e.setEstado(datos.getEstado());
+
+            // Solo se actualizan si vienen en la petición (así cancelar no borra la tarifa Premium)
+            if (datos.getClase() != null) {
+                e.setClase(datos.getClase());
+            }
+            if (datos.getTotal() != null) {
+                e.setTotal(datos.getTotal());
+            }
 
             return ResponseEntity.ok(repository.save(e));
         }).orElse(ResponseEntity.notFound().build());

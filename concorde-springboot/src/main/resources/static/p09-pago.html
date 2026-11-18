@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -300,7 +299,7 @@
               <p class="mb-1 fw-bold" id="resRuta">—</p>
               <p class="mb-1 text-muted" id="resFecha">—</p>
               <p class="mb-1 text-muted" id="resClase">—</p>
-              <p class="mb-1 text-muted" id="resPasajero">—</p>
+              <div class="mb-1 text-muted" id="resPasajero">—</div>
 
               <hr>
 
@@ -360,7 +359,6 @@
         sessionStorage.getItem('concorde_viaje') || 'null'
       );
 
-      var asiento = sessionStorage.getItem('concorde_asiento');
       var usuario = Auth.getUsuario();
 
       if (!viaje) {
@@ -372,6 +370,37 @@
         window.location.href = 'p03-login.html';
         return;
       }
+
+      function leerJSON(k) {
+        try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; }
+      }
+
+      function esc(s) {
+        return String(s).replace(/[&<>"']/g, function (c) {
+          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+        });
+      }
+
+      var numPax = Number(viaje.pasajeros || 1) || 1;
+
+      // Asientos: acepta arreglo (nuevo) o texto (formato anterior)
+      var asRaw = leerJSON('concorde_asientos') || sessionStorage.getItem('concorde_asiento');
+      var listaAsientos = Array.isArray(asRaw)
+        ? asRaw
+        : (asRaw ? String(asRaw).split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
+      var asiento = listaAsientos.join(', ');
+
+      // Pasajeros: acepta arreglo (nuevo) u objeto único (formato anterior)
+      var paxRaw = leerJSON('concorde_pasajeros') || leerJSON('concorde_pasajero');
+      var listaPax = Array.isArray(paxRaw) ? paxRaw : (paxRaw ? [paxRaw] : []);
+
+      var nombreRespaldo = usuario.nombreCompleto || usuario.nombre || 'Pasajero';
+      var nombres = [];
+      for (var i = 0; i < numPax; i++) {
+        var p = listaPax[i];
+        nombres.push((p && p.nombre) ? p.nombre : (i === 0 ? nombreRespaldo : 'Pasajero ' + (i + 1)));
+      }
+      var nombrePasajero = nombres.join(', ');
 
       // Fecha del viaje
       var fecha = new Date(viaje.ida + 'T00:00:00')
@@ -401,7 +430,7 @@
 
       var totalCalculado = viaje.total
         ? Number(viaje.total)
-        : unit * Number(viaje.pasajeros || 1);
+        : unit * numPax;
 
       // Recuperar total final del resumen
       var totalGuardado = Number(
@@ -414,15 +443,6 @@
 
       var total = '$' + Math.round(totalNumero).toLocaleString('es-CO');
 
-      // Datos del pasajero
-      var pax = JSON.parse(
-        sessionStorage.getItem('concorde_pasajero') || 'null'
-      );
-
-      var nombrePasajero = (pax && pax.nombre)
-        ? pax.nombre
-        : (usuario.nombreCompleto || usuario.nombre || 'Pasajero');
-
       // Mostrar información
       document.getElementById('resRuta').textContent =
         viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
@@ -433,8 +453,10 @@
       document.getElementById('resClase').textContent =
         'Directo · ' + claseNombre;
 
-      document.getElementById('resPasajero').textContent =
-        nombrePasajero + (asiento ? ' · Asiento ' + asiento : '');
+      // Un renglón por pasajero con su asiento
+      document.getElementById('resPasajero').innerHTML = nombres.map(function (n, i) {
+        return esc(n) + (listaAsientos[i] ? ' · Asiento ' + esc(listaAsientos[i]) : '');
+      }).join('<br>');
 
       document.getElementById('resTotal').textContent = total;
       document.getElementById('btnTotal').textContent = total;
@@ -446,6 +468,17 @@
       window.pagarYConfirmar = async function (mensaje) {
 
         if (procesandoPago) {
+          return;
+        }
+
+        // No dejar pagar si se perdieron datos del flujo
+        if (listaPax.length < numPax) {
+          UI.mostrarToast('Faltan datos de pasajeros. Vuelve al paso de pasajeros.', 'warning');
+          return;
+        }
+
+        if (listaAsientos.length < numPax) {
+          UI.mostrarToast('Faltan asientos por elegir. Vuelve al paso de asientos.', 'warning');
           return;
         }
 
@@ -495,6 +528,8 @@
           var reserva = await res.json();
 
           // Guardar datos de confirmación
+          // "pasajero" y "asiento" siguen siendo texto (con todos separados por coma),
+          // así la página de confirmación actual los muestra completos.
           sessionStorage.setItem(
             'concorde_confirmacion',
             JSON.stringify({
@@ -504,6 +539,8 @@
               hora: viaje.salida,
               asiento: asiento || '—',
               pasajero: nombrePasajero,
+              pasajeros: nombres,
+              asientos: listaAsientos,
               clase: claseNombre,
               total: total
             })
@@ -525,7 +562,9 @@
               }),
 
             clase: claseNombre,
-            total: total
+            total: total,
+            pasajeros: nombres,
+            asientos: listaAsientos
           };
 
           localStorage.setItem(

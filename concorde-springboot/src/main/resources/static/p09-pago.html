@@ -183,11 +183,15 @@
       if (!viaje) { window.location.href = 'index.html'; return; }
 
       var fecha = new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
-      var total = '$' + Number(viaje.precio).toLocaleString('es-CO');
+      var totalGuardado = Number(sessionStorage.getItem('concorde_total'));
+      var totalNumero = totalGuardado > 0 ? totalGuardado : Number(viaje.precio) * Number(viaje.pasajeros || 1);
+      var total = '$' + totalNumero.toLocaleString('es-CO');
+      var pax = JSON.parse(sessionStorage.getItem('concorde_pasajero') || 'null');
+      var nombrePasajero = (pax && pax.nombre) ? pax.nombre : usuario.nombre;
 
       document.getElementById('resRuta').textContent = viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
       document.getElementById('resFecha').textContent = fecha + ' · ' + viaje.salida;
-      document.getElementById('resPasajero').textContent = usuario.nombre + (asiento ? ' · Asiento ' + asiento : '');
+      document.getElementById('resPasajero').textContent = nombrePasajero + (asiento ? ' · Asiento ' + asiento : '');
       document.getElementById('resTotal').textContent = total;
       document.getElementById('btnTotal').textContent = total;
 
@@ -213,7 +217,7 @@
             fecha: fecha,
             hora: viaje.salida,
             asiento: asiento || '—',
-            pasajero: usuario.nombre,
+            pasajero: nombrePasajero,
             total: total
           }));
           // Respaldo para la página Mis Reservas

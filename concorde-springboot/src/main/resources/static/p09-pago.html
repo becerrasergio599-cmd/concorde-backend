@@ -299,6 +299,16 @@
               <p class="mb-1 fw-bold" id="resRuta">—</p>
               <p class="mb-1 text-muted" id="resFecha">—</p>
               <p class="mb-1 text-muted" id="resClase">—</p>
+
+              <!-- Vuelta (solo si la compra es de ida y vuelta) -->
+              <div id="resVuelta" class="d-none">
+                <hr class="my-2">
+                <p class="mb-1 fw-bold" id="resRutaV">—</p>
+                <p class="mb-1 text-muted" id="resFechaV">—</p>
+                <p class="mb-1 text-muted" id="resClaseV">—</p>
+              </div>
+
+              <hr class="my-2">
               <div class="mb-1 text-muted" id="resPasajero">—</div>
 
               <hr>
@@ -381,14 +391,45 @@
         });
       }
 
+      // Normaliza la clase del servicio a lo que espera el backend
+      function claseDe(v) {
+        var n = String(v.clase || 'ECONOMICA')
+          .trim()
+          .toUpperCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+        return n === 'PREMIUM' ? 'PREMIUM' : 'ECONOMICA';
+      }
+
+      function fechaCorta(v) {
+        return new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', {
+          weekday: 'short', day: 'numeric', month: 'short'
+        });
+      }
+
+      function fechaConAnio(v) {
+        return new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', {
+          day: 'numeric', month: 'short', year: 'numeric'
+        });
+      }
+
       var numPax = Number(viaje.pasajeros || 1) || 1;
 
-      // Asientos: acepta arreglo (nuevo) o texto (formato anterior)
+      // Vuelta (solo si la compra es de ida y vuelta)
+      var viajeV = leerJSON('concorde_viaje_vuelta');
+      var hayVuelta = !!viajeV;
+
+      // Asientos de la ida: acepta arreglo (nuevo) o texto (formato anterior)
       var asRaw = leerJSON('concorde_asientos') || sessionStorage.getItem('concorde_asiento');
       var listaAsientos = Array.isArray(asRaw)
         ? asRaw
         : (asRaw ? String(asRaw).split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
       var asiento = listaAsientos.join(', ');
+
+      // Asientos de la vuelta
+      var asRawV = leerJSON('concorde_asientos_vuelta');
+      var listaAsientosV = Array.isArray(asRawV) ? asRawV : [];
+      var asientoV = listaAsientosV.join(', ');
 
       // Pasajeros: acepta arreglo (nuevo) u objeto único (formato anterior)
       var paxRaw = leerJSON('concorde_pasajeros') || leerJSON('concorde_pasajero');
@@ -402,37 +443,26 @@
       }
       var nombrePasajero = nombres.join(', ');
 
-      // Fecha del viaje
-      var fecha = new Date(viaje.ida + 'T00:00:00')
-        .toLocaleDateString('es-CO', {
-          weekday: 'short',
-          day: 'numeric',
-          month: 'short'
-        });
+      // Fechas del viaje
+      var fecha = fechaCorta(viaje);
+      var fechaV = hayVuelta ? fechaCorta(viajeV) : '';
 
-      // Normalizar clase
-      var claseNormalizada = String(viaje.clase || 'ECONOMICA')
-        .trim()
-        .toUpperCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
+      // Clases
+      var claseBackend = claseDe(viaje);
+      var claseNombre = claseBackend === 'PREMIUM' ? 'Premium' : 'Económico';
+      var claseBackendV = hayVuelta ? claseDe(viajeV) : '';
+      var claseNombreV = claseBackendV === 'PREMIUM' ? 'Premium' : 'Económico';
 
-      var claseBackend = claseNormalizada === 'PREMIUM'
-        ? 'PREMIUM'
-        : 'ECONOMICA';
-
-      var claseNombre = claseBackend === 'PREMIUM'
-        ? 'Premium'
-        : 'Económico';
-
-      // Calcular total
+      // Subtotales por tramo (tarifa × pasajeros)
       var unit = Number(viaje.precioUnitario || viaje.precio || 0);
+      var unitV = hayVuelta ? Number(viajeV.precioUnitario || viajeV.precio || 0) : 0;
+      var subIda = unit * numPax;
+      var subVuelta = unitV * numPax;
+      var totalCalculado = hayVuelta
+        ? subIda + subVuelta
+        : (viaje.total ? Number(viaje.total) : subIda);
 
-      var totalCalculado = viaje.total
-        ? Number(viaje.total)
-        : unit * numPax;
-
-      // Recuperar total final del resumen
+      // Recuperar total final del resumen (incluye descuento si se aplicó)
       var totalGuardado = Number(
         sessionStorage.getItem('concorde_total')
       );
@@ -443,6 +473,16 @@
 
       var total = '$' + Math.round(totalNumero).toLocaleString('es-CO');
 
+      // El total pagado se reparte entre las dos reservas en proporción a cada tramo
+      var totalIda = totalNumero;
+      var totalVuelta = 0;
+      if (hayVuelta && (subIda + subVuelta) > 0) {
+        totalIda = Math.round(totalNumero * subIda / (subIda + subVuelta));
+        totalVuelta = Math.round(totalNumero) - totalIda;
+      }
+
+      function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
+
       // Mostrar información
       document.getElementById('resRuta').textContent =
         viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
@@ -451,11 +491,25 @@
         fecha + ' · ' + (viaje.salida || '');
 
       document.getElementById('resClase').textContent =
-        'Directo · ' + claseNombre;
+        (hayVuelta ? 'Ida · ' : '') + 'Directo · ' + claseNombre;
+
+      if (hayVuelta) {
+        document.getElementById('resVuelta').classList.remove('d-none');
+        document.getElementById('resRutaV').textContent =
+          viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino;
+        document.getElementById('resFechaV').textContent =
+          fechaV + ' · ' + (viajeV.salida || '');
+        document.getElementById('resClaseV').textContent =
+          'Vuelta · Directo · ' + claseNombreV;
+      }
 
       // Un renglón por pasajero con su asiento
       document.getElementById('resPasajero').innerHTML = nombres.map(function (n, i) {
-        return esc(n) + (listaAsientos[i] ? ' · Asiento ' + esc(listaAsientos[i]) : '');
+        var a = listaAsientos[i] ? esc(listaAsientos[i]) : '—';
+        var txt = hayVuelta
+          ? 'Ida ' + a + ' · Vuelta ' + (listaAsientosV[i] ? esc(listaAsientosV[i]) : '—')
+          : (listaAsientos[i] ? 'Asiento ' + a : '');
+        return esc(n) + (txt ? ' · ' + txt : '');
       }).join('<br>');
 
       document.getElementById('resTotal').textContent = total;
@@ -464,7 +518,53 @@
       // Evitar reservas duplicadas
       var procesandoPago = false;
 
-      // Crear reserva en el backend
+      // Reservas ya creadas (si falla la segunda, al reintentar solo se crea la que falta)
+      var reservaIda = null;
+      var reservaVuelta = null;
+
+      // Crea una reserva en el backend (un viaje por reserva)
+      async function crearReserva(v, claseBack, totalN) {
+
+        var idUsuario = usuario.idUsuario || usuario.id;
+        var idViaje = Number(v.idViaje);
+
+        if (!idUsuario || !idViaje) {
+          throw new Error('No se encontró el usuario o el viaje.');
+        }
+
+        if (!Number.isFinite(totalN) || totalN <= 0) {
+          throw new Error('El total de la reserva no es válido.');
+        }
+
+        var res = await fetch('/api/reservas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            usuario: {
+              idUsuario: idUsuario
+            },
+            viaje: {
+              idViaje: idViaje
+            },
+            estado: 'CONFIRMADA',
+            clase: claseBack,
+            total: Math.round(totalN)
+          })
+        });
+
+        if (!res.ok) {
+          var errorTexto = await res.text();
+
+          throw new Error(
+            'HTTP ' + res.status + ': ' + errorTexto
+          );
+        }
+
+        return res.json();
+      }
+
       window.pagarYConfirmar = async function (mensaje) {
 
         if (procesandoPago) {
@@ -482,90 +582,82 @@
           return;
         }
 
+        if (hayVuelta && listaAsientosV.length < numPax) {
+          UI.mostrarToast('Faltan los asientos de la vuelta. Vuelve al paso de asientos.', 'warning');
+          return;
+        }
+
         procesandoPago = true;
 
         UI.mostrarLoader(mensaje || 'Procesando pago...');
 
         try {
 
-          var idUsuario = usuario.idUsuario || usuario.id;
-          var idViaje = Number(viaje.idViaje);
-
-          if (!idUsuario || !idViaje) {
-            throw new Error('No se encontró el usuario o el viaje.');
+          if (!reservaIda) {
+            reservaIda = await crearReserva(viaje, claseBackend, totalIda);
           }
 
-          if (!Number.isFinite(totalNumero) || totalNumero <= 0) {
-            throw new Error('El total de la reserva no es válido.');
+          if (hayVuelta && !reservaVuelta) {
+            reservaVuelta = await crearReserva(viajeV, claseBackendV, totalVuelta);
           }
-
-          var res = await fetch('/api/reservas', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              usuario: {
-                idUsuario: idUsuario
-              },
-              viaje: {
-                idViaje: idViaje
-              },
-              estado: 'CONFIRMADA',
-              clase: claseBackend,
-              total: Math.round(totalNumero)
-            })
-          });
-
-          if (!res.ok) {
-            var errorTexto = await res.text();
-
-            throw new Error(
-              'HTTP ' + res.status + ': ' + errorTexto
-            );
-          }
-
-          var reserva = await res.json();
 
           // Guardar datos de confirmación
           // "pasajero" y "asiento" siguen siendo texto (con todos separados por coma),
           // así la página de confirmación actual los muestra completos.
-          sessionStorage.setItem(
-            'concorde_confirmacion',
-            JSON.stringify({
-              idReserva: reserva.idReserva,
-              ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
-              fecha: fecha,
-              hora: viaje.salida,
-              asiento: asiento || '—',
-              pasajero: nombrePasajero,
-              pasajeros: nombres,
-              asientos: listaAsientos,
-              clase: claseNombre,
-              total: total
-            })
-          );
+          var confirmacion = {
+            idReserva: reservaIda.idReserva,
+            ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
+            fecha: fecha,
+            hora: viaje.salida,
+            asiento: asiento || '—',
+            pasajero: nombrePasajero,
+            pasajeros: nombres,
+            asientos: listaAsientos,
+            clase: claseNombre,
+            total: total
+          };
 
-          // Respaldo para Mis Reservas
+          if (hayVuelta) {
+            confirmacion.vuelta = {
+              idReserva: reservaVuelta.idReserva,
+              ruta: viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino,
+              fecha: fechaV,
+              hora: viajeV.salida,
+              asiento: asientoV || '—',
+              asientos: listaAsientosV,
+              clase: claseNombreV,
+              total: dinero(totalVuelta)
+            };
+          }
+
+          sessionStorage.setItem('concorde_confirmacion', JSON.stringify(confirmacion));
+
+          // Respaldo para Mis Reservas (una entrada por reserva)
           var info = JSON.parse(
             localStorage.getItem('concorde_reservas_info') || '{}'
           );
 
-          info[reserva.idReserva] = {
+          info[reservaIda.idReserva] = {
             ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
-
-            fecha: new Date(viaje.ida + 'T00:00:00')
-              .toLocaleDateString('es-CO', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric'
-              }),
-
+            fecha: fechaConAnio(viaje),
             clase: claseNombre,
-            total: total,
+            total: dinero(totalIda),
+            tramo: hayVuelta ? 'Ida' : '',
             pasajeros: nombres,
             asientos: listaAsientos
           };
+
+          if (hayVuelta) {
+            info[reservaVuelta.idReserva] = {
+              ruta: viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino,
+              fecha: fechaConAnio(viajeV),
+              clase: claseNombreV,
+              total: dinero(totalVuelta),
+              tramo: 'Vuelta',
+              pasajeros: nombres,
+              asientos: listaAsientosV
+            };
+          }
 
           localStorage.setItem(
             'concorde_reservas_info',
@@ -583,10 +675,17 @@
 
           UI.ocultarLoader();
 
-          UI.mostrarToast(
-            'No se pudo guardar la reserva. Intenta de nuevo.',
-            'danger'
-          );
+          if (reservaIda && hayVuelta && !reservaVuelta) {
+            UI.mostrarToast(
+              'Se guardó la ida, pero no la vuelta. Pulsa pagar de nuevo para completar la vuelta.',
+              'danger'
+            );
+          } else {
+            UI.mostrarToast(
+              'No se pudo guardar la reserva. Intenta de nuevo.',
+              'danger'
+            );
+          }
         }
       };
 

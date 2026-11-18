@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Resumen de compra - Concorde Transporte Terrestre">
-  <title>Concorde Transporte Terrestre | Resumen de Compra</title>
+  <meta name="description" content="Datos de los pasajeros - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Datos de los Pasajeros</title>
   <link rel="icon" type="image/png" href="img/LogoConcorde.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -19,99 +19,55 @@
         <div class="step-linea completado"></div>
         <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Detalle</span></div>
         <div class="step-linea completado"></div>
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Pasajeros</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Asientos</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step activo" aria-current="step"><div class="step-numero">5</div><span class="step-label">Resumen</span></div>
+        <div class="step activo" aria-current="step"><div class="step-numero">3</div><span class="step-label">Pasajeros</span></div>
+        <div class="step-linea"></div>
+        <div class="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
+        <div class="step-linea"></div>
+        <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
       </nav>
-
-      <h1 class="h4 fw-bold texto-azul mb-4"><i class="bi bi-cart-check me-2" aria-hidden="true"></i>Resumen de tu compra</h1>
 
       <div class="row g-4">
         <div class="col-lg-8">
-          <!-- Trayecto -->
-          <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto</div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
-                <div>
-                  <p class="mb-1 fw-bold" id="rsRuta">—</p>
-                  <p class="mb-1 text-muted small" id="rsDetalle">—</p>
-                  <span class="badge-clase badge-economica" id="rsClase">Clase Económica</span>
+          <form id="formPasajero" class="form-concorde" data-action="pasajero" novalidate aria-label="Formulario de datos de los pasajeros">
+            <div class="alerta-info alerta-concorde mb-3" role="note">
+              <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
+              Los datos deben coincidir exactamente con el documento de identidad de cada pasajero.
+            </div>
+
+            <!-- Un bloque por pasajero, generado con JS -->
+            <div id="contenedorPasajeros"></div>
+
+            <!-- Progreso de llenado -->
+            <div class="card-concorde mb-3">
+              <div class="card-body">
+                <label class="form-label small text-muted">Progreso del formulario</label>
+                <div class="progress" style="height:8px" role="progressbar"
+                  aria-label="Progreso del formulario" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar bg-success" id="barraProgreso" style="width:0%;transition:width 0.4s ease"></div>
                 </div>
-                <div class="texto-azul fw-bold fs-5" id="rsPrecio">$0</div>
+                <small class="text-muted" id="textoProgreso" aria-live="polite">0 campos requeridos completados</small>
               </div>
             </div>
-          </article>
 
-          <!-- Pasajero -->
-          <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-person me-2" aria-hidden="true"></i>Pasajero</div>
-            <div class="card-body">
-              <div class="row g-2 small">
-                <div class="col-md-6"><strong>Nombre:</strong> <span id="rsNombre">—</span></div>
-                <div class="col-md-6"><strong>Documento:</strong> <span id="rsDocumento">—</span></div>
-                <div class="col-md-6"><strong>Asiento:</strong> <span id="rsAsiento">—</span></div>
-                <div class="col-md-6"><strong>Contacto:</strong> <span id="rsContacto">—</span></div>
-              </div>
-            </div>
-          </article>
-
-          <!-- Equipaje -->
-          <article class="card-concorde mb-3">
-            <div class="card-header-concorde"><i class="bi bi-luggage me-2" aria-hidden="true"></i>Equipaje incluido</div>
-            <div class="card-body d-flex gap-4 flex-wrap">
-              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🎒</div><small class="text-muted">Artículo personal<br>10 kg</small></div>
-              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🧳</div><small class="text-muted">Equipaje de mano<br>10 kg</small></div>
-              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🛄</div><small class="text-muted" id="rsMaletas">Maleta bodega 20 kg</small></div>
-            </div>
-          </article>
-
-          <!-- Código de descuento -->
-          <article class="card-concorde">
-            <div class="card-header-concorde"><i class="bi bi-tag me-2" aria-hidden="true"></i>Código de descuento</div>
-            <div class="card-body">
-              <div class="row g-2 align-items-end">
-                <div class="col-8">
-                  <label class="form-label" for="codigoDesc">¿Tienes un código?</label>
-                  <input type="text" class="form-control" id="codigoDesc" placeholder="Ej: BIENVENIDO10" aria-label="Código de descuento">
-                </div>
-                <div class="col-4">
-                  <button type="button" id="btnAplicar" onclick="aplicarDescuento()" class="btn btn-concorde-primario w-100">
-                    Aplicar
-                  </button>
-                </div>
-              </div>
-              <div id="msgDescuento" class="mt-2 small d-none" role="status" aria-live="polite"></div>
-            </div>
-          </article>
+            <button type="submit" class="btn btn-concorde-dorado w-100 py-2">
+              Continuar a selección de asientos
+              <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
+            </button>
+          </form>
         </div>
 
-        <!-- Total -->
-        <aside class="col-lg-4" aria-label="Total a pagar">
+        <aside class="col-lg-4" aria-label="Resumen del trayecto">
           <div class="card-concorde" style="position:sticky;top:80px">
-            <div class="card-header-concorde"><i class="bi bi-receipt me-2" aria-hidden="true"></i>Total a pagar</div>
-            <div class="card-body">
-              <table class="table table-sm mb-3" aria-label="Resumen de precios">
-                <tbody>
-                  <tr><td>Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
-                  <tr><td>Pasajeros</td><td class="text-end" id="rsPasajeros">1</td></tr>
-                  <tr id="filaDescuento" class="text-success d-none">
-                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$0</td>
-                  </tr>
-                  <tr class="table-light fw-bold">
-                    <td>Total</td>
-                    <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$0</td>
-                  </tr>
-                </tbody>
-              </table>
-              <a href="p09-pago.html" class="btn btn-concorde-dorado w-100 py-2">
-                <i class="bi bi-credit-card me-1" aria-hidden="true"></i>Ir al pago
-              </a>
-              <a href="p07-asientos.html" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
-                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver
-              </a>
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Tu trayecto</div>
+            <div class="card-body small">
+              <p class="mb-1 fw-bold" id="tuRuta">—</p>
+              <p class="mb-1 text-muted" id="tuFecha">—</p>
+              <p class="mb-1 text-muted">Directo · <span id="tuClase">Económico</span></p>
+              <p class="mb-1 text-muted">Pasajeros: <span id="tuPasajeros">1</span></p>
+              <hr>
+              <div class="d-flex justify-content-between fw-bold">
+                <span>Total</span><span class="texto-azul" id="tuTotal">$0</span>
+              </div>
             </div>
           </div>
         </aside>
@@ -126,88 +82,289 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
-    // ===== Datos reales del flujo de compra =====
-    const viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
-    if (!viaje) { window.location.href = 'index.html'; }
+    // ===== Viaje elegido (con la tarifa Económico/Premium de p05) =====
+    const viajeP = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
+    if (!viajeP) { window.location.href = 'index.html'; }
+    const numPax = Number(viajeP && viajeP.pasajeros) || 1;
 
-    const usuario = Auth.getUsuario() || {};
-    const pax = JSON.parse(sessionStorage.getItem('concorde_pasajero') || 'null');
-    const asiento = sessionStorage.getItem('concorde_asiento');
-
-    // Tarifa elegida en p05 (Económico o Premium)
-    const esPremium = !!viaje && viaje.clase === 'premium';
-    const tarifa = Number(viaje ? (viaje.precioUnitario || viaje.precio) : 0);
-    const numPasajeros = Number(viaje ? viaje.pasajeros : 1) || 1;
-    const subtotal = tarifa * numPasajeros;
-    let totalActual = subtotal;
-
-    function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
-
-    function guardarTotal() {
-      sessionStorage.setItem('concorde_total', String(Math.round(totalActual)));
+    if (viajeP) {
+      const f = new Date(viajeP.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+      const unit = Number(viajeP.precioUnitario || viajeP.precio);
+      const total = viajeP.total ? Number(viajeP.total) : unit * numPax;
+      document.getElementById('tuRuta').textContent = viajeP.terminalOrigen + ' → ' + viajeP.terminalDestino;
+      document.getElementById('tuFecha').textContent = f + ' · ' + viajeP.salida;
+      document.getElementById('tuClase').textContent = viajeP.clase === 'premium' ? 'Premium' : 'Económico';
+      document.getElementById('tuPasajeros').textContent = numPax;
+      document.getElementById('tuTotal').textContent = '$' + total.toLocaleString('es-CO');
     }
 
-    if (viaje) {
-      const fecha = new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-      document.getElementById('rsRuta').textContent = viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
-      document.getElementById('rsDetalle').textContent = fecha + ' · Salida ' + viaje.salida + ' · Directo';
-      document.getElementById('rsPrecio').textContent = dinero(subtotal);
-      document.getElementById('rsTarifa').textContent = dinero(tarifa);
-      document.getElementById('rsPasajeros').textContent = numPasajeros;
-      document.getElementById('totalFinal').textContent = dinero(subtotal);
+    const form = document.getElementById('formPasajero');
+    const contenedor = document.getElementById('contenedorPasajeros');
 
-      // Clase del servicio
-      const badge = document.getElementById('rsClase');
-      if (esPremium) {
-        badge.textContent = '⭐ Clase Premium';
-        badge.classList.remove('badge-economica');
-        badge.classList.add('badge-premium');
-        badge.style.background = 'rgba(245,166,35,0.18)';
-        badge.style.color = '#b9770e';
-        document.getElementById('rsMaletas').innerHTML = 'Maletas bodega<br>2 × 20 kg';
+    // ===== Plantilla de un pasajero =====
+    function plantilla(i) {
+      const n = i + 1;
+      const primero = i === 0;
+      return `
+      <div class="card-concorde mb-3" data-pax="${i}">
+        <div class="card-header-concorde d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-person-fill me-2" aria-hidden="true"></i>Datos del Pasajero ${n}</span>
+          ${primero ? '<span class="small fw-normal">Contacto de la compra</span>' : ''}
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+            ${primero ? `
+            <div class="col-12">
+              <button type="button" id="btnAutocompletar" class="btn btn-outline-concorde btn-sm">
+                <i class="bi bi-person-check me-1" aria-hidden="true"></i>Usar mis datos de cuenta
+              </button>
+              <span class="text-muted small ms-2" id="msgAutocompletar" aria-live="polite"></span>
+            </div>` : ''}
+
+            <div class="col-md-6">
+              <label class="form-label" for="primerNombre_${i}">Primer nombre <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="text" class="form-control" id="primerNombre_${i}" data-campo="primerNombre" data-req required aria-required="true" autocomplete="${primero ? 'given-name' : 'off'}">
+              <div class="invalid-feedback">Campo requerido</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="segundoNombre_${i}">Segundo nombre</label>
+              <input type="text" class="form-control" id="segundoNombre_${i}" data-campo="segundoNombre" autocomplete="off">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="primerApellido_${i}">Primer apellido <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="text" class="form-control" id="primerApellido_${i}" data-campo="primerApellido" data-req required aria-required="true" autocomplete="${primero ? 'family-name' : 'off'}">
+              <div class="invalid-feedback">Campo requerido</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="segundoApellido_${i}">Segundo apellido</label>
+              <input type="text" class="form-control" id="segundoApellido_${i}" data-campo="segundoApellido" autocomplete="off">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="tipoDoc_${i}">Tipo documento <span class="text-danger" aria-hidden="true">*</span></label>
+              <select class="form-select" id="tipoDoc_${i}" data-campo="tipoDoc" data-req required aria-required="true">
+                <option value="">Selecciona...</option>
+                <option value="CC">Cédula de Ciudadanía</option>
+                <option value="CE">Cédula de Extranjería</option>
+                <option value="PA">Pasaporte</option>
+                <option value="TI">Tarjeta de Identidad</option>
+              </select>
+              <div class="invalid-feedback">Selecciona el tipo</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="numDoc_${i}">Número de documento <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="text" class="form-control" id="numDoc_${i}" data-campo="numDoc" data-req required aria-required="true" autocomplete="off">
+              <div class="invalid-feedback">Campo requerido</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="fechaNac_${i}">Fecha de nacimiento <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="date" class="form-control" id="fechaNac_${i}" data-campo="fechaNac" data-req data-fecha required aria-required="true" autocomplete="${primero ? 'bday' : 'off'}">
+              <div class="invalid-feedback">Campo requerido</div>
+              <div id="edad_${i}" class="form-text" aria-live="polite"></div>
+            </div>
+            ${primero ? `
+            <div class="col-md-6">
+              <label class="form-label" for="email_${i}">Correo de contacto <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="email" class="form-control" id="email_${i}" data-campo="email" data-req required aria-required="true" autocomplete="email">
+              <div class="invalid-feedback">Correo inválido</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="telefono_${i}">Teléfono de contacto <span class="text-danger" aria-hidden="true">*</span></label>
+              <input type="tel" class="form-control" id="telefono_${i}" data-campo="telefono" data-req required aria-required="true" autocomplete="tel">
+              <div class="invalid-feedback">Campo requerido</div>
+            </div>` : ''}
+
+            <div class="col-12">
+              <h2 class="h6 fw-bold mb-2">Necesidades especiales (opcional)</h2>
+              <div class="row g-2">
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="silla_${i}" data-campo="sillaRuedas">
+                    <label class="form-check-label" for="silla_${i}">♿ Silla de ruedas</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="comida_${i}" data-campo="comidaEspecial">
+                    <label class="form-check-label" for="comida_${i}">🥗 Comida especial</label>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="menor_${i}" data-campo="menorSolo">
+                    <label class="form-check-label" for="menor_${i}">👶 Menor sin acompañante</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    contenedor.innerHTML = Array.from({ length: numPax }, (_, i) => plantilla(i)).join('');
+
+    // ===== Validación en vivo y progreso =====
+    function campoValido(el) {
+      if (!el.value.trim()) return false;
+      if (el.type === 'email') return el.checkValidity();
+      return true;
+    }
+
+    function validarCampoVivo(el) {
+      if (campoValido(el)) {
+        el.classList.remove('is-invalid');
+        el.classList.add('is-valid');
       } else {
-        badge.textContent = 'Clase Económica';
+        el.classList.remove('is-valid');
       }
-
-      document.getElementById('rsNombre').textContent = pax ? pax.nombre : (usuario.nombre || '—');
-      document.getElementById('rsDocumento').textContent = pax ? pax.documento : '—';
-      document.getElementById('rsAsiento').textContent = asiento || '—';
-      document.getElementById('rsContacto').textContent = pax ? pax.email : (usuario.email || '—');
-      guardarTotal();
+      actualizarProgreso();
     }
 
-    function aplicarDescuento() {
-      const codigo = document.getElementById('codigoDesc').value.trim().toUpperCase();
-      const msg = document.getElementById('msgDescuento');
-      const fila = document.getElementById('filaDescuento');
-      const total = document.getElementById('totalFinal');
-      msg.classList.remove('d-none','text-success','text-danger');
+    function actualizarProgreso() {
+      const reqs = Array.from(form.querySelectorAll('[data-req]'));
+      const completados = reqs.filter(el => el.value.trim()).length;
+      const pct = reqs.length ? Math.round((completados / reqs.length) * 100) : 0;
+      const barra = document.getElementById('barraProgreso');
+      barra.style.width = pct + '%';
+      barra.parentElement.setAttribute('aria-valuenow', pct);
+      document.getElementById('textoProgreso').textContent =
+        `${completados} de ${reqs.length} campos requeridos completados`;
+    }
 
-      if (codigo === 'BIENVENIDO10') {
-        const descuento = subtotal * 0.10;
-        totalActual = subtotal - descuento;
-        document.getElementById('valorDescuento').textContent = '-' + dinero(descuento);
-        fila.classList.remove('d-none');
-        total.textContent = dinero(totalActual);
-        guardarTotal();
-        msg.textContent = '✓ Descuento del 10% aplicado correctamente.';
-        msg.classList.add('text-success');
-        document.getElementById('btnAplicar').disabled = true;
-        UI.mostrarToast('¡Descuento aplicado! Ahorras ' + dinero(descuento), 'success');
-      } else if (codigo === '') {
-        msg.textContent = 'Ingresa un código de descuento.';
-        msg.classList.add('text-danger');
+    function calcularEdad(input) {
+      const card = input.closest('[data-pax]');
+      const el = document.getElementById('edad_' + card.dataset.pax);
+      if (!input.value) { el.textContent = ''; return; }
+      const hoy = new Date();
+      const nac = new Date(input.value);
+      let edad = hoy.getFullYear() - nac.getFullYear();
+      if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
+      if (edad >= 0 && edad < 120) {
+        el.textContent = `Edad: ${edad} años` + (edad < 18 ? ' (menor de edad)' : '');
+        el.className = 'form-text text-success';
       } else {
-        msg.textContent = `El código "${codigo}" no es válido o ya expiró.`;
-        msg.classList.add('text-danger');
-        UI.mostrarToast('Código no válido', 'danger');
+        el.textContent = '';
       }
-      msg.classList.remove('d-none');
     }
 
-    document.getElementById('codigoDesc').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') aplicarDescuento();
+    // Un solo listener por tipo de evento para todos los pasajeros
+    form.addEventListener('input', function (e) {
+      if (e.target.matches('[data-req]')) validarCampoVivo(e.target);
     });
+    form.addEventListener('change', function (e) {
+      if (e.target.matches('[data-fecha]')) calcularEdad(e.target);
+      if (e.target.matches('[data-req]')) validarCampoVivo(e.target);
+    });
+
+    // ===== Autocompletar pasajero 1 con la cuenta =====
+    document.getElementById('btnAutocompletar').addEventListener('click', function () {
+      const u = Auth.getUsuario() || {};
+      const partes = (u.nombre || 'Juan García').split(' ').filter(Boolean);
+      const datos = {
+        primerNombre: partes[0] || 'Juan',
+        segundoNombre: '',
+        primerApellido: partes[1] || 'García',
+        segundoApellido: partes[2] || '',
+        tipoDoc: 'CC',
+        numDoc: '1234567890',
+        fechaNac: '1995-05-15',
+        email: u.email || 'juangarcia@email.com',
+        telefono: '3001234567'
+      };
+      const card = form.querySelector('[data-pax="0"]');
+      Object.entries(datos).forEach(([campo, val]) => {
+        const el = card.querySelector('[data-campo="' + campo + '"]');
+        if (el) { el.value = val; if (val) el.classList.add('is-valid'); }
+      });
+      calcularEdad(card.querySelector('[data-fecha]'));
+      document.getElementById('msgAutocompletar').textContent = '✓ Datos completados desde tu cuenta';
+      actualizarProgreso();
+      UI.mostrarToast('Datos de cuenta cargados exitosamente', 'success');
+    });
+
+    // ===== Recoger y restaurar lo escrito (por si el usuario vuelve atrás) =====
+    function recogerCampos() {
+      return Array.from(form.querySelectorAll('[data-pax]')).map(card => {
+        const o = {};
+        card.querySelectorAll('[data-campo]').forEach(el => {
+          o[el.dataset.campo] = el.type === 'checkbox' ? el.checked : el.value.trim();
+        });
+        return o;
+      });
+    }
+
+    (function restaurar() {
+      try {
+        const g = JSON.parse(sessionStorage.getItem('concorde_pasajeros_form') || 'null');
+        if (!Array.isArray(g)) return;
+        g.slice(0, numPax).forEach((o, i) => {
+          const card = form.querySelector('[data-pax="' + i + '"]');
+          if (!card) return;
+          Object.entries(o).forEach(([campo, val]) => {
+            const el = card.querySelector('[data-campo="' + campo + '"]');
+            if (!el) return;
+            if (el.type === 'checkbox') el.checked = !!val; else el.value = val;
+            if (el.dataset.req !== undefined && val) el.classList.add('is-valid');
+          });
+          const fecha = card.querySelector('[data-fecha]');
+          if (fecha && fecha.value) calcularEdad(fecha);
+        });
+      } catch (e) { /* sin datos previos */ }
+    })();
+    actualizarProgreso();
+
+    // ===== Envío: valida todos, guarda y avanza a p07 =====
+    // Se escucha en "document" (fase de captura) para ejecutarse antes que main.js
+    document.addEventListener('submit', function (e) {
+      if (e.target !== form) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      let primeroInvalido = null;
+      form.querySelectorAll('[data-req]').forEach(el => {
+        if (campoValido(el)) {
+          el.classList.remove('is-invalid');
+          el.classList.add('is-valid');
+        } else {
+          el.classList.remove('is-valid');
+          el.classList.add('is-invalid');
+          if (!primeroInvalido) primeroInvalido = el;
+        }
+      });
+      if (primeroInvalido) {
+        UI.mostrarToast('Completa los campos requeridos de todos los pasajeros', 'warning');
+        primeroInvalido.focus();
+        return;
+      }
+
+      const campos = recogerCampos();
+
+      // Documentos repetidos entre pasajeros
+      const docs = campos.map(o => (o.tipoDoc + ' ' + o.numDoc).toUpperCase());
+      const repetido = docs.findIndex((d, i) => docs.indexOf(d) !== i);
+      if (repetido !== -1) {
+        const el = form.querySelector('[data-pax="' + repetido + '"] [data-campo="numDoc"]');
+        el.classList.remove('is-valid');
+        el.classList.add('is-invalid');
+        UI.mostrarToast('El pasajero ' + (repetido + 1) + ' tiene un documento repetido', 'warning');
+        el.focus();
+        return;
+      }
+
+      const pasajeros = campos.map((o, i) => ({
+        nombre: [o.primerNombre, o.segundoNombre, o.primerApellido, o.segundoApellido].filter(Boolean).join(' '),
+        documento: o.tipoDoc + ' ' + o.numDoc,
+        fechaNac: o.fechaNac,
+        email: i === 0 ? o.email : campos[0].email,
+        telefono: i === 0 ? o.telefono : campos[0].telefono,
+        necesidades: { sillaRuedas: !!o.sillaRuedas, comidaEspecial: !!o.comidaEspecial, menorSolo: !!o.menorSolo }
+      }));
+
+      sessionStorage.setItem('concorde_pasajeros', JSON.stringify(pasajeros));
+      sessionStorage.setItem('concorde_pasajero', JSON.stringify(pasajeros[0])); // compatibilidad con páginas anteriores
+      sessionStorage.setItem('concorde_pasajeros_form', JSON.stringify(campos));
+      window.location.href = 'p07-asientos.html';
+    }, true);
   </script>
 </body>
 </html>

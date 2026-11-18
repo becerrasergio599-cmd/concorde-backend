@@ -28,4 +28,10 @@ public class Reserva {
 
     private LocalDate fechaInicial = LocalDate.now();
     private String estado = "PENDIENTE";
+
+    // Tarifa elegida: "ECONOMICA" o "PREMIUM" (null en reservas antiguas)
+    private String clase;
+
+    // Valor total pagado en COP (null en reservas antiguas)
+    private Integer total;
 }

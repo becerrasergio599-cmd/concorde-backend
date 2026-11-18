@@ -15,66 +15,36 @@
 
   <!-- Ajustes: formulario compacto + imágenes de destinos -->
   <style>
-    /* Título y texto del hero */
     .hero-titulo { font-size: 1.9rem; }
     @media (min-width: 992px) { .hero-titulo { font-size: 3rem; } }
 
-    /* Formulario compacto en celular */
     @media (max-width: 767px) {
       .hero-section { padding-top: 1rem !important; padding-bottom: 1.5rem !important; }
       .hero-section .row.mb-4 { margin-bottom: .75rem !important; }
-
       .card-busqueda { padding: .75rem !important; border-radius: 14px; }
       .card-busqueda .nav-link { padding: .4rem .5rem; font-size: .9rem; }
-
       .form-concorde .form-label { font-size: .75rem; margin-bottom: .15rem; }
       .form-concorde .form-select,
-      .form-concorde .form-control {
-        font-size: .85rem;
-        padding: .35rem .5rem;
-        min-height: 38px;
-      }
+      .form-concorde .form-control { font-size: .85rem; padding: .35rem .5rem; min-height: 38px; }
       .form-concorde .btn-concorde-dorado { padding: .45rem !important; }
       .form-concorde .contador-pasajeros .btn { padding: .2rem .55rem; }
     }
 
-    /* Botón de intercambiar ciudades: flota entre Origen y Destino */
     .fila-ciudades .btn-swap {
-      position: absolute;
-      left: 50%;
-      top: 37px;                 /* escritorio: debajo de la etiqueta */
-      transform: translateX(-50%);
-      width: 28px;
-      height: 28px;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: .75rem;
-      line-height: 1;
-      color: #003580;
-      background: #fff;
-      border: 1px solid #b6c2d6;
-      border-radius: 50%;
-      box-shadow: 0 1px 4px rgba(0,0,0,.18);
-      z-index: 5;
-      cursor: pointer;
+      position: absolute; left: 50%; top: 37px; transform: translateX(-50%);
+      width: 28px; height: 28px; padding: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; line-height: 1; color: #003580; background: #fff;
+      border: 1px solid #b6c2d6; border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(0,0,0,.18); z-index: 5; cursor: pointer;
     }
     .fila-ciudades .btn-swap:hover,
     .fila-ciudades .btn-swap:active { background: #003580; color: #fff; }
-    @media (max-width: 767px) {
-      .fila-ciudades .btn-swap { top: 25px; }   /* celular: etiqueta más pequeña */
-    }
+    @media (max-width: 767px) { .fila-ciudades .btn-swap { top: 25px; } }
 
-    /* Imágenes de destinos */
     .destino-card { position: relative; overflow: hidden; border-radius: 12px; height: 180px; }
     .destino-bg { position: absolute; inset: 0; }
-    .destino-bg img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
+    .destino-bg img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .destino-overlay { position: absolute; left: 0; right: 0; bottom: 0; }
   </style>
 </head>
@@ -123,7 +93,6 @@
               <form id="formBusqueda" class="form-concorde" novalidate aria-label="Buscar tiquetes de bus">
                 <div class="row g-2 align-items-end mt-1">
 
-                  <!-- Origen + Destino (el botón de intercambio flota entre ambos, sin ocupar espacio) -->
                   <div class="col-12 col-lg-6">
                   <div class="row gx-4 gy-0 position-relative fila-ciudades">
 
@@ -152,7 +121,6 @@
                     <div class="invalid-feedback">Selecciona la ciudad de origen</div>
                   </div>
 
-                  <!-- Swap: flotante, no ocupa espacio en el layout -->
                   <button type="button" id="btnSwap" class="btn-swap"
                     aria-label="Intercambiar origen y destino">
                     <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
@@ -238,7 +206,7 @@
         <p class="text-center text-muted mb-4">Nuestras rutas más viajadas desde Boyacá y el centro del país</p>
         <div class="row g-3">
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Tunja desde $18.000">
+            <a href="p02-resultados.html?origen=BOGOTA_SALITRE&destino=TUNJA" class="destino-card d-block" aria-label="Tiquetes a Tunja desde $18.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#1a3c6e,#2563eb);"><img src="img/Tunja.jpg" alt="Tunja" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Tunja</h5>
@@ -247,7 +215,7 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bucaramanga desde $55.000">
+            <a href="p02-resultados.html?origen=TUNJA&destino=BUCARAMANGA" class="destino-card d-block" aria-label="Tiquetes a Bucaramanga desde $55.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#7c3aed,#a855f7);"><img src="img/Bucaramanga.jpg" alt="Bucaramanga" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Bucaramanga</h5>
@@ -256,7 +224,7 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Bogotá Salitre desde $22.000">
+            <a href="p02-resultados.html?origen=TUNJA&destino=BOGOTA_SALITRE" class="destino-card d-block" aria-label="Tiquetes a Bogotá Salitre desde $22.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#0f766e,#14b8a6);"><img src="img/Bogota.jpg" alt="Bogotá Salitre" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Bogotá Salitre</h5>
@@ -265,7 +233,7 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Sogamoso desde $15.000">
+            <a href="p02-resultados.html?origen=TUNJA&destino=SOGAMOSO" class="destino-card d-block" aria-label="Tiquetes a Sogamoso desde $15.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#b45309,#d97706);"><img src="img/Sogamoso.jpg" alt="Sogamoso" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Sogamoso</h5>
@@ -274,7 +242,7 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Yopal desde $45.000">
+            <a href="p02-resultados.html?origen=TUNJA&destino=YOPAL" class="destino-card d-block" aria-label="Tiquetes a Yopal desde $45.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#166534,#16a34a);"><img src="img/Yopal.jpg" alt="Yopal" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Yopal</h5>
@@ -283,7 +251,7 @@
             </a>
           </div>
           <div class="col-lg-4 col-md-6 fade-in-up">
-            <a href="p02-resultados.html" class="destino-card d-block" aria-label="Tiquetes a Cartagena desde $120.000">
+            <a href="p02-resultados.html?origen=TUNJA&destino=CARTAGENA" class="destino-card d-block" aria-label="Tiquetes a Cartagena desde $120.000">
               <div class="destino-bg" style="background:linear-gradient(135deg,#0369a1,#0ea5e9);"><img src="img/Cartagena.jpg" alt="Cartagena" loading="lazy" onerror="this.style.display='none'"></div>
               <div class="destino-overlay">
                 <h5>Cartagena</h5>
@@ -295,28 +263,28 @@
         <!-- Fila 2: destinos adicionales -->
         <div class="row g-3 mt-1">
           <div class="col-6 col-md-3 fade-in-up">
-            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Duitama">
+            <a href="p02-resultados.html?origen=TUNJA&destino=DUITAMA" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Duitama">
               <div style="font-size:1.8rem" aria-hidden="true">🏘️</div>
               <div class="fw-bold small texto-azul mt-1">Duitama</div>
               <div class="text-muted" style="font-size:.75rem">Desde $12.000</div>
             </a>
           </div>
           <div class="col-6 col-md-3 fade-in-up">
-            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Paipa">
+            <a href="p02-resultados.html?origen=TUNJA&destino=PAIPA" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Paipa">
               <div style="font-size:1.8rem" aria-hidden="true">🌊</div>
               <div class="fw-bold small texto-azul mt-1">Paipa</div>
               <div class="text-muted" style="font-size:.75rem">Desde $14.000</div>
             </a>
           </div>
           <div class="col-6 col-md-3 fade-in-up">
-            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Cúcuta">
+            <a href="p02-resultados.html?origen=TUNJA&destino=CUCUTA" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Cúcuta">
               <div style="font-size:1.8rem" aria-hidden="true">🌆</div>
               <div class="fw-bold small texto-azul mt-1">Cúcuta</div>
               <div class="text-muted" style="font-size:.75rem">Desde $75.000</div>
             </a>
           </div>
           <div class="col-6 col-md-3 fade-in-up">
-            <a href="p02-resultados.html" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Barranquilla">
+            <a href="p02-resultados.html?origen=TUNJA&destino=BARRANQUILLA" class="card-concorde text-center p-3 d-block text-decoration-none" aria-label="Ir a Barranquilla">
               <div style="font-size:1.8rem" aria-hidden="true">🎉</div>
               <div class="fw-bold small texto-azul mt-1">Barranquilla</div>
               <div class="text-muted" style="font-size:.75rem">Desde $130.000</div>
@@ -373,5 +341,19 @@
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
   <script src="js/aviso-agotados.js"></script>
+
+  <!-- Las tarjetas de destino respetan la fecha y los pasajeros del formulario -->
+  <script>
+    document.querySelectorAll('a[href^="p02-resultados.html?"]').forEach(function (a) {
+      a.addEventListener('click', function () {
+        var url = new URL(a.getAttribute('href'), location.href);
+        var ida = document.getElementById('fechaIda').value;
+        var pas = document.getElementById('pasajeros').value || 1;
+        if (ida) url.searchParams.set('ida', ida);
+        url.searchParams.set('pasajeros', pas);
+        a.href = url.pathname.split('/').pop() + url.search;
+      });
+    });
+  </script>
 </body>
 </html>

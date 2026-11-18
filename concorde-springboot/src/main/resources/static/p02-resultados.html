@@ -43,12 +43,12 @@
               <fieldset class="mb-3">
                 <legend class="form-label fw-bold">Precio máximo</legend>
                 <input type="range" class="form-range" min="10000" max="150000"
-                  step="5000" value="150000" id="filtroPrecio" data-filtro
+                  step="1000" value="150000" id="filtroPrecio" data-filtro
                   aria-label="Filtrar por precio máximo">
                 <div class="d-flex justify-content-between small text-muted">
-                  <span>$10k</span>
+                  <span id="minPrecio">$10k</span>
                   <span id="valorPrecio" class="fw-bold texto-azul">$150k</span>
-                  <span>$150k</span>
+                  <span id="maxPrecio">$150k</span>
                 </div>
               </fieldset>
 
@@ -118,7 +118,6 @@
               <select class="form-select form-select-sm" id="ordenar" style="width:auto" aria-label="Ordenar resultados">
                 <option value="precio-asc">Precio (menor)</option>
                 <option value="precio-desc">Precio (mayor)</option>
-                <option value="duracion">Duración</option>
                 <option value="salida">Salida más temprana</option>
               </select>
             </div>
@@ -167,7 +166,11 @@
     const total = document.getElementById('totalTrayectos');
     const slider = document.getElementById('filtroPrecio');
     const valorPrecio = document.getElementById('valorPrecio');
+    const minLbl = document.getElementById('minPrecio');
+    const maxLbl = document.getElementById('maxPrecio');
     const ordenar = document.getElementById('ordenar');
+    const chkEco = document.getElementById('claseEconomica');
+    const chkPrem = document.getElementById('clasePremium');
     const turnos = [1, 2, 3, 4].map(function (n) { return document.getElementById('turno' + n); });
 
     function turnoDe(hora) {
@@ -175,10 +178,39 @@
       return h < 6 ? 0 : h < 12 ? 1 : h < 18 ? 2 : 3;
     }
 
+    // Devuelve 'PREMIUM' o 'ECONOMICO' (si el backend no envía clase, se asume económico)
+    function claseDe(t) {
+      const c = String(t.clase || 'ECONOMICO')
+        .toUpperCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return c === 'PREMIUM' ? 'PREMIUM' : 'ECONOMICO';
+    }
+
+    // Ajusta el slider al rango real de precios de los resultados
+    function ajustarSlider() {
+      if (!TRAYECTOS.length) return;
+      const precios = TRAYECTOS.map(function (t) { return Number(t.precio); });
+      let min = Math.floor(Math.min.apply(null, precios) / 1000) * 1000;
+      const max = Math.ceil(Math.max.apply(null, precios) / 1000) * 1000;
+      if (min === max) min = Math.max(0, max - 1000);
+      slider.min = min;
+      slider.max = max;
+      slider.step = 1000;
+      slider.value = max;
+      minLbl.textContent = '$' + (min / 1000) + 'k';
+      maxLbl.textContent = '$' + (max / 1000) + 'k';
+      valorPrecio.textContent = '$' + (max / 1000) + 'k';
+    }
+
     function dibujar() {
       const maxPrecio = parseInt(slider.value, 10);
       const lista = TRAYECTOS.filter(function (t) {
-        return Number(t.precio) <= maxPrecio && turnos[turnoDe(t.salida)].checked;
+        const clase = claseDe(t);
+        const claseOk = (clase === 'PREMIUM' && chkPrem.checked) ||
+                        (clase === 'ECONOMICO' && chkEco.checked);
+        return Number(t.precio) <= maxPrecio &&
+               turnos[turnoDe(t.salida)].checked &&
+               claseOk;
       });
 
       lista.sort(function (a, b) {
@@ -206,13 +238,14 @@
         p.set('terminalOrigen', t.terminalOrigen);
         p.set('terminalDestino', t.terminalDestino);
         const precio = Number(t.precio).toLocaleString('es-CO');
+        const etiquetaClase = claseDe(t) === 'PREMIUM' ? 'Premium ⭐' : 'Económico';
         return '' +
                 '<article class="card-vuelo fade-in-up visible" aria-label="Bus a las ' + t.salida + ', precio $' + precio + '">' +
                 '<div class="row align-items-center g-2">' +
                 '<div class="col-md-4">' +
                 '<div class="hora">' + t.salida + '</div>' +
                 '<div class="ciudad">' + t.terminalOrigen + '</div>' +
-                '<div class="small text-muted">Bus 🚌</div>' +
+                '<div class="small text-muted">Bus 🚌 · ' + etiquetaClase + '</div>' +
                 '</div>' +
                 '<div class="col-md-4">' +
                 '<div class="ciudad">' + t.terminalDestino + '</div>' +
@@ -238,6 +271,7 @@
         const res = await fetch(AUTH_API + '/viajes/disponibles?' + q.toString());
         if (!res.ok) throw new Error('HTTP ' + res.status);
         TRAYECTOS = await res.json();
+        ajustarSlider();
         dibujar();
       } catch (e) {
         console.error(e);
@@ -251,6 +285,8 @@
       dibujar();
     });
     turnos.forEach(function (el) { el.addEventListener('change', dibujar); });
+    chkEco.addEventListener('change', dibujar);
+    chkPrem.addEventListener('change', dibujar);
     ordenar.addEventListener('change', dibujar);
 
     const selO = document.getElementById('origenFiltro');

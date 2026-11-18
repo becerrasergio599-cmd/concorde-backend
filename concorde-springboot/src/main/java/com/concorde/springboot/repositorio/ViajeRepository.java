@@ -1,3 +1,4 @@
+
 package com.concorde.springboot.repositorio;
 
 import com.concorde.springboot.modelo.Viaje;
@@ -22,6 +23,7 @@ public interface ViajeRepository extends JpaRepository<Viaje, Integer> {
           AND v.fecha_viaje = :fecha
           AND v.estado_viaje = 'PROGRAMADO'
         ORDER BY v.hora_salida
+        LIMIT 100
         """, nativeQuery = true)
     List<Viaje> buscar(@Param("origen") String origen,
                        @Param("destino") String destino,

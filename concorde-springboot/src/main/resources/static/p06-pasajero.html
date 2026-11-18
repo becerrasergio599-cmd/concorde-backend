@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Datos del pasajero - Concorde Transporte Terrestre">
-  <title>Concorde Transporte Terrestre | Datos del Pasajero</title>
+  <meta name="description" content="Resumen de compra - Concorde Transporte Terrestre">
+  <title>Concorde Transporte Terrestre | Resumen de Compra</title>
   <link rel="icon" type="image/png" href="img/LogoConcorde.png">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
@@ -19,154 +19,99 @@
         <div class="step-linea completado"></div>
         <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Detalle</span></div>
         <div class="step-linea completado"></div>
-        <div class="step activo" aria-current="step"><div class="step-numero">3</div><span class="step-label">Pasajeros</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Pasajeros</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Asientos</span></div>
+        <div class="step-linea completado"></div>
+        <div class="step activo" aria-current="step"><div class="step-numero">5</div><span class="step-label">Resumen</span></div>
       </nav>
+
+      <h1 class="h4 fw-bold texto-azul mb-4"><i class="bi bi-cart-check me-2" aria-hidden="true"></i>Resumen de tu compra</h1>
 
       <div class="row g-4">
         <div class="col-lg-8">
-          <div class="card-concorde">
-            <div class="card-header-concorde">
-              <i class="bi bi-person-fill me-2" aria-hidden="true"></i><span id="tituloPasajero">Datos del Pasajero 1</span>
-            </div>
+          <!-- Trayecto -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto</div>
             <div class="card-body">
-              <form id="formPasajero" class="form-concorde" data-action="pasajero" novalidate aria-label="Formulario de datos del pasajero">
-                <div class="row g-3">
-
-                  <!-- Indicador de pasajeros (solo si hay más de uno) -->
-                  <div class="col-12" id="chipsPasajeros" aria-live="polite"></div>
-
-                  <div class="col-12">
-                    <div class="alerta-info alerta-concorde" role="note">
-                      <i class="bi bi-info-circle me-2" aria-hidden="true"></i>
-                      Los datos deben coincidir exactamente con el documento de identidad.
-                    </div>
-                  </div>
-
-                  <!-- Autocompletar desde cuenta (solo pasajero 1) -->
-                  <div class="col-12" id="bloqueAutocompletar">
-                    <button type="button" id="btnAutocompletar" onclick="autocompletarDatos()" class="btn btn-outline-concorde btn-sm">
-                      <i class="bi bi-person-check me-1" aria-hidden="true"></i>Usar mis datos de cuenta
-                    </button>
-                    <span class="text-muted small ms-2" id="msgAutocompletar" aria-live="polite"></span>
-                  </div>
-
-                  <div class="col-md-6">
-                    <label class="form-label" for="primerNombre">Primer nombre <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="text" class="form-control" id="primerNombre" required aria-required="true" autocomplete="off" oninput="validarCampoVivo(this)">
-                    <div class="invalid-feedback">Campo requerido</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="segundoNombre">Segundo nombre</label>
-                    <input type="text" class="form-control" id="segundoNombre" autocomplete="off">
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="primerApellido">Primer apellido <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="text" class="form-control" id="primerApellido" required aria-required="true" autocomplete="off" oninput="validarCampoVivo(this)">
-                    <div class="invalid-feedback">Campo requerido</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="segundoApellido">Segundo apellido</label>
-                    <input type="text" class="form-control" id="segundoApellido" autocomplete="off">
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label" for="tipoDocPax">Tipo documento <span class="text-danger" aria-hidden="true">*</span></label>
-                    <select class="form-select" id="tipoDocPax" required aria-required="true" onchange="validarCampoVivo(this)">
-                      <option value="">Selecciona...</option>
-                      <option value="CC">Cédula de Ciudadanía</option>
-                      <option value="CE">Cédula de Extranjería</option>
-                      <option value="PA">Pasaporte</option>
-                      <option value="TI">Tarjeta de Identidad</option>
-                    </select>
-                    <div class="invalid-feedback">Selecciona el tipo</div>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label" for="numDocPax">Número de documento <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="text" class="form-control" id="numDocPax" required aria-required="true" autocomplete="off" oninput="validarCampoVivo(this)">
-                    <div class="invalid-feedback">Campo requerido</div>
-                  </div>
-                  <div class="col-md-4">
-                    <label class="form-label" for="fechaNac">Fecha de nacimiento <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="date" class="form-control" id="fechaNac" required aria-required="true" autocomplete="off" onchange="calcularEdad(this)">
-                    <div class="invalid-feedback">Campo requerido</div>
-                    <div id="edadCalculada" class="form-text" aria-live="polite"></div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="emailContacto">Correo de contacto <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="email" class="form-control" id="emailContacto" required aria-required="true" autocomplete="off" oninput="validarCampoVivo(this)">
-                    <div class="invalid-feedback">Correo inválido</div>
-                  </div>
-                  <div class="col-md-6">
-                    <label class="form-label" for="telefonoPax">Teléfono de contacto <span class="text-danger" aria-hidden="true">*</span></label>
-                    <input type="tel" class="form-control" id="telefonoPax" required aria-required="true" autocomplete="off" oninput="validarCampoVivo(this)">
-                    <div class="invalid-feedback">Campo requerido</div>
-                  </div>
-
-                  <!-- Necesidades especiales -->
-                  <div class="col-12">
-                    <h2 class="h6 fw-bold mb-2">Necesidades especiales (opcional)</h2>
-                    <div class="row g-2">
-                      <div class="col-md-4">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="necesidadSillaRuedas">
-                          <label class="form-check-label" for="necesidadSillaRuedas">♿ Silla de ruedas</label>
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="necesidadVegano">
-                          <label class="form-check-label" for="necesidadVegano">🥗 Comida especial</label>
-                        </div>
-                      </div>
-                      <div class="col-md-4">
-                        <div class="form-check">
-                          <input type="checkbox" class="form-check-input" id="necesidadMenorSolo">
-                          <label class="form-check-label" for="necesidadMenorSolo">👶 Menor sin acompañante</label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Progreso de llenado -->
-                  <div class="col-12">
-                    <label class="form-label small text-muted">Progreso del formulario</label>
-                    <div class="progress" style="height:8px" role="progressbar"
-                      aria-label="Progreso del formulario" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                      <div class="progress-bar bg-success" id="barraProgreso" style="width:0%;transition:width 0.4s ease"></div>
-                    </div>
-                    <small class="text-muted" id="textoProgreso" aria-live="polite">0 de 7 campos requeridos completados</small>
-                  </div>
-
-                  <div class="col-12 d-flex flex-column flex-md-row gap-2">
-                    <button type="button" id="btnAnterior" onclick="anteriorPasajero()" class="btn btn-outline-concorde py-2 d-none">
-                      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Pasajero anterior
-                    </button>
-                    <button type="submit" id="btnContinuar" class="btn btn-concorde-dorado flex-grow-1 py-2">
-                      <span id="textoBtnContinuar">Continuar a selección de asientos</span>
-                      <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-                    </button>
-                  </div>
+              <div class="d-flex justify-content-between flex-wrap gap-2 align-items-start">
+                <div>
+                  <p class="mb-1 fw-bold" id="rsRuta">—</p>
+                  <p class="mb-1 text-muted small" id="rsDetalle">—</p>
+                  <span class="badge-clase badge-economica" id="rsClase">Clase Económica</span>
                 </div>
-              </form>
+                <div class="texto-azul fw-bold fs-5" id="rsPrecio">$0</div>
+              </div>
             </div>
-          </div>
+          </article>
+
+          <!-- Pasajero -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-person me-2" aria-hidden="true"></i>Pasajero</div>
+            <div class="card-body">
+              <div class="row g-2 small">
+                <div class="col-md-6"><strong>Nombre:</strong> <span id="rsNombre">—</span></div>
+                <div class="col-md-6"><strong>Documento:</strong> <span id="rsDocumento">—</span></div>
+                <div class="col-md-6"><strong>Asiento:</strong> <span id="rsAsiento">—</span></div>
+                <div class="col-md-6"><strong>Contacto:</strong> <span id="rsContacto">—</span></div>
+              </div>
+            </div>
+          </article>
+
+          <!-- Equipaje -->
+          <article class="card-concorde mb-3">
+            <div class="card-header-concorde"><i class="bi bi-luggage me-2" aria-hidden="true"></i>Equipaje incluido</div>
+            <div class="card-body d-flex gap-4 flex-wrap">
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🎒</div><small class="text-muted">Artículo personal<br>10 kg</small></div>
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🧳</div><small class="text-muted">Equipaje de mano<br>10 kg</small></div>
+              <div class="text-center"><div style="font-size:2rem" aria-hidden="true">🛄</div><small class="text-muted" id="rsMaletas">Maleta bodega 20 kg</small></div>
+            </div>
+          </article>
+
+          <!-- Código de descuento -->
+          <article class="card-concorde">
+            <div class="card-header-concorde"><i class="bi bi-tag me-2" aria-hidden="true"></i>Código de descuento</div>
+            <div class="card-body">
+              <div class="row g-2 align-items-end">
+                <div class="col-8">
+                  <label class="form-label" for="codigoDesc">¿Tienes un código?</label>
+                  <input type="text" class="form-control" id="codigoDesc" placeholder="Ej: BIENVENIDO10" aria-label="Código de descuento">
+                </div>
+                <div class="col-4">
+                  <button type="button" id="btnAplicar" onclick="aplicarDescuento()" class="btn btn-concorde-primario w-100">
+                    Aplicar
+                  </button>
+                </div>
+              </div>
+              <div id="msgDescuento" class="mt-2 small d-none" role="status" aria-live="polite"></div>
+            </div>
+          </article>
         </div>
 
-        <aside class="col-lg-4" aria-label="Resumen del trayecto">
+        <!-- Total -->
+        <aside class="col-lg-4" aria-label="Total a pagar">
           <div class="card-concorde" style="position:sticky;top:80px">
-            <div class="card-header-concorde"><i class="bi bi-bus-front me-2" aria-hidden="true"></i>Tu trayecto</div>
-            <div class="card-body small">
-              <p class="mb-1 fw-bold" id="tuRuta">—</p>
-              <p class="mb-1 text-muted" id="tuFecha">—</p>
-              <p class="mb-1 text-muted">Directo · <span id="tuClase">Económico</span></p>
-              <p class="mb-1 text-muted">Pasajeros: <span id="tuPasajeros">1</span></p>
-              <hr>
-              <div class="d-flex justify-content-between fw-bold">
-                <span>Total</span><span class="texto-azul" id="tuTotal">$0</span>
-              </div>
+            <div class="card-header-concorde"><i class="bi bi-receipt me-2" aria-hidden="true"></i>Total a pagar</div>
+            <div class="card-body">
+              <table class="table table-sm mb-3" aria-label="Resumen de precios">
+                <tbody>
+                  <tr><td>Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
+                  <tr><td>Pasajeros</td><td class="text-end" id="rsPasajeros">1</td></tr>
+                  <tr id="filaDescuento" class="text-success d-none">
+                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$0</td>
+                  </tr>
+                  <tr class="table-light fw-bold">
+                    <td>Total</td>
+                    <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$0</td>
+                  </tr>
+                </tbody>
+              </table>
+              <a href="p09-pago.html" class="btn btn-concorde-dorado w-100 py-2">
+                <i class="bi bi-credit-card me-1" aria-hidden="true"></i>Ir al pago
+              </a>
+              <a href="p07-asientos.html" class="btn btn-outline-secondary w-100 mt-2 py-2 small">
+                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Volver
+              </a>
             </div>
           </div>
         </aside>
@@ -181,193 +126,88 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
-    // ── Viaje elegido en p05 ────────────────────────────────────────────
-    let viaje = null;
-    try { viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null'); } catch (e) {}
+    // ===== Datos reales del flujo de compra =====
+    const viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
     if (!viaje) { window.location.href = 'index.html'; }
 
-    // Cantidad de pasajeros elegida en la página de detalle
-    const NUM = Math.max(1, parseInt(viaje && viaje.pasajeros, 10) || 1);
+    const usuario = Auth.getUsuario() || {};
+    const pax = JSON.parse(sessionStorage.getItem('concorde_pasajero') || 'null');
+    const asiento = sessionStorage.getItem('concorde_asiento');
 
-    // Resumen real del viaje (con la tarifa Económico/Premium de p05)
-    (function () {
-      var v = viaje;
-      if (!v) return;
-      var f = new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
-      var unit = Number(v.precioUnitario || v.precio);
-      var total = v.total ? Number(v.total) : unit * NUM;
-      document.getElementById('tuRuta').textContent = v.terminalOrigen + ' → ' + v.terminalDestino;
-      document.getElementById('tuFecha').textContent = f + ' · ' + v.salida;
-      document.getElementById('tuClase').textContent = v.clase === 'premium' ? 'Premium' : 'Económico';
-      document.getElementById('tuPasajeros').textContent = NUM;
-      document.getElementById('tuTotal').textContent = '$' + total.toLocaleString('es-CO');
-    })();
+    // Tarifa elegida en p05 (Económico o Premium)
+    const esPremium = !!viaje && viaje.clase === 'premium';
+    const tarifa = Number(viaje ? (viaje.precioUnitario || viaje.precio) : 0);
+    const numPasajeros = Number(viaje ? viaje.pasajeros : 1) || 1;
+    const subtotal = tarifa * numPasajeros;
+    let totalActual = subtotal;
 
-    // ── Estado: un pasajero a la vez ────────────────────────────────────
-    const camposRequeridos = ['primerNombre','primerApellido','tipoDocPax','numDocPax','fechaNac','emailContacto','telefonoPax'];
-    const camposTexto = ['primerNombre','segundoNombre','primerApellido','segundoApellido','tipoDocPax','numDocPax','fechaNac','emailContacto','telefonoPax'];
-    const camposCheck = ['necesidadSillaRuedas','necesidadVegano','necesidadMenorSolo'];
+    function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
 
-    let actual = 0;      // índice del pasajero que se está llenando (0 = pasajero 1)
-    let pasajeros = [];  // datos ya guardados de cada pasajero
-
-    function toast(msg, tipo) {
-      if (window.UI && UI.mostrarToast) UI.mostrarToast(msg, tipo);
+    function guardarTotal() {
+      sessionStorage.setItem('concorde_total', String(Math.round(totalActual)));
     }
 
-    // ── Validación y progreso ───────────────────────────────────────────
-    function validarCampoVivo(campo) {
-      if (campo.value.trim()) {
-        campo.classList.remove('is-invalid');
-        campo.classList.add('is-valid');
+    if (viaje) {
+      const fecha = new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      document.getElementById('rsRuta').textContent = viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
+      document.getElementById('rsDetalle').textContent = fecha + ' · Salida ' + viaje.salida + ' · Directo';
+      document.getElementById('rsPrecio').textContent = dinero(subtotal);
+      document.getElementById('rsTarifa').textContent = dinero(tarifa);
+      document.getElementById('rsPasajeros').textContent = numPasajeros;
+      document.getElementById('totalFinal').textContent = dinero(subtotal);
+
+      // Clase del servicio
+      const badge = document.getElementById('rsClase');
+      if (esPremium) {
+        badge.textContent = '⭐ Clase Premium';
+        badge.classList.remove('badge-economica');
+        badge.classList.add('badge-premium');
+        badge.style.background = 'rgba(245,166,35,0.18)';
+        badge.style.color = '#b9770e';
+        document.getElementById('rsMaletas').innerHTML = 'Maletas bodega<br>2 × 20 kg';
       } else {
-        campo.classList.remove('is-valid');
+        badge.textContent = 'Clase Económica';
       }
-      actualizarProgreso();
+
+      document.getElementById('rsNombre').textContent = pax ? pax.nombre : (usuario.nombre || '—');
+      document.getElementById('rsDocumento').textContent = pax ? pax.documento : '—';
+      document.getElementById('rsAsiento').textContent = asiento || '—';
+      document.getElementById('rsContacto').textContent = pax ? pax.email : (usuario.email || '—');
+      guardarTotal();
     }
 
-    function actualizarProgreso() {
-      const completados = camposRequeridos.filter(id => {
-        const el = document.getElementById(id);
-        return el && el.value.trim();
-      }).length;
-      const pct = Math.round((completados / camposRequeridos.length) * 100);
-      document.getElementById('barraProgreso').style.width = pct + '%';
-      document.getElementById('barraProgreso').parentElement.setAttribute('aria-valuenow', pct);
-      document.getElementById('textoProgreso').textContent = `${completados} de ${camposRequeridos.length} campos requeridos completados`;
-    }
+    function aplicarDescuento() {
+      const codigo = document.getElementById('codigoDesc').value.trim().toUpperCase();
+      const msg = document.getElementById('msgDescuento');
+      const fila = document.getElementById('filaDescuento');
+      const total = document.getElementById('totalFinal');
+      msg.classList.remove('d-none','text-success','text-danger');
 
-    function calcularEdad(input) {
-      const el = document.getElementById('edadCalculada');
-      if (!input.value) { el.textContent = ''; validarCampoVivo(input); return; }
-      const hoy = new Date();
-      const nac = new Date(input.value);
-      let edad = hoy.getFullYear() - nac.getFullYear();
-      if (hoy.getMonth() < nac.getMonth() || (hoy.getMonth() === nac.getMonth() && hoy.getDate() < nac.getDate())) edad--;
-      if (edad >= 0 && edad < 120) {
-        el.textContent = `Edad: ${edad} años`;
-        el.className = 'form-text text-success';
-        if (edad < 18) el.textContent += ' (menor de edad)';
+      if (codigo === 'BIENVENIDO10') {
+        const descuento = subtotal * 0.10;
+        totalActual = subtotal - descuento;
+        document.getElementById('valorDescuento').textContent = '-' + dinero(descuento);
+        fila.classList.remove('d-none');
+        total.textContent = dinero(totalActual);
+        guardarTotal();
+        msg.textContent = '✓ Descuento del 10% aplicado correctamente.';
+        msg.classList.add('text-success');
+        document.getElementById('btnAplicar').disabled = true;
+        UI.mostrarToast('¡Descuento aplicado! Ahorras ' + dinero(descuento), 'success');
+      } else if (codigo === '') {
+        msg.textContent = 'Ingresa un código de descuento.';
+        msg.classList.add('text-danger');
+      } else {
+        msg.textContent = `El código "${codigo}" no es válido o ya expiró.`;
+        msg.classList.add('text-danger');
+        UI.mostrarToast('Código no válido', 'danger');
       }
-      validarCampoVivo(input);
+      msg.classList.remove('d-none');
     }
 
-    function validarFormulario() {
-      let primerInvalido = null;
-      camposRequeridos.forEach(id => {
-        const el = document.getElementById(id);
-        let ok = !!el.value.trim();
-        if (ok && id === 'emailContacto') ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
-        el.classList.toggle('is-invalid', !ok);
-        el.classList.toggle('is-valid', ok);
-        if (!ok && !primerInvalido) primerInvalido = el;
-      });
-      if (primerInvalido) primerInvalido.focus();
-      return !primerInvalido;
-    }
-
-    // ── Autocompletar (solo para el pasajero 1) ─────────────────────────
-    function autocompletarDatos() {
-      // Nombre y correo reales de la cuenta; el resto son datos de ejemplo
-      const u = Auth.getUsuario() || {};
-      const partes = (u.nombre || 'Juan García').split(' ').filter(Boolean);
-      const datos = {
-        primerNombre: partes[0] || 'Juan',
-        segundoNombre: '',
-        primerApellido: partes[1] || 'García',
-        segundoApellido: partes[2] || '',
-        tipoDocPax: 'CC',
-        numDocPax: '1234567890',
-        fechaNac: '1995-05-15',
-        emailContacto: u.email || 'juangarcia@email.com',
-        telefonoPax: '3001234567'
-      };
-      Object.entries(datos).forEach(([id, val]) => {
-        const el = document.getElementById(id);
-        if (el) { el.value = val; if (val) el.classList.add('is-valid'); }
-      });
-      calcularEdad(document.getElementById('fechaNac'));
-      document.getElementById('msgAutocompletar').textContent = '✓ Datos completados desde tu cuenta';
-      actualizarProgreso();
-      toast('Datos de cuenta cargados exitosamente', 'success');
-    }
-
-    // ── Leer / llenar el formulario ─────────────────────────────────────
-    function leerFormulario() {
-      const v = id => (document.getElementById(id).value || '').trim();
-      const nombre = [v('primerNombre'), v('segundoNombre'), v('primerApellido'), v('segundoApellido')].filter(Boolean).join(' ');
-      const campos = {};
-      camposTexto.forEach(id => { campos[id] = v(id); });
-      camposCheck.forEach(id => { campos[id] = document.getElementById(id).checked; });
-      return {
-        nombre: nombre,
-        documento: v('tipoDocPax') + ' ' + v('numDocPax'),
-        email: v('emailContacto'),
-        telefono: v('telefonoPax'),
-        tipoDocumento: v('tipoDocPax'),
-        numeroDocumento: v('numDocPax'),
-        fechaNacimiento: v('fechaNac'),
-        necesidades: {
-          sillaRuedas: document.getElementById('necesidadSillaRuedas').checked,
-          comidaEspecial: document.getElementById('necesidadVegano').checked,
-          menorSolo: document.getElementById('necesidadMenorSolo').checked
-        },
-        campos: campos
-      };
-    }
-
-    function limpiarFormulario() {
-      document.getElementById('formPasajero').reset();
-      document.querySelectorAll('#formPasajero .is-valid, #formPasajero .is-invalid')
-        .forEach(el => el.classList.remove('is-valid', 'is-invalid'));
-      document.getElementById('edadCalculada').textContent = '';
-      document.getElementById('msgAutocompletar').textContent = '';
-    }
-
-    function llenarFormulario(p) {
-      if (!p || !p.campos) return;
-      camposTexto.forEach(id => {
-        const el = document.getElementById(id);
-        el.value = p.campos[id] || '';
-        if (el.value) el.classList.add('is-valid');
-      });
-      camposCheck.forEach(id => { document.getElementById(id).checked = !!p.campos[id]; });
-      if (p.campos.fechaNac) calcularEdad(document.getElementById('fechaNac'));
-    }
-
-    // ── Guardar en sessionStorage para las páginas siguientes ───────────
-    function guardar() {
-      const lista = pasajeros.filter(Boolean);
-      // Lista completa de pasajeros (en el mismo orden que los asientos)
-      sessionStorage.setItem('concorde_pasajeros', JSON.stringify(lista));
-      // Primer pasajero con el formato anterior (compatibilidad con p08 y pago)
-      if (lista[0]) {
-        sessionStorage.setItem('concorde_pasajero', JSON.stringify({
-          nombre: lista[0].nombre,
-          documento: lista[0].documento,
-          email: lista[0].email,
-          telefono: lista[0].telefono
-        }));
-      }
-    }
-
-    // ── Navegación entre pasajeros ──────────────────────────────────────
-    function renderChips() {
-      const cont = document.getElementById('chipsPasajeros');
-      if (NUM <= 1) { cont.innerHTML = ''; return; }
-      let html = '';
-      for (let i = 0; i < NUM; i++) {
-        const hecho = !!pasajeros[i];
-        const cls = i === actual ? 'bg-primary' : (hecho ? 'bg-success' : 'bg-secondary');
-        html += `<span class="badge ${cls} me-1">${hecho && i !== actual ? '✓ ' : ''}Pasajero ${i + 1}</span>`;
-      }
-      cont.innerHTML = html;
-    }
-
-    function mostrarPasajero(i) {
-      actual = i;
-      limpiarFormulario();
-      llenarFormulario(pasajeros[i]);
-
-      document.getElementById('tituloPasajero').textContent =
-        NUM > 1 ? `Datos del Pasajero ${i + 1} d
+    document.getElementById('codigoDesc').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') aplicarDescuento();
+    });
+  </script>
+</body>
+</html>

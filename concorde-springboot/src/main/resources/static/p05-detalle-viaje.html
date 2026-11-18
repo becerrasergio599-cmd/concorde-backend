@@ -28,6 +28,9 @@
         <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
       </nav>
 
+      <!-- Aviso de ida / vuelta -->
+      <div id="avisoTramo" class="alerta-info alerta-concorde mb-3 d-none" role="status"></div>
+
       <div class="row g-4">
         <div class="col-lg-8">
 
@@ -35,6 +38,7 @@
           <article class="card-concorde mb-4">
             <div class="card-header-concorde">
               <i class="bi bi-bus-front me-2" aria-hidden="true"></i>Trayecto seleccionado
+              <span class="badge bg-light text-dark ms-2 d-none" id="etiquetaTramo"></span>
             </div>
             <div class="card-body">
               <div class="row align-items-center text-center g-3">
@@ -148,7 +152,8 @@
             <div class="card-body">
               <table class="table table-sm mb-0" aria-label="Desglose de precios">
                 <tbody>
-                  <tr><td>Tarifa por pasajero</td><td class="text-end" id="tarifaBase">$0</td></tr>
+                  <tr id="filaIda" class="d-none"><td id="idaTxt">Ida</td><td class="text-end" id="idaMonto">$0</td></tr>
+                  <tr><td id="lblTarifa">Tarifa por pasajero</td><td class="text-end" id="tarifaBase">$0</td></tr>
                   <tr><td>Pasajeros</td><td class="text-end" id="numPasajeros">1</td></tr>
                   <tr class="table-light">
                     <td><strong>Total</strong></td>
@@ -203,6 +208,34 @@
     };
 
     const $ = id => document.getElementById(id);
+    const leer = k => { try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; } };
+
+    // ¿Es la IDA o la VUELTA de una búsqueda "ida y vuelta"? Se detecta comparando
+    // la búsqueda guardada en el buscador con los datos de esta página.
+    const rt = leer('concorde_busqueda_rt');
+    let tramo = 'unico';
+    if (rt) {
+      if (origen === rt.origen && destino === rt.destino && ida === rt.ida) {
+        tramo = 'ida';
+      } else if (origen === rt.destino && destino === rt.origen && ida === rt.vuelta &&
+                 sessionStorage.getItem('concorde_ida_rt')) {
+        tramo = 'vuelta';
+      }
+    }
+
+    // Limpieza al entrar: los asientos y el total se eligen más adelante
+    ['concorde_asientos', 'concorde_asiento', 'concorde_asientos_vuelta', 'concorde_total']
+      .forEach(k => sessionStorage.removeItem(k));
+    if (tramo !== 'vuelta') {
+      sessionStorage.removeItem('concorde_viaje_vuelta');
+      sessionStorage.removeItem('concorde_ida_rt');
+    } else {
+      // Al elegir la vuelta en la lista de resultados, esa página pudo reemplazar
+      // concorde_viaje; se restaura la ida desde la copia guardada.
+      sessionStorage.setItem('concorde_viaje', sessionStorage.getItem('concorde_ida_rt'));
+    }
+    const idaPrevia = tramo === 'vuelta' ? leer('concorde_ida_rt') : null;
+    const totalIdaPrevio = idaPrevia ? (Number(idaPrevia.total) || 0) : 0;
 
     // --- Datos del trayecto (vienen de la búsqueda) ---
     $('horaSalida').textContent      = salida;
@@ -218,28 +251,55 @@
     $('precioEconomica').textContent = fmt(precios.economica.unit);
     $('precioPremium').textContent   = fmt(precios.premium.unit);
 
+    // Etiquetas según el tramo
+    if (tramo !== 'unico') {
+      const etiqueta = $('etiquetaTramo');
+      etiqueta.textContent = tramo === 'ida' ? 'Ida' : 'Vuelta';
+      etiqueta.classList.remove('d-none');
+      const aviso = $('avisoTramo');
+      aviso.classList.remove('d-none');
+      aviso.innerHTML = tramo === 'ida'
+        ? '<i class="bi bi-arrow-right-circle me-2" aria-hidden="true"></i>Paso 1 de 2: elige tu <strong>ida</strong>. Después elegirás tu vuelta.'
+        : '<i class="bi bi-arrow-left-circle me-2" aria-hidden="true"></i>Paso 2 de 2: elige tu <strong>vuelta</strong>. Tu ida ya quedó seleccionada.';
+      $('lblTarifa').textContent = 'Tarifa por pasajero (' + (tramo === 'ida' ? 'ida' : 'vuelta') + ')';
+    }
+    if (tramo === 'vuelta' && idaPrevia) {
+      $('filaIda').classList.remove('d-none');
+      $('idaTxt').textContent = 'Ida: ' + (idaPrevia.terminalOrigen || NOMBRES[idaPrevia.origen] || '') +
+        ' → ' + (idaPrevia.terminalDestino || NOMBRES[idaPrevia.destino] || '');
+      $('idaMonto').textContent = fmt(totalIdaPrevio);
+    }
+
     // Botón "Ver otros trayectos": vuelve a la misma búsqueda
     const volver = new URLSearchParams(params);
     ['idViaje', 'salida', 'precio', 'terminalOrigen', 'terminalDestino', 'clase', 'total'].forEach(k => volver.delete(k));
     $('btnVolver').href = 'p02-resultados.html?' + volver.toString();
 
-    // Guarda la tarifa elegida en sessionStorage para p06, p07, p08 y p09
+    function construirDesdeUrl() {
+      return {
+        idViaje: idViaje, origen: origen, destino: destino, ida: ida, salida: salida,
+        terminalOrigen: params.get('terminalOrigen') || '',
+        terminalDestino: params.get('terminalDestino') || '',
+        precio: precioBase, pasajeros: pasajeros
+      };
+    }
+
+    // Guarda la tarifa elegida en sessionStorage para p06, p07, p08 y p09.
+    // La ida (o el viaje único) va en concorde_viaje; la vuelta en concorde_viaje_vuelta.
     function guardarTarifa(clase, unit, total) {
       try {
-        let viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
-        if (!viaje) {
-          // Si no existía, se arma con los datos de la URL
-          viaje = {
-            idViaje: idViaje, origen: origen, destino: destino, ida: ida, salida: salida,
-            terminalOrigen: params.get('terminalOrigen') || '',
-            terminalDestino: params.get('terminalDestino') || '',
-            precio: precioBase, pasajeros: pasajeros
-          };
+        let viaje;
+        if (tramo === 'vuelta') {
+          viaje = construirDesdeUrl();
+        } else {
+          viaje = leer('concorde_viaje');
+          // Si lo guardado es de otro viaje, se reconstruye con los datos de la URL
+          if (!viaje || (idViaje && String(viaje.idViaje) !== String(idViaje))) viaje = construirDesdeUrl();
         }
         viaje.clase = clase;
         viaje.precioUnitario = unit;   // precio por pasajero de la tarifa elegida
         viaje.total = Math.round(total);
-        sessionStorage.setItem('concorde_viaje', JSON.stringify(viaje));
+        sessionStorage.setItem(tramo === 'vuelta' ? 'concorde_viaje_vuelta' : 'concorde_viaje', JSON.stringify(viaje));
       } catch (e) {}
     }
 
@@ -247,16 +307,26 @@
       const d = precios[clase];
       const total = d.unit * pasajeros;
       $('tarifaBase').textContent  = fmt(d.unit);
-      $('totalPrecio').textContent = fmt(total);
+      $('totalPrecio').textContent = fmt(total + totalIdaPrevio);
       $('textoComida').textContent = d.comida;
       $('iconoComida').textContent = d.icono;
 
       guardarTarifa(clase, d.unit, total);
 
-      const siguiente = new URLSearchParams(params);
-      siguiente.set('clase', clase);
-      siguiente.set('total', Math.round(total));
-      $('btnContinuar').href = 'p06-pasajero.html?' + siguiente.toString();
+      const btn = $('btnContinuar');
+      if (tramo === 'ida') {
+        // Siguiente paso: buscar la vuelta (origen y destino invertidos, fecha de vuelta)
+        const busquedaVuelta = new URLSearchParams({
+          origen: rt.destino, destino: rt.origen, ida: rt.vuelta, pasajeros: String(pasajeros)
+        });
+        btn.href = 'p02-resultados.html?' + busquedaVuelta.toString();
+        btn.innerHTML = 'Elegir vuelta <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>';
+      } else {
+        const siguiente = new URLSearchParams(params);
+        siguiente.set('clase', clase);
+        siguiente.set('total', Math.round(total));
+        btn.href = 'p06-pasajero.html?' + siguiente.toString();
+      }
 
       const esEco = clase === 'economica';
       $('labelEconomica').style.background  = esEco ? 'rgba(0,53,128,0.06)' : '';
@@ -264,6 +334,14 @@
       $('labelPremium').style.background    = !esEco ? 'rgba(245,166,35,0.1)' : '';
       $('labelPremium').style.borderColor   = !esEco ? 'var(--dorado)' : '';
     }
+
+    // Al pasar a elegir la vuelta, se guarda una copia de la ida
+    // (la página de resultados puede reemplazar concorde_viaje al elegir la vuelta)
+    $('btnContinuar').addEventListener('click', function () {
+      if (tramo === 'ida') {
+        sessionStorage.setItem('concorde_ida_rt', sessionStorage.getItem('concorde_viaje') || '');
+      }
+    });
 
     document.querySelectorAll('input[name="clase"]').forEach(radio => {
       radio.addEventListener('change', () => {

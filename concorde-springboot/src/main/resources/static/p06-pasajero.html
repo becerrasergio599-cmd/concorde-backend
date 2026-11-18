@@ -250,6 +250,18 @@
       const el = document.getElementById(id);
       if (el) el.addEventListener('change', actualizarProgreso);
     });
+
+    // Guarda los datos del pasajero para el resumen de compra
+    document.getElementById('formPasajero').addEventListener('submit', function () {
+      const v = id => (document.getElementById(id).value || '').trim();
+      const nombre = [v('primerNombre'), v('segundoNombre'), v('primerApellido'), v('segundoApellido')].filter(Boolean).join(' ');
+      sessionStorage.setItem('concorde_pasajero', JSON.stringify({
+        nombre: nombre,
+        documento: v('tipoDocPax') + ' ' + v('numDocPax'),
+        email: v('emailContacto'),
+        telefono: v('telefonoPax')
+      }));
+    });
   </script>
 </body>
 </html>

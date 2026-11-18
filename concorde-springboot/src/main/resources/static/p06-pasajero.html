@@ -90,10 +90,21 @@
     if (viajeP) {
       const f = new Date(viajeP.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
       const unit = Number(viajeP.precioUnitario || viajeP.precio);
-      const total = viajeP.total ? Number(viajeP.total) : unit * numPax;
+      let total = viajeP.total ? Number(viajeP.total) : unit * numPax;
+
+      // Si es ida y vuelta, se suma la vuelta
+      let vueltaP = null;
+      try { vueltaP = JSON.parse(sessionStorage.getItem('concorde_viaje_vuelta') || 'null'); } catch (e) {}
+      let textoFecha = f + ' · ' + viajeP.salida;
+      if (vueltaP) {
+        total += vueltaP.total ? Number(vueltaP.total) : Number(vueltaP.precioUnitario || vueltaP.precio) * numPax;
+        const fv = new Date(vueltaP.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+        textoFecha += ' — Vuelta: ' + fv + ' · ' + vueltaP.salida;
+      }
+
       document.getElementById('tuRuta').textContent = viajeP.terminalOrigen + ' → ' + viajeP.terminalDestino;
-      document.getElementById('tuFecha').textContent = f + ' · ' + viajeP.salida;
-      document.getElementById('tuClase').textContent = viajeP.clase === 'premium' ? 'Premium' : 'Económico';
+      document.getElementById('tuFecha').textContent = textoFecha;
+      document.getElementById('tuClase').textContent = (viajeP.clase === 'premium' ? 'Premium' : 'Económico') + (vueltaP ? ' · Ida y vuelta' : '');
       document.getElementById('tuPasajeros').textContent = numPax;
       document.getElementById('tuTotal').textContent = '$' + total.toLocaleString('es-CO');
     }

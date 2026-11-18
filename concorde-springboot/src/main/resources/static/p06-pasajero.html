@@ -154,7 +154,7 @@
             <div class="card-body small">
               <p class="mb-1 fw-bold" id="tuRuta">—</p>
               <p class="mb-1 text-muted" id="tuFecha">—</p>
-              <p class="mb-1 text-muted">Directo</p>
+              <p class="mb-1 text-muted">Directo · <span id="tuClase">Económico</span></p>
               <hr>
               <div class="d-flex justify-content-between fw-bold">
                 <span>Total</span><span class="texto-azul" id="tuTotal">$0</span>
@@ -173,14 +173,17 @@
   </script>
   <script src="js/componentes.js"></script><script src="js/main.js"></script>
   <script>
-    // Resumen real del viaje elegido en la página de resultados
+    // Resumen real del viaje elegido (con la tarifa Económico/Premium de p05)
     (function () {
       var v = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
       if (!v) { window.location.href = 'index.html'; return; }
       var f = new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+      var unit = Number(v.precioUnitario || v.precio);
+      var total = v.total ? Number(v.total) : unit * Number(v.pasajeros || 1);
       document.getElementById('tuRuta').textContent = v.terminalOrigen + ' → ' + v.terminalDestino;
       document.getElementById('tuFecha').textContent = f + ' · ' + v.salida;
-      document.getElementById('tuTotal').textContent = '$' + (Number(v.precio) * Number(v.pasajeros || 1)).toLocaleString('es-CO');
+      document.getElementById('tuClase').textContent = v.clase === 'premium' ? 'Premium' : 'Económico';
+      document.getElementById('tuTotal').textContent = '$' + total.toLocaleString('es-CO');
     })();
 
     const camposRequeridos = ['primerNombre','primerApellido','tipoDocPax','numDocPax','fechaNac','emailContacto','telefonoPax'];

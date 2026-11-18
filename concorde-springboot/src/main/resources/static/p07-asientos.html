@@ -159,8 +159,8 @@
           <div class="card-concorde" style="position:sticky;top:80px">
             <div class="card-header-concorde"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Tu selección</div>
             <div class="card-body">
-              <p class="mb-1 small"><strong>Trayecto:</strong> Tunja → Bogotá Salitre</p>
-              <p class="mb-2 small"><strong>Salida:</strong> Jue 2 Ene · 05:30</p>
+              <p class="mb-1 small"><strong>Trayecto:</strong> <span id="selRuta">—</span></p>
+              <p class="mb-2 small"><strong>Salida:</strong> <span id="selSalida">—</span></p>
               <div id="resumenAsientos" class="alerta-advertencia alerta-concorde mb-3 small"
                 role="status" aria-live="polite">
                 Ningún asiento seleccionado
@@ -188,6 +188,15 @@
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
   <script>
+    // Datos del viaje elegido en la página de resultados
+    (function () {
+      var v = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
+      if (!v) return;
+      var f = new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' });
+      document.getElementById('selRuta').textContent = v.terminalOrigen + ' → ' + v.terminalDestino;
+      document.getElementById('selSalida').textContent = f + ' · ' + v.salida;
+    })();
+
     // Asientos ocupados (fila+columna)
     const ocupados = ['1A','1C','2B','3D','4A','4B','5C','6D','7A','8B','9C','10D','11A'];
     const premium  = ['1A','1B','1C','1D','2A','2B','2C','2D']; // primeras 2 filas
@@ -262,10 +271,12 @@
         el.textContent = 'Ningún asiento seleccionado';
         btn.style.pointerEvents = 'none'; btn.style.opacity = '0.6';
         btn.setAttribute('aria-disabled','true');
+        sessionStorage.removeItem('concorde_asiento');
       } else {
         el.textContent = `Asiento seleccionado: ${seleccionados[0]}`;
         btn.style.pointerEvents = ''; btn.style.opacity = '';
         btn.removeAttribute('aria-disabled');
+        sessionStorage.setItem('concorde_asiento', seleccionados[0]);
       }
     }
 

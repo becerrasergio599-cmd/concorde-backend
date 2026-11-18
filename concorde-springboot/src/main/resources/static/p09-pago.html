@@ -216,6 +216,15 @@
             pasajero: usuario.nombre,
             total: total
           }));
+          // Respaldo para la página Mis Reservas
+          var info = JSON.parse(localStorage.getItem('concorde_reservas_info') || '{}');
+          info[reserva.idReserva] = {
+            ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
+            fecha: new Date(viaje.ida + 'T00:00:00').toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' }),
+            total: total
+          };
+          localStorage.setItem('concorde_reservas_info', JSON.stringify(info));
+
           window.location.href = 'p10-confirmacion.html';
         } catch (e) {
           console.error(e);

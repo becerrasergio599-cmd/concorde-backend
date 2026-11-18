@@ -223,6 +223,26 @@
     ['idViaje', 'salida', 'precio', 'terminalOrigen', 'terminalDestino', 'clase', 'total'].forEach(k => volver.delete(k));
     $('btnVolver').href = 'p02-resultados.html?' + volver.toString();
 
+    // Guarda la tarifa elegida en sessionStorage para p06, p07, p08 y p09
+    function guardarTarifa(clase, unit, total) {
+      try {
+        let viaje = JSON.parse(sessionStorage.getItem('concorde_viaje') || 'null');
+        if (!viaje) {
+          // Si no existía, se arma con los datos de la URL
+          viaje = {
+            idViaje: idViaje, origen: origen, destino: destino, ida: ida, salida: salida,
+            terminalOrigen: params.get('terminalOrigen') || '',
+            terminalDestino: params.get('terminalDestino') || '',
+            precio: precioBase, pasajeros: pasajeros
+          };
+        }
+        viaje.clase = clase;
+        viaje.precioUnitario = unit;   // precio por pasajero de la tarifa elegida
+        viaje.total = Math.round(total);
+        sessionStorage.setItem('concorde_viaje', JSON.stringify(viaje));
+      } catch (e) {}
+    }
+
     function actualizarResumen(clase) {
       const d = precios[clase];
       const total = d.unit * pasajeros;
@@ -230,6 +250,8 @@
       $('totalPrecio').textContent = fmt(total);
       $('textoComida').textContent = d.comida;
       $('iconoComida').textContent = d.icono;
+
+      guardarTarifa(clase, d.unit, total);
 
       const siguiente = new URLSearchParams(params);
       siguiente.set('clase', clase);

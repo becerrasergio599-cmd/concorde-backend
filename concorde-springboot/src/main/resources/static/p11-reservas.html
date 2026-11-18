@@ -100,18 +100,30 @@
 
         const misPropias = reservas.filter(r => r.usuario && r.usuario.idUsuario === usuario.id);
 
+        // Datos guardados al momento de pagar (respaldo si el backend no los devuelve)
+        const infoLocal = JSON.parse(localStorage.getItem('concorde_reservas_info') || '{}');
+
+        // Si un viaje no vino en la lista general, se pide por su id
+        const faltantes = [...new Set(misPropias.map(r => r.viaje && r.viaje.idViaje).filter(id => id && !viajePorId[id]))];
+        await Promise.all(faltantes.map(id =>
+          fetch(`${API}/viajes/${id}`).then(r => r.ok ? r.json() : null)
+            .then(v => { if (v) viajePorId[id] = v; })
+            .catch(() => {})
+        ));
+
         misReservas = misPropias.map(reserva => {
           const viaje = viajePorId[reserva.viaje.idViaje];
           const ruta = viaje ? rutaPorId[viaje.ruta.idRuta] : null;
           const origen = ruta ? terminalPorId[ruta.terminalOrigen.idTerminal] : null;
           const destino = ruta ? terminalPorId[ruta.terminalDestino.idTerminal] : null;
           const info = estadoInfo[reserva.estado] || estadoInfo.PENDIENTE;
+          const extra = infoLocal[reserva.idReserva];
 
           return {
             idReserva: reserva.idReserva,
-            rutaTexto: origen && destino ? `${origen.ciudad} → ${destino.ciudad}` : 'Ruta no disponible',
-            fechaTexto: viaje ? new Date(viaje.fechaViaje + 'T00:00:00').toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' }) : '—',
-            valorTexto: viaje ? '$' + Number(viaje.precio).toLocaleString('es-CO') : '—',
+            rutaTexto: origen && destino ? `${origen.ciudad} → ${destino.ciudad}` : (extra ? extra.ruta : 'Ruta no disponible'),
+            fechaTexto: viaje && viaje.fechaViaje ? new Date(viaje.fechaViaje + 'T00:00:00').toLocaleDateString('es-CO', { day:'numeric', month:'short', year:'numeric' }) : (extra ? extra.fecha : '—'),
+            valorTexto: viaje && viaje.precio ? '$' + Number(viaje.precio).toLocaleString('es-CO') : (extra ? extra.total : '—'),
             estadoFiltro: info.filtro,
             estadoClase: info.clase,
             estadoTexto: info.texto,

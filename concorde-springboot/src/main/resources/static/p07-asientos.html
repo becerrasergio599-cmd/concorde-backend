@@ -74,6 +74,9 @@
     .asiento-seleccionado { background: var(--dorado); border-color: var(--dorado-oscuro); color: var(--azul-oscuro); transform: scale(1.08); box-shadow: 0 3px 10px rgba(245,166,35,0.4); }
     .asiento-premium { background: rgba(245,166,35,0.15); border-color: var(--dorado); color: var(--dorado-oscuro); }
     .asiento-premium:hover { background: var(--dorado); color: white; transform: scale(1.08); }
+    /* Asiento Premium bloqueado (tarifa económica) */
+    .asiento-bloqueado { opacity: .45; cursor: not-allowed; }
+    .asiento-bloqueado:hover { background: rgba(245,166,35,0.15); color: var(--dorado-oscuro); transform: none; }
     .bus-trasero {
       background: var(--gris-medio);
       border-radius: 4px 4px 12px 12px;
@@ -215,6 +218,32 @@
     const ocupados = ['1A','1C','2B','3D','4A','4B','5C','6D','7A','8B','9C','10D','11A'];
     const premium  = ['1A','1B','1C','1D','2A','2B','2C','2D']; // primeras 2 filas
 
+    // ── Tarifa elegida (ECONOMICA o PREMIUM) ────────────────────────────
+    // Busca la clase en el viaje guardado y en sessionStorage.
+    // Devuelve 'PREMIUM', 'ECONOMICA' o null si no la encuentra.
+    function getClaseTarifa() {
+      const candidatos = [
+        viajeIda.clase, viajeIda.tarifa, viajeIda.tipoTarifa, viajeIda.claseTarifa, viajeIda.tipo,
+        sessionStorage.getItem('concorde_clase'),
+        sessionStorage.getItem('concorde_tarifa'),
+        sessionStorage.getItem('concorde_tipo_tarifa')
+      ];
+      for (const c of candidatos) {
+        if (typeof c !== 'string') continue;
+        const v = c.toUpperCase();
+        if (v.includes('PREMIUM')) return 'PREMIUM';
+        if (v.includes('ECON')) return 'ECONOMICA';
+      }
+      return null;
+    }
+    const CLASE = getClaseTarifa();
+    if (!CLASE) console.warn('No se encontró la clase de tarifa en sessionStorage; los asientos Premium no se bloquearán.');
+
+    // Un asiento Premium está bloqueado si la tarifa elegida es económica
+    function bloqueadoPorClase(id) {
+      return CLASE === 'ECONOMICA' && premium.includes(id);
+    }
+
     // ── Cantidad de pasajeros ──────────────────────────────────────────
     // Busca el número en el viaje guardado, en la URL o en sessionStorage.
     // Si no lo encuentra, usa 1.
@@ -259,10 +288,12 @@
       $('selRuta').textContent = nombreRuta(v);
       $('selSalida').textContent = f + (v.salida || '—');
       const pl = NUM_PASAJEROS > 1 ? 's' : '';
-      $('textoAyuda').textContent = tramos.length > 1
+      let ayuda = tramos.length > 1
         ? 'Selecciona ' + NUM_PASAJEROS + ' asiento' + pl + ' para la ' + etiquetaTramo(tramoActual).toLowerCase() +
           ' (y para el otro tramo) para continuar'
         : 'Selecciona ' + NUM_PASAJEROS + ' asiento' + pl + ' para continuar';
+      if (CLASE === 'ECONOMICA') ayuda += '. Los asientos Premium ⭐ son solo para tarifa Premium.';
+      $('textoAyuda').textContent = ayuda;
     }
 
     function dibujarTabs() {
@@ -342,6 +373,17 @@
         b.classList.add(sel[tramoActual].includes(id)
           ? 'asiento-seleccionado'
           : (premium.includes(id) ? 'asiento-premium' : 'asiento-libre'));
+
+        // Premium bloqueado si la tarifa elegida es económica
+        const bloqueado = bloqueadoPorClase(id);
+        b.classList.toggle('asiento-bloqueado', bloqueado);
+        if (bloqueado) {
+          b.setAttribute('aria-disabled', 'true');
+          b.title = 'Solo para tarifa Premium';
+        } else {
+          b.removeAttribute('aria-disabled');
+          b.removeAttribute('title');
+        }
       });
     }
 
@@ -353,6 +395,11 @@
         // Quitar selección
         sel[tramoActual] = lista.filter(s => s !== id);
       } else {
+        // Los asientos Premium no se pueden elegir con tarifa económica
+        if (bloqueadoPorClase(id)) {
+          UI.mostrarToast('El asiento ' + id + ' es Premium. Elige la tarifa Premium para poder reservarlo.', 'warning');
+          return;
+        }
         // Agregar selección (hasta el número de pasajeros)
         if (lista.length >= NUM_PASAJEROS) {
           UI.mostrarToast(
@@ -419,7 +466,8 @@
         if (!Array.isArray(g)) return;
         sel[t] = g.slice(0, NUM_PASAJEROS).filter(id => {
           const b = document.querySelector('.asiento-bus[data-numero="' + id + '"]');
-          return b && !b.classList.contains('asiento-ocupado');
+          // Se descartan los ocupados y los Premium si ahora la tarifa es económica
+          return b && !b.classList.contains('asiento-ocupado') && !bloqueadoPorClase(id);
         });
       });
     }

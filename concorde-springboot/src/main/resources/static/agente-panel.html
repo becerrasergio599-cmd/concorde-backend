@@ -604,8 +604,7 @@
       cont.innerHTML = '';
       datos.mensajes.forEach(m => {
         const div = document.createElement('div');
-        const remitente = m.remitente.toLowerCase() === 'agente' ? 'cliente' : (m.remitente.toLowerCase() === 'cliente' ? 'bot' : m.remitente.toLowerCase());
-        // Nota: en la vista del agente se invierte visualmente el lado de las
+        // En la vista del agente se invierte visualmente el lado de las
         // burbujas (las propias respuestas del agente quedan a la derecha).
         const lado = m.remitente === 'AGENTE' ? 'cliente' : 'bot';
         div.className = `chatbot-burbuja-msg ${lado}`;
@@ -631,9 +630,9 @@
     }, 8000);
   }
 
+  // CORREGIDO: solo detiene el intervalo; ya NO borra el ticket seleccionado
   function detenerPollingConversacionChat() {
     if (intervaloPollingChat) { clearInterval(intervaloPollingChat); intervaloPollingChat = null; }
-    ticketChatSeleccionado = null;
   }
 
   document.getElementById('formRespuestaAgente')?.addEventListener('submit', async (e) => {
@@ -643,14 +642,17 @@
     if (!texto || !ticketChatSeleccionado) return;
     input.value = '';
     try {
-      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/responder`, {
+      const res = await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/responder`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ texto, agenteId: user ? user.id : null })
       });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       await cargarConversacionChat(ticketChatSeleccionado);
-    } catch (e) {
-      mostrarToastAdmin('No se pudo enviar la respuesta.', 'danger');
+      await cargarTicketsChat(); // para que el ticket pase a "En atención"
+    } catch (err) {
+      input.value = texto; // devuelve el texto para no perderlo
+      mostrarToastAdmin('No se pudo enviar la respuesta: ' + err.message, 'danger');
     }
   });
 
@@ -658,12 +660,13 @@
     if (!ticketChatSeleccionado) return;
     if (!confirm('¿Cerrar esta conversación? El cliente podrá escribir de nuevo si necesita algo más.')) return;
     try {
-      await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/cerrar`, { method: 'POST' });
+      const res = await fetch(`${API}/chatbot/consultas/${ticketChatSeleccionado}/cerrar`, { method: 'POST' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       mostrarToastAdmin('Ticket cerrado', 'success');
       await cargarConversacionChat(ticketChatSeleccionado);
       await cargarTicketsChat();
-    } catch (e) {
-      mostrarToastAdmin('No se pudo cerrar el ticket.', 'danger');
+    } catch (err) {
+      mostrarToastAdmin('No se pudo cerrar el ticket: ' + err.message, 'danger');
     }
   }
 
@@ -696,8 +699,12 @@
 
     if (entityKeys.includes(nombre)) cargarEntidad(nombre);
     if (nombre === 'dashboard') cargarStatsDashboard();
-    if (nombre === 'chat') cargarTicketsChat();
-    else detenerPollingConversacionChat();
+    if (nombre === 'chat') {
+      cargarTicketsChat();
+    } else {
+      detenerPollingConversacionChat();
+      ticketChatSeleccionado = null;
+    }
   }
 
   // ════════════════════════════════════════════════════════

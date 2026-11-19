@@ -943,10 +943,7 @@
         <div class="config-card">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
             <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar asiento" oninput="filtrarTabla('asientos', this.value)">
-            <div class="d-flex gap-2">
-              <button class="btn btn-outline-secondary btn-sm" onclick="generarAsientos()"><i class="bi bi-magic me-1"></i>Generar asientos</button>
-              <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
-            </div>
+            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
           </div>
           <div id="form-asientos" class="mb-3" style="display:none;"></div>
           <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
@@ -1281,20 +1278,6 @@
   const dataCache = {};   // { key: [...registros...] }
   const fkCache = {};     // cache de listas para selects fk
   const editing = {};     // { key: idEnEdicion | null }
-
-  // Crea los asientos 1..capacidad de todos los vehículos que aún no los tienen.
-  async function generarAsientos() {
-    if (!confirm('¿Generar los asientos de todos los vehículos según su capacidad? No se duplican los que ya existen.')) return;
-    try {
-      const res = await fetch(`${API}/asientos/generar`, { method: 'POST' });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const datos = await res.json();
-      mostrarToastAdmin(`Asientos creados: ${datos.creados}`, 'success');
-      await cargarEntidad('asientos');
-    } catch (err) {
-      mostrarToastAdmin('No se pudieron generar los asientos: ' + err.message, 'danger');
-    }
-  }
 
   async function cargarEntidad(key) {
     const wrap = document.getElementById('tabla-' + key);

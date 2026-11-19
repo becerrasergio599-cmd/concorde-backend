@@ -2,6 +2,7 @@ package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.Vehiculo;
 import com.concorde.springboot.repositorio.VehiculoRepository;
+import com.concorde.springboot.servicio.GeneradorAsientos;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ public class VehiculoController {
     @Autowired
     private VehiculoRepository repository;
 
+    @Autowired
+    private GeneradorAsientos generadorAsientos;
+
     @GetMapping
     public List<Vehiculo> listar() { return repository.findAll(); }
 
@@ -26,7 +30,9 @@ public class VehiculoController {
 
     @PostMapping
     public ResponseEntity<Vehiculo> crear(@RequestBody Vehiculo v) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(repository.save(v));
+        Vehiculo guardado = repository.save(v);
+        generadorAsientos.generarParaVehiculo(guardado);
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
     }
 
     @PutMapping("/{id}")
@@ -35,7 +41,9 @@ public class VehiculoController {
             e.setPlaca(datos.getPlaca());
             e.setCapacidad(datos.getCapacidad());
             e.setModelo(datos.getModelo());
-            return ResponseEntity.ok(repository.save(e));
+            Vehiculo guardado = repository.save(e);
+            generadorAsientos.generarParaVehiculo(guardado);
+            return ResponseEntity.ok(guardado);
         }).orElse(ResponseEntity.notFound().build());
     }
 

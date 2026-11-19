@@ -945,6 +945,16 @@
             <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar asiento" oninput="filtrarTabla('asientos', this.value)">
             <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
           </div>
+          <div id="asientos-viaje-control" class="border rounded-3 p-3 mb-3" style="background:#f5f8ff">
+            <label for="asientos-viaje-select" class="form-label fw-bold">🚌 Consultar ocupación por viaje</label>
+            <div class="d-flex gap-2 flex-wrap">
+              <select id="asientos-viaje-select" class="form-select flex-grow-1" style="min-width:240px" onchange="cambiarViajeAsientos(this.value)">
+                <option value="">Todos los vehículos (estado físico, no ocupación)</option>
+              </select>
+              <button type="button" class="btn btn-outline-primary" onclick="cargarEntidad('asientos')">Actualizar</button>
+            </div>
+            <div id="asientos-viaje-resumen" class="small text-muted mt-2">Selecciona un viaje para consultar los asientos ocupados.</div>
+          </div>
           <div id="form-asientos" class="mb-3" style="display:none;"></div>
           <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
         </div>
@@ -1252,7 +1262,7 @@
       {name:'vehiculo', label:'Vehículo', type:'fk', fk:'vehiculos', fkIdField:'idVehiculo', fkLabelFn:v=>v.placa},
       {name:'numeroAsiento', label:'N° Asiento', type:'text', required:true},
       {name:'tipo', label:'Tipo', type:'text', default:'ESTANDAR'},
-      {name:'disponible', label:'Disponible', type:'checkbox', default:true}
+      {name:'disponible', label:'Habilitado físicamente', type:'checkbox', default:true}
     ], columns:['idAsiento','vehiculo','numeroAsiento','tipo','disponible']},
 
     reservas: { idField:'idReserva', fields:[
@@ -1287,6 +1297,7 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       dataCache[key] = await res.json();
       await asegurarFkCache(key);
+      if (key === 'asientos') await cargarOcupacionAsientosAdmin();
       renderTabla(key);
       if (key === 'viajes') cargarAvisoAgotados('aviso-viajes-agotados');
     } catch (err) {
@@ -1327,7 +1338,119 @@
     return raw;
   }
 
+  // Ocupación por VIAJE: asiento.disponible es una habilitación física,
+  // NO indica que esté vendido para todas las fechas o rutas.
+  let viajeAsientosAdmin = '';
+  let viajesAsientosAdmin = [];
+  let detallesAsientosAdmin = [];
+  let errorAsientosAdmin = '';
+
+  async function apiListaAsientosAdmin(ruta) {
+    const r = await fetch(`${API}/${ruta}`, {cache:'no-store'});
+    if (!r.ok) throw new Error(`${ruta}: HTTP ${r.status}`);
+    const datos = await r.json();
+    if (!Array.isArray(datos)) throw new Error(`${ruta}: respuesta inesperada`);
+    return datos;
+  }
+
+  function idVehiculoAsientosAdmin(v) {
+    return Number(v?.idVehiculo ?? v?.vehiculo?.idVehiculo ?? -1);
+  }
+
+  function rutaAsientosAdmin(v) {
+    return `${v?.ruta?.terminalOrigen?.ciudad || 'Origen'} → ${v?.ruta?.terminalDestino?.ciudad || 'Destino'}`;
+  }
+
+  async function cargarOcupacionAsientosAdmin() {
+    errorAsientosAdmin = '';
+    const select = document.getElementById('asientos-viaje-select');
+    try {
+      viajesAsientosAdmin = await apiListaAsientosAdmin('viajes');
+      select.innerHTML = '<option value="">Todos los vehículos (estado físico, no ocupación)</option>';
+      [...viajesAsientosAdmin].sort((a,b) => String(b.fechaViaje || '').localeCompare(String(a.fechaViaje || ''))).forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = String(v.idViaje);
+        opt.textContent = `#${v.idViaje} | ${rutaAsientosAdmin(v)} | ${v.fechaViaje || ''} ${v.horaSalida || ''} | ${v.vehiculo?.placa || ''}`;
+        select.appendChild(opt);
+      });
+      if (!viajesAsientosAdmin.some(v => String(v.idViaje) === viajeAsientosAdmin)) viajeAsientosAdmin = '';
+      select.value = viajeAsientosAdmin;
+      if (viajeAsientosAdmin) {
+        detallesAsientosAdmin = await apiListaAsientosAdmin('detalle-reservas');
+      } else {
+        detallesAsientosAdmin = [];
+      }
+    } catch (e) {
+      errorAsientosAdmin = e.message;
+      console.error('No se pudo cargar la ocupación de asientos:', e);
+    }
+  }
+
+  async function cambiarViajeAsientos(valor) {
+    viajeAsientosAdmin = String(valor || '');
+    const tabla = document.getElementById('tabla-asientos');
+    if (tabla) tabla.textContent = 'Consultando reservas del viaje…';
+    await cargarOcupacionAsientosAdmin();
+    renderTabla('asientos');
+  }
+
+  function ocupadosAsientosAdmin() {
+    const ids = new Set();
+    if (!viajeAsientosAdmin) return ids;
+    detallesAsientosAdmin.forEach(d => {
+      const reserva = d.reserva;
+      const estado = String(reserva?.estado || '').toUpperCase();
+      if (!reserva || ['CANCELADA','CANCELADO','ANULADA','ANULADO'].includes(estado)) return;
+      if (String(reserva?.viaje?.idViaje) !== viajeAsientosAdmin) return;
+      const id = Number(d.asiento?.idAsiento);
+      if (Number.isFinite(id)) ids.add(id);
+    });
+    return ids;
+  }
+
+  function renderTablaAsientosAdmin() {
+    const wrap = document.getElementById('tabla-asientos');
+    const resumen = document.getElementById('asientos-viaje-resumen');
+    if (errorAsientosAdmin) {
+      wrap.innerHTML = `<div class="alert alert-danger m-2">No se pudo verificar la ocupación: ${errorAsientosAdmin.replace(/</g,'&lt;')}. No se mostrarán estados sin verificar.</div>`;
+      if (resumen) resumen.textContent = 'Error de consulta';
+      return;
+    }
+    const viaje = viajesAsientosAdmin.find(v => String(v.idViaje) === viajeAsientosAdmin);
+    const todos = dataCache.asientos || [];
+    const data = viaje ? todos.filter(a => idVehiculoAsientosAdmin(a.vehiculo) === idVehiculoAsientosAdmin(viaje.vehiculo)) : todos;
+    const ocupados = ocupadosAsientosAdmin();
+    const libres = data.filter(a => a.disponible !== false && !ocupados.has(Number(a.idAsiento))).length;
+    const vendidos = data.filter(a => ocupados.has(Number(a.idAsiento))).length;
+    if (resumen) resumen.textContent = viaje
+      ? `Viaje #${viaje.idViaje} | ${rutaAsientosAdmin(viaje)} | 🟢 ${libres} disponibles · 🔴 ${vendidos} ocupados · ⭐ ${data.filter(a => String(a.tipo).toUpperCase()==='PREMIUM').length} Premium`
+      : `${data.length} asientos registrados. «Habilitado» NO significa disponible en todos los viajes.`;
+    if (!data.length) {
+      wrap.innerHTML = '<div class="p-4 text-muted">No hay asientos registrados para esta selección.</div>';
+      return;
+    }
+    let html = `<div class="table-responsive"><table class="table table-hover align-middle" data-key="asientos"><thead><tr><th>ID</th><th>Vehículo</th><th>N° Asiento</th><th>Tipo</th><th>${viaje ? 'Estado en este viaje' : 'Estado físico'}</th><th>Acciones</th></tr></thead><tbody>`;
+    data.forEach(a => {
+      const id = Number(a.idAsiento);
+      const vendido = ocupados.has(id);
+      const estado = a.disponible === false
+        ? '<span class="badge bg-secondary">Inhabilitado</span>'
+        : !viaje
+          ? '<span class="badge bg-secondary">Habilitado</span>'
+          : vendido
+            ? '<span class="badge bg-danger">🔴 Ocupado</span>'
+            : '<span class="badge bg-success">🟢 Disponible</span>';
+      const premium = ['PREMIUM','PREMIUN'].includes(String(a.tipo || '').toUpperCase());
+      const tipo = premium ? '<span class="badge bg-warning text-dark">⭐ PREMIUM</span>' : '<span class="badge bg-primary">ESTANDAR</span>';
+      const placa = String(a.vehiculo?.placa || '—').replace(/</g,'&lt;');
+      const numero = String(a.numeroAsiento || '—').replace(/</g,'&lt;');
+      html += `<tr${vendido && viaje ? ' style="background:#fff1f2"' : ''}><td><strong>#${id}</strong></td><td>${placa}</td><td>${numero}</td><td>${tipo}</td><td>${estado}</td><td><button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('asientos',${id})">Editar</button><button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('asientos',${id})">Eliminar</button></td></tr>`;
+    });
+    wrap.innerHTML = html + '</tbody></table></div>';
+  }
+
   function renderTabla(key) {
+    if (key === 'asientos') return renderTablaAsientosAdmin();
     const wrap = document.getElementById('tabla-' + key);
     const ent = entities[key];
     const data = dataCache[key] || [];

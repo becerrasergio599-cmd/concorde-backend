@@ -208,8 +208,11 @@ const ChatbotWidget = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idConsulta: this.idConsulta, texto })
       });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const datos = await res.json();
-      this.estado = datos.estado;
+      // Solo se actualiza el estado si el servidor lo envió; si llegara
+      // undefined, el polling se detendría y no se verían las respuestas del asesor.
+      if (datos.estado) this.estado = datos.estado;
       if (datos.respuesta) this.agregarMensajeDom('bot', datos.respuesta);
       this.actualizarAviso();
       this.totalMensajesMostrados += datos.respuesta ? 2 : 1;

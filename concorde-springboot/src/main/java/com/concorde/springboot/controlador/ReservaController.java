@@ -2,8 +2,10 @@ package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.Pago;
 import com.concorde.springboot.modelo.Reserva;
+import com.concorde.springboot.modelo.Viaje;
 import com.concorde.springboot.repositorio.PagoRepository;
 import com.concorde.springboot.repositorio.ReservaRepository;
+import com.concorde.springboot.repositorio.ViajeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,9 @@ public class ReservaController {
 
     @Autowired
     private PagoRepository pagoRepository;
+
+    @Autowired
+    private ViajeRepository viajeRepository;
 
     @GetMapping
     public List<Reserva> listar() {
@@ -46,11 +51,20 @@ public class ReservaController {
 
         Reserva guardada = repository.save(r);
 
+        // Valor: el total de la reserva, o si no viene, el precio del viaje
+        Float valor = null;
+        if (guardada.getTotal() != null) {
+            valor = guardada.getTotal().floatValue();
+        } else if (guardada.getViaje() != null && guardada.getViaje().getIdViaje() != null) {
+            Viaje viaje = viajeRepository.findById(guardada.getViaje().getIdViaje()).orElse(null);
+            if (viaje != null) valor = viaje.getPrecio();
+        }
+
         // Pago automático de la reserva
         Pago pago = new Pago();
         pago.setReserva(guardada);
         pago.setMetodoPago("TARJETA");
-        pago.setValorPagado(guardada.getTotal() != null ? guardada.getTotal().floatValue() : 0f);
+        pago.setValorPagado(valor != null ? valor : 0f);
         pago.setFechaPago(LocalDate.now());
         pago.setEstado("PROCESADO");
         pagoRepository.save(pago);

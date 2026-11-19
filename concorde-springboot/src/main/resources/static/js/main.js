@@ -348,7 +348,7 @@ const UI = {
       .lb__escena { position: relative; }
 
       .lb__bus {
-        width: 210px; display: block; margin: 0 auto; position: relative; z-index: 1;
+        width: 190px; display: block; margin: 0 auto; position: relative; z-index: 1;
         animation: lb-rebote .45s ease-in-out infinite alternate;
       }
       @keyframes lb-rebote { to { transform: translateY(-2px); } }
@@ -366,7 +366,7 @@ const UI = {
       }
       @keyframes lb-ruta { to { background-position-x: -48px; } }
 
-      .lb__lineas { position: absolute; left: 0; top: 18px; width: 60px; height: 50px; z-index: 0; }
+      .lb__lineas { position: absolute; left: 10px; top: 24px; width: 60px; height: 50px; z-index: 0; }
       .lb__lineas span {
         position: absolute; right: 0; height: 3px; border-radius: 2px; background: #fff; opacity: 0;
         animation: lb-vel .9s linear infinite;
@@ -401,25 +401,27 @@ const UI = {
       <div class="lb">
         <div class="lb__escena">
           <div class="lb__lineas"><span></span><span></span><span></span></div>
-          <svg class="lb__bus" viewBox="0 0 240 88" aria-hidden="true">
-            <path d="M10 30 Q10 20 22 20 H180 Q196 20 206 36 L214 52 V72 H10 Z"
+          <svg class="lb__bus" viewBox="0 0 180 94" aria-hidden="true">
+            <path d="M8 22 Q8 10 20 10 H140 Q158 10 166 28 L172 50 V76 H8 Z"
                   fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
-            <rect x="11" y="52" width="202" height="8" fill="#000"/>
-            <rect x="22"  y="28" width="30" height="20" rx="3" fill="#000"/>
-            <rect x="58"  y="28" width="30" height="20" rx="3" fill="#000"/>
-            <rect x="94"  y="28" width="30" height="20" rx="3" fill="#000"/>
-            <rect x="130" y="28" width="30" height="20" rx="3" fill="#000"/>
-            <path d="M168 28 H182 Q194 30 202 44 H168 Z" fill="#000"/>
-            <rect x="206" y="60" width="8" height="6" rx="2" fill="#000"/>
+            <rect x="9" y="54" width="162" height="7" fill="#000"/>
+            <rect x="16"  y="20" width="28" height="26" rx="4" fill="#000"/>
+            <rect x="48"  y="20" width="28" height="26" rx="4" fill="#000"/>
+            <rect x="80"  y="20" width="28" height="26" rx="4" fill="#000"/>
+            <rect x="112" y="20" width="28" height="26" rx="4" fill="#000"/>
+            <path d="M146 20 H152 Q160 22 165 36 L167 46 H146 Z" fill="#000"/>
+            <rect x="165" y="60" width="7" height="6" rx="2" fill="#000"/>
             <g class="lb__rueda">
-              <circle cx="48" cy="74" r="13" fill="#000" stroke="#fff" stroke-width="2"/>
-              <circle cx="48" cy="74" r="5" fill="#fff"/>
-              <rect x="47" y="63" width="2" height="22" fill="#fff"/>
+              <circle cx="44" cy="76" r="14" fill="#000" stroke="#fff" stroke-width="2"/>
+              <circle cx="44" cy="76" r="4" fill="#fff"/>
+              <rect x="43" y="64" width="2" height="24" fill="#fff"/>
+              <rect x="32" y="75" width="24" height="2" fill="#fff"/>
             </g>
             <g class="lb__rueda">
-              <circle cx="166" cy="74" r="13" fill="#000" stroke="#fff" stroke-width="2"/>
-              <circle cx="166" cy="74" r="5" fill="#fff"/>
-              <rect x="165" y="63" width="2" height="22" fill="#fff"/>
+              <circle cx="136" cy="76" r="14" fill="#000" stroke="#fff" stroke-width="2"/>
+              <circle cx="136" cy="76" r="4" fill="#fff"/>
+              <rect x="135" y="64" width="2" height="24" fill="#fff"/>
+              <rect x="124" y="75" width="24" height="2" fill="#fff"/>
             </g>
           </svg>
           <div class="lb__carretera"></div>

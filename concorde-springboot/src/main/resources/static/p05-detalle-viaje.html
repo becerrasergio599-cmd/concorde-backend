@@ -181,8 +181,8 @@
   <script src="js/main.js"></script>
   <script>
   (function () {
-    // Recargo del servicio Premium sobre el precio del viaje (ajústalo si el negocio usa otro valor)
-    const RECARGO_PREMIUM = 1.25;
+    // Recargo fijo del servicio Premium sobre el precio del viaje, en pesos (COP)
+    const RECARGO_PREMIUM = 15000;
 
     const NOMBRES = {
       AGUAZUL: 'Aguazul', BARRANQUILLA: 'Barranquilla', BOGOTA_NORTE: 'Bogotá Norte',
@@ -201,10 +201,9 @@
     const idViaje    = params.get('idViaje');
 
     const fmt = n => '$' + Math.round(n).toLocaleString('es-CO');
-    const redondear = n => Math.round(n / 100) * 100;
     const precios = {
-      economica: { unit: precioBase,                              comida: 'Sin refrigerio', icono: '🍪' },
-      premium:   { unit: redondear(precioBase * RECARGO_PREMIUM), comida: 'Snack incluido', icono: '🍱' }
+      economica: { unit: precioBase,                    comida: 'Sin refrigerio', icono: '🍪' },
+      premium:   { unit: precioBase > 0 ? precioBase + RECARGO_PREMIUM : 0, comida: 'Snack incluido', icono: '🍱' }
     };
 
     const $ = id => document.getElementById(id);

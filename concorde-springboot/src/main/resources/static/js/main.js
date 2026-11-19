@@ -348,7 +348,7 @@ const UI = {
       .lb__escena { position: relative; }
 
       .lb__bus {
-        width: 190px; display: block; margin: 0 auto; position: relative; z-index: 1;
+        width: 270px; display: block; margin: 0 auto; position: relative; z-index: 1;
         animation: lb-rebote .45s ease-in-out infinite alternate;
       }
       @keyframes lb-rebote { to { transform: translateY(-2px); } }
@@ -366,14 +366,14 @@ const UI = {
       }
       @keyframes lb-ruta { to { background-position-x: -48px; } }
 
-      .lb__lineas { position: absolute; left: 10px; top: 24px; width: 60px; height: 50px; z-index: 0; }
+      .lb__lineas { position: absolute; left: 0; top: 28px; width: 44px; height: 50px; z-index: 0; }
       .lb__lineas span {
         position: absolute; right: 0; height: 3px; border-radius: 2px; background: #fff; opacity: 0;
         animation: lb-vel .9s linear infinite;
       }
-      .lb__lineas span:nth-child(1) { top: 4px;  width: 34px; animation-delay: 0s; }
-      .lb__lineas span:nth-child(2) { top: 22px; width: 46px; animation-delay: .3s; }
-      .lb__lineas span:nth-child(3) { top: 40px; width: 28px; animation-delay: .6s; }
+      .lb__lineas span:nth-child(1) { top: 4px;  width: 30px; animation-delay: 0s; }
+      .lb__lineas span:nth-child(2) { top: 22px; width: 40px; animation-delay: .3s; }
+      .lb__lineas span:nth-child(3) { top: 40px; width: 24px; animation-delay: .6s; }
       @keyframes lb-vel {
         0%   { opacity: 0;  transform: translateX(20px); }
         30%  { opacity: .7; }
@@ -401,27 +401,32 @@ const UI = {
       <div class="lb">
         <div class="lb__escena">
           <div class="lb__lineas"><span></span><span></span><span></span></div>
-          <svg class="lb__bus" viewBox="0 0 180 94" aria-hidden="true">
-            <path d="M8 22 Q8 10 20 10 H140 Q158 10 166 28 L172 50 V76 H8 Z"
-                  fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
-            <rect x="9" y="54" width="162" height="7" fill="#000"/>
-            <rect x="16"  y="20" width="28" height="26" rx="4" fill="#000"/>
-            <rect x="48"  y="20" width="28" height="26" rx="4" fill="#000"/>
-            <rect x="80"  y="20" width="28" height="26" rx="4" fill="#000"/>
-            <rect x="112" y="20" width="28" height="26" rx="4" fill="#000"/>
-            <path d="M146 20 H152 Q160 22 165 36 L167 46 H146 Z" fill="#000"/>
-            <rect x="165" y="60" width="7" height="6" rx="2" fill="#000"/>
+          <svg class="lb__bus" viewBox="0 0 300 96" aria-hidden="true">
+            <path d="M8 26 Q8 14 22 14 H236 Q258 14 268 30 L276 44 Q290 47 292 58 V72 Q292 76 288 76 H14 Q8 76 8 70 Z"
+                  fill="#000" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+            <rect x="70"  y="9" width="26" height="6" rx="3" fill="#000" stroke="#fff" stroke-width="1.5"/>
+            <rect x="160" y="9" width="26" height="6" rx="3" fill="#000" stroke="#fff" stroke-width="1.5"/>
+            <rect x="20"  y="22" width="40" height="22" rx="2" fill="#fff"/>
+            <rect x="64"  y="22" width="40" height="22" rx="2" fill="#fff"/>
+            <rect x="108" y="22" width="40" height="22" rx="2" fill="#fff"/>
+            <rect x="152" y="22" width="40" height="22" rx="2" fill="#fff"/>
+            <rect x="198" y="22" width="32" height="38" rx="3" fill="#fff"/>
+            <path d="M238 22 H246 Q256 22 262 33 L268 44 H238 Z" fill="#fff"/>
+            <rect x="12" y="62" width="262" height="2" fill="#fff"/>
+            <rect x="285" y="52" width="7" height="5" rx="2" fill="#fff"/>
             <g class="lb__rueda">
-              <circle cx="44" cy="76" r="14" fill="#000" stroke="#fff" stroke-width="2"/>
-              <circle cx="44" cy="76" r="4" fill="#fff"/>
-              <rect x="43" y="64" width="2" height="24" fill="#fff"/>
-              <rect x="32" y="75" width="24" height="2" fill="#fff"/>
+              <circle cx="62" cy="76" r="15" fill="#000" stroke="#fff" stroke-width="2.5"/>
+              <circle cx="62" cy="76" r="9" fill="#fff"/>
+              <circle cx="62" cy="76" r="6.5" fill="#000"/>
+              <rect x="61.25" y="70" width="1.5" height="12" fill="#fff"/>
+              <circle cx="62" cy="76" r="2.2" fill="#fff"/>
             </g>
             <g class="lb__rueda">
-              <circle cx="136" cy="76" r="14" fill="#000" stroke="#fff" stroke-width="2"/>
-              <circle cx="136" cy="76" r="4" fill="#fff"/>
-              <rect x="135" y="64" width="2" height="24" fill="#fff"/>
-              <rect x="124" y="75" width="24" height="2" fill="#fff"/>
+              <circle cx="222" cy="76" r="15" fill="#000" stroke="#fff" stroke-width="2.5"/>
+              <circle cx="222" cy="76" r="9" fill="#fff"/>
+              <circle cx="222" cy="76" r="6.5" fill="#000"/>
+              <rect x="221.25" y="70" width="1.5" height="12" fill="#fff"/>
+              <circle cx="222" cy="76" r="2.2" fill="#fff"/>
             </g>
           </svg>
           <div class="lb__carretera"></div>

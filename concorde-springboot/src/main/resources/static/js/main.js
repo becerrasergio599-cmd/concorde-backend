@@ -331,7 +331,7 @@ const UI = {
     this.initFiltrosResultados();
   },
 
-  // ---------- LOADER: bus en blanco y negro sobre la carretera ----------
+  // ---------- LOADER: bus en blanco y negro sobre la carretera (apunta a la derecha) ----------
   _loaderTimer: null,
 
   _inyectarEstilosLoader() {
@@ -347,15 +347,22 @@ const UI = {
       .lb { width: min(380px, 88vw); text-align: center; color: #fff; }
       .lb__escena { position: relative; }
 
+      /* Bus volteado para que apunte a la derecha */
       .lb__bus {
         width: 340px; max-width: 100%; display: block; margin: 0 auto; position: relative; z-index: 1;
+        transform: scaleX(-1);
         animation: lb-rebote .45s ease-in-out infinite alternate;
       }
-      @keyframes lb-rebote { to { transform: translateY(-2px); } }
+      @keyframes lb-rebote {
+        from { transform: scaleX(-1) translateY(0); }
+        to   { transform: scaleX(-1) translateY(-2px); }
+      }
 
+      /* Rueda: -360deg porque el SVG está volteado (visualmente gira hacia adelante) */
       .lb__rueda { transform-box: fill-box; transform-origin: center; animation: lb-gira .5s linear infinite; }
-      @keyframes lb-gira { to { transform: rotate(360deg); } }
+      @keyframes lb-gira { to { transform: rotate(-360deg); } }
 
+      /* Carretera: las rayas corren hacia la izquierda */
       .lb__carretera {
         height: 14px; margin-top: -1px; border-radius: 3px;
         background-color: #000;
@@ -364,20 +371,21 @@ const UI = {
         box-shadow: 0 -1px 0 #fff;
         animation: lb-ruta .45s linear infinite;
       }
-      @keyframes lb-ruta { to { background-position-x: 48px; } }
+      @keyframes lb-ruta { to { background-position-x: -48px; } }
 
-      .lb__lineas { position: absolute; right: -26px; top: 36px; width: 44px; height: 50px; z-index: 0; }
+      /* Líneas de velocidad: detrás del bus (izquierda) y moviéndose hacia la izquierda */
+      .lb__lineas { position: absolute; left: -26px; top: 36px; width: 44px; height: 50px; z-index: 0; }
       .lb__lineas span {
-        position: absolute; left: 0; height: 3px; border-radius: 2px; background: #fff; opacity: 0;
+        position: absolute; right: 0; height: 3px; border-radius: 2px; background: #fff; opacity: 0;
         animation: lb-vel .9s linear infinite;
       }
       .lb__lineas span:nth-child(1) { top: 4px;  width: 30px; animation-delay: 0s; }
       .lb__lineas span:nth-child(2) { top: 22px; width: 40px; animation-delay: .3s; }
       .lb__lineas span:nth-child(3) { top: 40px; width: 24px; animation-delay: .6s; }
       @keyframes lb-vel {
-        0%   { opacity: 0;  transform: translateX(-20px); }
+        0%   { opacity: 0;  transform: translateX(20px); }
         30%  { opacity: .7; }
-        100% { opacity: 0;  transform: translateX(30px); }
+        100% { opacity: 0;  transform: translateX(-30px); }
       }
 
       .lb__texto { margin-top: 20px; font-weight: 700; transition: opacity .3s; }

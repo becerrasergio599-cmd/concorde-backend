@@ -523,7 +523,7 @@
       var reservaVuelta = null;
 
       // Crea una reserva en el backend (un viaje por reserva)
-      async function crearReserva(v, claseBack, totalN) {
+      async function crearReserva(v, claseBack, totalN, asientosSeleccionados) {
 
         var idUsuario = usuario.idUsuario || usuario.id;
         var idViaje = Number(v.idViaje);
@@ -550,7 +550,8 @@
             },
             estado: 'CONFIRMADA',
             clase: claseBack,
-            total: Math.round(totalN)
+            total: Math.round(totalN),
+            numerosAsientos: asientosSeleccionados.map(function (n) { return String(n).trim().toUpperCase(); })
           })
         });
 
@@ -594,11 +595,11 @@
         try {
 
           if (!reservaIda) {
-            reservaIda = await crearReserva(viaje, claseBackend, totalIda);
+            reservaIda = await crearReserva(viaje, claseBackend, totalIda, listaAsientos);
           }
 
           if (hayVuelta && !reservaVuelta) {
-            reservaVuelta = await crearReserva(viajeV, claseBackendV, totalVuelta);
+            reservaVuelta = await crearReserva(viajeV, claseBackendV, totalVuelta, listaAsientosV);
           }
 
           // Guardar datos de confirmación

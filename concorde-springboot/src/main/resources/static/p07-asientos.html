@@ -1,482 +1,1314 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Selección de asientos del bus - Concorde Transporte Terrestre">
-  <title>Concorde Transporte Terrestre | Selección de Asientos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description"
+        content="Selección de asientos - Concorde Transporte Terrestre">
+
+  <title>Concorde | Selección de Asientos</title>
+
   <link rel="icon" type="image/png" href="img/LogoConcorde.png">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
   <link rel="stylesheet" href="css/styles.css">
+
   <style>
-    /* Mapa de asientos estilo bus */
     .bus-body {
-      background: var(--gris-claro);
+      background: var(--gris-claro, #f3f5f8);
       border-radius: 16px;
       padding: 1.5rem;
       max-width: 340px;
       margin: 0 auto;
-      border: 2px solid var(--gris-medio);
+      border: 2px solid var(--gris-medio, #dce1e7);
     }
+
     .bus-frente {
-      background: linear-gradient(135deg, var(--azul-principal), var(--azul-claro));
+      background: linear-gradient(135deg, #003580, #0863c4);
       border-radius: 12px 12px 4px 4px;
-      padding: 0.6rem;
+      padding: .7rem;
       text-align: center;
       color: white;
-      font-size: 0.75rem;
+      font-size: .75rem;
       font-weight: 700;
       margin-bottom: 1rem;
-      letter-spacing: 1px;
     }
+
     .fila-bus {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
       margin-bottom: 5px;
-      justify-content: center;
     }
+
     .num-fila {
       width: 22px;
-      font-size: 0.6rem;
-      color: var(--gris-texto);
+      font-size: .6rem;
+      color: #777;
       text-align: center;
       flex-shrink: 0;
     }
-    .pasillo-bus { width: 18px; flex-shrink: 0; }
+
+    .pasillo-bus {
+      width: 18px;
+      flex-shrink: 0;
+    }
+
     .asiento-bus {
       width: 38px;
       height: 38px;
+      flex-shrink: 0;
       border-radius: 6px 6px 4px 4px;
       border: 2px solid transparent;
       cursor: pointer;
-      transition: all 0.25s;
-      font-size: 0.62rem;
+      transition: all .2s;
+      font-size: .62rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
     }
-    /* Respaldo del asiento */
+
     .asiento-bus::before {
-      content: '';
+      content: "";
       position: absolute;
-      top: 0; left: 2px; right: 2px;
+      top: 0;
+      left: 2px;
+      right: 2px;
       height: 6px;
-      background: rgba(0,0,0,0.1);
+      background: rgba(0,0,0,.1);
       border-radius: 3px 3px 0 0;
     }
-    .asiento-libre  { background: #e8f4ea; border-color: #28a745; color: #155724; }
-    .asiento-libre:hover  { background: #28a745; color: white; transform: scale(1.08); }
-    .asiento-ocupado { background: #f8d7da; border-color: #dc3545; color: #721c24; cursor: not-allowed; }
-    .asiento-seleccionado { background: var(--dorado); border-color: var(--dorado-oscuro); color: var(--azul-oscuro); transform: scale(1.08); box-shadow: 0 3px 10px rgba(245,166,35,0.4); }
-    .asiento-premium { background: rgba(245,166,35,0.15); border-color: var(--dorado); color: var(--dorado-oscuro); }
-    .asiento-premium:hover { background: var(--dorado); color: white; transform: scale(1.08); }
-    /* Asiento Premium bloqueado (tarifa económica) */
-    .asiento-bloqueado { opacity: .45; cursor: not-allowed; }
-    .asiento-bloqueado:hover { background: rgba(245,166,35,0.15); color: var(--dorado-oscuro); transform: none; }
+
+    /* DISPONIBLE */
+    .asiento-libre {
+      background: #e8f4ea;
+      border-color: #28a745;
+      color: #155724;
+    }
+
+    .asiento-libre:hover {
+      background: #28a745;
+      color: white;
+      transform: scale(1.07);
+    }
+
+    /* OCUPADO REAL */
+    .asiento-ocupado,
+    .asiento-ocupado:hover {
+      background: #f8d7da !important;
+      border-color: #dc3545 !important;
+      color: #721c24 !important;
+      cursor: not-allowed !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
+
+    /* PREMIUM */
+    .asiento-premium {
+      background: #fff2d8;
+      border-color: #f5a623;
+      color: #a76b00;
+    }
+
+    .asiento-premium:hover {
+      background: #f5a623;
+      color: white;
+      transform: scale(1.07);
+    }
+
+    /* SELECCIONADO */
+    .asiento-seleccionado,
+    .asiento-seleccionado:hover {
+      background: #f5a623 !important;
+      border-color: #d68a00 !important;
+      color: #003580 !important;
+      transform: scale(1.07);
+      box-shadow: 0 3px 10px rgba(245,166,35,.4);
+    }
+
+    /* PREMIUM NO PERMITIDO PARA TARIFA ECONÓMICA */
+    .asiento-bloqueado {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .asiento-bloqueado:hover {
+      transform: none;
+      background: #fff2d8;
+      color: #a76b00;
+    }
+
     .bus-trasero {
-      background: var(--gris-medio);
+      background: #dce1e7;
       border-radius: 4px 4px 12px 12px;
       padding: 5px;
-      text-align: center;
-      margin-top: 0.8rem;
+      margin-top: .8rem;
       display: flex;
       justify-content: center;
       gap: 4px;
     }
-    /* Pestañas Ida / Vuelta */
-    #listaTabsTramo .nav-link { color: var(--azul-principal); font-weight: 600; font-size: .85rem; }
-    #listaTabsTramo .nav-link.active { background: var(--azul-principal); color: #fff; }
+
+    #listaTabsTramo .nav-link {
+      color: #003580;
+      font-weight: 600;
+    }
+
+    #listaTabsTramo .nav-link.active {
+      background: #003580;
+      color: white;
+    }
+
+    .leyenda-asiento {
+      width: 22px;
+      height: 22px;
+      display: inline-block;
+      border-radius: 4px;
+      border: 2px solid;
+      vertical-align: middle;
+    }
+
+    .leyenda-libre {
+      background: #e8f4ea;
+      border-color: #28a745;
+    }
+
+    .leyenda-ocupado {
+      background: #f8d7da;
+      border-color: #dc3545;
+    }
+
+    .leyenda-seleccionado {
+      background: #f5a623;
+      border-color: #d68a00;
+    }
+
+    .leyenda-premium {
+      background: #fff2d8;
+      border-color: #f5a623;
+    }
   </style>
 </head>
+
 <body>
-  <div id="navbar-placeholder"></div>
 
-  <main id="contenido-principal" class="py-4">
-    <div class="container">
-      <nav class="stepper" aria-label="Pasos del proceso de compra">
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Buscar</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Detalle</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step completado"><div class="step-numero">✓</div><span class="step-label">Pasajero</span></div>
-        <div class="step-linea completado"></div>
-        <div class="step activo" aria-current="step"><div class="step-numero">4</div><span class="step-label">Asientos</span></div>
-        <div class="step-linea"></div>
-        <div class="step"><div class="step-numero">5</div><span class="step-label">Pago</span></div>
-      </nav>
+<div id="navbar-placeholder"></div>
 
-      <div class="row g-4">
-        <div class="col-lg-8">
-          <div class="card-concorde">
-            <div class="card-header-concorde">
-              <i class="bi bi-grid-3x3-gap me-2" aria-hidden="true"></i>Mapa de asientos del bus
-            </div>
-            <div class="card-body">
+<main id="contenido-principal" class="py-4">
+  <div class="container">
 
-              <!-- Pestañas Ida / Vuelta (solo si la compra es de ida y vuelta) -->
-              <div id="tabsTramo" class="d-none mb-3">
-                <ul class="nav nav-pills nav-fill gap-2" id="listaTabsTramo" aria-label="Elegir tramo"></ul>
-              </div>
+    <!-- PASOS -->
+    <nav class="stepper" aria-label="Pasos de compra">
 
-              <!-- Leyenda -->
-              <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center" role="legend" aria-label="Leyenda de asientos">
-                <span class="d-flex align-items-center gap-1">
-                  <span class="asiento-bus asiento-libre" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
-                  <small>Disponible</small>
-                </span>
-                <span class="d-flex align-items-center gap-1">
-                  <span class="asiento-bus asiento-ocupado" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
-                  <small>Ocupado</small>
-                </span>
-                <span class="d-flex align-items-center gap-1">
-                  <span class="asiento-bus asiento-seleccionado" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
-                  <small>Seleccionado</small>
-                </span>
-                <span class="d-flex align-items-center gap-1">
-                  <span class="asiento-bus asiento-premium" style="width:22px;height:22px;display:inline-block;font-size:0" aria-hidden="true"></span>
-                  <small>Premium ⭐</small>
-                </span>
-              </div>
+      <div class="step completado">
+        <div class="step-numero">✓</div>
+        <span class="step-label">Buscar</span>
+      </div>
 
-              <!-- Bus layout -->
-              <div class="bus-body" aria-label="Mapa interactivo de asientos del bus" id="busBody" data-pasajeros="1">
-                <div class="bus-frente">🚌 FRENTE · CONDUCTOR</div>
+      <div class="step-linea completado"></div>
 
-                <!-- Referencia de columnas -->
-                <div class="fila-bus mb-1">
-                  <span class="num-fila"></span>
-                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">A</span>
-                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">B</span>
-                  <span class="pasillo-bus"></span>
-                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">C</span>
-                  <span style="width:38px;text-align:center;font-size:.6rem;color:var(--gris-texto)">D</span>
-                </div>
+      <div class="step completado">
+        <div class="step-numero">✓</div>
+        <span class="step-label">Detalle</span>
+      </div>
 
-                <!-- Filas se generan con JS -->
-                <div id="filasAsientos"></div>
+      <div class="step-linea completado"></div>
 
-                <!-- Fila trasera (5 asientos) -->
-                <div class="bus-trasero" id="filaTrasera"></div>
-              </div>
-            </div>
+      <div class="step completado">
+        <div class="step-numero">✓</div>
+        <span class="step-label">Pasajero</span>
+      </div>
+
+      <div class="step-linea completado"></div>
+
+      <div class="step activo">
+        <div class="step-numero">4</div>
+        <span class="step-label">Asientos</span>
+      </div>
+
+      <div class="step-linea"></div>
+
+      <div class="step">
+        <div class="step-numero">5</div>
+        <span class="step-label">Pago</span>
+      </div>
+
+    </nav>
+
+    <div class="row g-4">
+
+      <!-- MAPA -->
+      <div class="col-lg-8">
+
+        <div class="card-concorde">
+
+          <div class="card-header-concorde">
+            <i class="bi bi-grid-3x3-gap me-2"></i>
+            Mapa de asientos del bus
           </div>
-        </div>
 
-        <div class="col-lg-4">
-          <div class="card-concorde" style="position:sticky;top:80px">
-            <div class="card-header-concorde"><i class="bi bi-info-circle me-2" aria-hidden="true"></i>Tu selección</div>
-            <div class="card-body">
-              <p class="mb-1 small"><strong>Trayecto:</strong> <span id="selRuta">—</span></p>
-              <p class="mb-2 small"><strong>Salida:</strong> <span id="selSalida">—</span></p>
-              <div id="resumenAsientos" class="alerta-advertencia alerta-concorde mb-3 small"
-                role="status" aria-live="polite">
-                Ningún asiento seleccionado
-              </div>
-              <a href="p08-resumen-compra.html" id="btnContinuarAsientos"
-                class="btn btn-concorde-dorado w-100 py-2"
-                style="pointer-events:none;opacity:0.6" aria-disabled="true">
-                Continuar al resumen
-                <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
-              </a>
-              <p class="small text-muted mt-2 text-center" id="textoAyuda"></p>
+          <div class="card-body">
+
+            <!-- IDA Y VUELTA -->
+            <div id="tabsTramo" class="d-none mb-3">
+              <ul class="nav nav-pills nav-fill gap-2"
+                  id="listaTabsTramo">
+              </ul>
             </div>
+
+            <!-- LEYENDA -->
+            <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center">
+
+              <span class="d-flex align-items-center gap-1">
+                <span class="leyenda-asiento leyenda-libre"></span>
+                <small>Disponible</small>
+              </span>
+
+              <span class="d-flex align-items-center gap-1">
+                <span class="leyenda-asiento leyenda-ocupado"></span>
+                <small>Ocupado</small>
+              </span>
+
+              <span class="d-flex align-items-center gap-1">
+                <span class="leyenda-asiento leyenda-seleccionado"></span>
+                <small>Seleccionado</small>
+              </span>
+
+              <span class="d-flex align-items-center gap-1">
+                <span class="leyenda-asiento leyenda-premium"></span>
+                <small>Premium ⭐</small>
+              </span>
+
+            </div>
+
+            <!-- BUS -->
+            <div class="bus-body" id="busBody">
+
+              <div class="bus-frente">
+                🚌 FRENTE · CONDUCTOR
+              </div>
+
+              <div class="fila-bus mb-1">
+
+                <span class="num-fila"></span>
+
+                <span style="width:38px;text-align:center;font-size:.6rem">
+                  A
+                </span>
+
+                <span style="width:38px;text-align:center;font-size:.6rem">
+                  B
+                </span>
+
+                <span class="pasillo-bus"></span>
+
+                <span style="width:38px;text-align:center;font-size:.6rem">
+                  C
+                </span>
+
+                <span style="width:38px;text-align:center;font-size:.6rem">
+                  D
+                </span>
+
+              </div>
+
+              <div id="filasAsientos"></div>
+
+              <div class="bus-trasero" id="filaTrasera"></div>
+
+            </div>
+
           </div>
         </div>
       </div>
+
+      <!-- RESUMEN -->
+      <div class="col-lg-4">
+
+        <div class="card-concorde"
+             style="position:sticky;top:80px">
+
+          <div class="card-header-concorde">
+            <i class="bi bi-info-circle me-2"></i>
+            Tu selección
+          </div>
+
+          <div class="card-body">
+
+            <p class="mb-1 small">
+              <strong>Trayecto:</strong>
+              <span id="selRuta">—</span>
+            </p>
+
+            <p class="mb-2 small">
+              <strong>Salida:</strong>
+              <span id="selSalida">—</span>
+            </p>
+
+            <div id="resumenAsientos"
+                 class="alerta-advertencia alerta-concorde mb-3 small"
+                 role="status">
+              Ningún asiento seleccionado
+            </div>
+
+            <a href="p08-resumen-compra.html"
+               id="btnContinuarAsientos"
+               class="btn btn-concorde-dorado w-100 py-2"
+               style="pointer-events:none;opacity:.6"
+               aria-disabled="true">
+
+              Continuar al resumen
+              <i class="bi bi-arrow-right ms-1"></i>
+
+            </a>
+
+            <p class="small text-muted mt-2 text-center"
+               id="textoAyuda">
+            </p>
+
+          </div>
+        </div>
+      </div>
+
     </div>
-  </main>
+  </div>
+</main>
 
-  <div id="footer-placeholder"></div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/auth.js"></script>
-  <script>
-    (function(){ var u=Auth.getUsuario(); if(!u) window.location.href='p03-login.html'; else if(u.rol==='administrador') window.location.href='admin-panel.html'; })();
-  </script>
-  <script src="js/componentes.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    const $ = id => document.getElementById(id);
-    function leer(k) { try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; } }
-    function esc(s) {
-      return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    }
+<div id="footer-placeholder"></div>
 
-    // ── Tramos: la ida siempre; la vuelta solo si la compra es de ida y vuelta ──
-    const viajeIda = leer('concorde_viaje') || {};
-    const viajeVuelta = leer('concorde_viaje_vuelta');
-    const tramos = viajeVuelta ? ['ida', 'vuelta'] : ['ida'];
-    const VIAJE = { ida: viajeIda, vuelta: viajeVuelta || {} };
-    const CLAVES = { ida: 'concorde_asientos', vuelta: 'concorde_asientos_vuelta' };
-    const sel = { ida: [], vuelta: [] };   // asientos elegidos por tramo
-    let tramoActual = 'ida';
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    // Asientos ocupados (fila+columna)
-    const ocupados = ['1A','1C','2B','3D','4A','4B','5C','6D','7A','8B','9C','10D','11A'];
-    const premium  = ['1A','1B','1C','1D','2A','2B','2C','2D']; // primeras 2 filas
+<script src="js/auth.js"></script>
 
-    // ── Tarifa elegida (ECONOMICA o PREMIUM) ────────────────────────────
-    // Busca la clase en el viaje guardado y en sessionStorage.
-    // Devuelve 'PREMIUM', 'ECONOMICA' o null si no la encuentra.
-    function getClaseTarifa() {
-      const candidatos = [
-        viajeIda.clase, viajeIda.tarifa, viajeIda.tipoTarifa, viajeIda.claseTarifa, viajeIda.tipo,
-        sessionStorage.getItem('concorde_clase'),
-        sessionStorage.getItem('concorde_tarifa'),
-        sessionStorage.getItem('concorde_tipo_tarifa')
-      ];
-      for (const c of candidatos) {
-        if (typeof c !== 'string') continue;
-        const v = c.toUpperCase();
-        if (v.includes('PREMIUM')) return 'PREMIUM';
-        if (v.includes('ECON')) return 'ECONOMICA';
-      }
+<script>
+(function () {
+  const usuario = Auth.getUsuario();
+
+  if (!usuario) {
+    location.href = 'p03-login.html';
+  } else if (usuario.rol === 'administrador') {
+    location.href = 'admin-panel.html';
+  }
+})();
+</script>
+
+<script src="js/componentes.js"></script>
+<script src="js/main.js"></script>
+
+<script>
+(function () {
+
+  const $ = id => document.getElementById(id);
+
+  function leer(clave) {
+    try {
+      return JSON.parse(
+        sessionStorage.getItem(clave) || 'null'
+      );
+    } catch {
       return null;
     }
-    const CLASE = getClaseTarifa();
-    if (!CLASE) console.warn('No se encontró la clase de tarifa en sessionStorage; los asientos Premium no se bloquearán.');
+  }
 
-    // Un asiento Premium está bloqueado si la tarifa elegida es económica
-    function bloqueadoPorClase(id) {
-      return CLASE === 'ECONOMICA' && premium.includes(id);
+  function normalizar(valor) {
+    return String(valor ?? '').trim().toUpperCase();
+  }
+
+  function esc(valor) {
+    return String(valor ?? '').replace(
+      /[&<>"']/g,
+      c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[c])
+    );
+  }
+
+  function avisar(mensaje, tipo = 'warning') {
+    if (
+      window.UI &&
+      typeof UI.mostrarToast === 'function'
+    ) {
+      UI.mostrarToast(mensaje, tipo);
+    } else {
+      console.warn(mensaje);
     }
+  }
 
-    // ── Cantidad de pasajeros ──────────────────────────────────────────
-    // Busca el número en el viaje guardado, en la URL o en sessionStorage.
-    // Si no lo encuentra, usa 1.
-    function getNumPasajeros() {
-      const params = new URLSearchParams(location.search);
-      const candidatos = [
-        viajeIda.pasajeros, viajeIda.numPasajeros, viajeIda.numeroPasajeros, viajeIda.cantidad, viajeIda.cantidadPasajeros,
-        params.get('pasajeros'), params.get('numPasajeros'),
-        sessionStorage.getItem('concorde_num_pasajeros')
-      ];
-      for (const c of candidatos) {
-        const n = parseInt(c, 10);
-        if (n > 0) return n;
+  // ==========================================
+  // DATOS DEL VIAJE
+  // ==========================================
+
+  const viajeIda =
+    leer('concorde_viaje') || {};
+
+  const viajeVuelta =
+    leer('concorde_viaje_vuelta');
+
+  const tramos = viajeVuelta
+    ? ['ida', 'vuelta']
+    : ['ida'];
+
+  const VIAJE = {
+    ida: viajeIda,
+    vuelta: viajeVuelta || {}
+  };
+
+  const CLAVES = {
+    ida: 'concorde_asientos',
+    vuelta: 'concorde_asientos_vuelta'
+  };
+
+  const seleccionados = {
+    ida: [],
+    vuelta: []
+  };
+
+  const mapas = {
+    ida: new Map(),
+    vuelta: new Map()
+  };
+
+  let tramoActual = 'ida';
+  let cargado = false;
+
+  function obtenerIdViaje(viaje) {
+    return Number(
+      viaje?.idViaje ||
+      viaje?.viaje?.idViaje ||
+      0
+    );
+  }
+
+  function obtenerClase() {
+    const candidatos = [
+      viajeIda.clase,
+      viajeIda.tarifa,
+      viajeIda.tipoTarifa,
+      viajeIda.claseTarifa,
+      viajeIda.tipo,
+      sessionStorage.getItem('concorde_clase'),
+      sessionStorage.getItem('concorde_tarifa'),
+      sessionStorage.getItem('concorde_tipo_tarifa')
+    ];
+
+    for (const candidato of candidatos) {
+      if (typeof candidato !== 'string') continue;
+
+      const valor = normalizar(candidato);
+
+      if (valor.includes('PREMIUM')) {
+        return 'PREMIUM';
       }
-      const lista = leer('concorde_pasajeros');
-      if (Array.isArray(lista) && lista.length > 0) return lista.length;
-      return 1;
-    }
 
-    const NUM_PASAJEROS = getNumPasajeros();
-    $('busBody').dataset.pasajeros = NUM_PASAJEROS;
-
-    // Pasajeros guardados en p06 (para mostrar a quién corresponde cada asiento)
-    const pasajerosGuardados = (function () {
-      const a = leer('concorde_pasajeros');
-      return Array.isArray(a) ? a : [];
-    })();
-
-    function etiquetaTramo(t) { return t === 'ida' ? 'Ida' : 'Vuelta'; }
-    function nombreRuta(v) {
-      return (v.terminalOrigen || v.origen || '—') + ' → ' + (v.terminalDestino || v.destino || '—');
-    }
-    function completo(t) { return sel[t].length === NUM_PASAJEROS; }
-
-    // Datos del tramo que se está eligiendo (ruta, salida y texto de ayuda)
-    function infoTramo() {
-      const v = VIAJE[tramoActual];
-      let f = '';
-      if (v.ida) {
-        f = new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ';
+      if (valor.includes('ECON')) {
+        return 'ECONOMICA';
       }
-      $('selRuta').textContent = nombreRuta(v);
-      $('selSalida').textContent = f + (v.salida || '—');
-      const pl = NUM_PASAJEROS > 1 ? 's' : '';
-      let ayuda = tramos.length > 1
-        ? 'Selecciona ' + NUM_PASAJEROS + ' asiento' + pl + ' para la ' + etiquetaTramo(tramoActual).toLowerCase() +
-          ' (y para el otro tramo) para continuar'
-        : 'Selecciona ' + NUM_PASAJEROS + ' asiento' + pl + ' para continuar';
-      if (CLASE === 'ECONOMICA') ayuda += '. Los asientos Premium ⭐ son solo para tarifa Premium.';
-      $('textoAyuda').textContent = ayuda;
     }
 
-    function dibujarTabs() {
-      if (tramos.length < 2) return;
-      $('tabsTramo').classList.remove('d-none');
-      $('listaTabsTramo').innerHTML = tramos.map(t => `
-        <li class="nav-item" role="presentation">
-          <button type="button" class="nav-link ${t === tramoActual ? 'active' : ''}" data-tramo="${t}">
-            ${etiquetaTramo(t)} · ${esc(nombreRuta(VIAJE[t]))} ${completo(t) ? '✓' : ''}
-          </button>
-        </li>`).join('');
+    return null;
+  }
+
+  const CLASE = obtenerClase();
+
+  function obtenerPasajeros() {
+    const params = new URLSearchParams(
+      location.search
+    );
+
+    const candidatos = [
+      viajeIda.pasajeros,
+      viajeIda.numPasajeros,
+      viajeIda.numeroPasajeros,
+      viajeIda.cantidad,
+      viajeIda.cantidadPasajeros,
+      params.get('pasajeros'),
+      params.get('numPasajeros'),
+      sessionStorage.getItem('concorde_num_pasajeros')
+    ];
+
+    for (const candidato of candidatos) {
+      const numero = parseInt(candidato, 10);
+
+      if (numero > 0) {
+        return numero;
+      }
     }
 
-    function cambiarTramo(t) {
-      tramoActual = t;
-      pintarSeleccion();
-      infoTramo();
-      dibujarTabs();
+    const pasajeros = leer('concorde_pasajeros');
+
+    if (Array.isArray(pasajeros) && pasajeros.length) {
+      return pasajeros.length;
     }
 
-    $('listaTabsTramo').addEventListener('click', function (e) {
-      const b = e.target.closest('[data-tramo]');
-      if (b) cambiarTramo(b.dataset.tramo);
+    return 1;
+  }
+
+  const NUM_PASAJEROS = obtenerPasajeros();
+
+  $('busBody').dataset.pasajeros = NUM_PASAJEROS;
+
+  const pasajerosGuardados =
+    leer('concorde_pasajeros') || [];
+
+  function completo(tramo) {
+    return seleccionados[tramo].length === NUM_PASAJEROS;
+  }
+
+  function etiquetaTramo(tramo) {
+    return tramo === 'ida' ? 'Ida' : 'Vuelta';
+  }
+
+  function nombreRuta(viaje) {
+    return (
+      viaje.terminalOrigen ||
+      viaje.origen ||
+      '—'
+    ) + ' → ' + (
+      viaje.terminalDestino ||
+      viaje.destino ||
+      '—'
+    );
+  }
+
+  // ==========================================
+  // CONSULTAR ASIENTOS REALES
+  // ==========================================
+
+  async function cargarAsientos(tramo) {
+
+    const viaje = VIAJE[tramo];
+    const idViaje = obtenerIdViaje(viaje);
+
+    if (!idViaje) {
+      throw new Error(
+        'No se encontró el ID del viaje de ' + tramo
+      );
+    }
+
+    const respuesta = await fetch(
+      `/api/asientos/viaje/${idViaje}`,
+      {
+        method: 'GET',
+        cache: 'no-store'
+      }
+    );
+
+    if (!respuesta.ok) {
+      throw new Error(
+        `Error HTTP ${respuesta.status} al consultar los asientos`
+      );
+    }
+
+    const datos = await respuesta.json();
+
+    if (!Array.isArray(datos)) {
+      throw new Error(
+        'El servidor no devolvió una lista de asientos'
+      );
+    }
+
+    if (!datos.length) {
+      throw new Error(
+        'Este vehículo no tiene asientos registrados'
+      );
+    }
+
+    const mapa = new Map();
+
+    datos.forEach(a => {
+
+      const numero = normalizar(
+        a.numeroAsiento
+      );
+
+      if (!numero) return;
+
+      mapa.set(numero, {
+        idAsiento: a.idAsiento,
+        numeroAsiento: numero,
+        tipo: normalizar(
+          a.tipo || 'ESTANDAR'
+        ),
+        disponible: a.disponible === true,
+        ocupado: a.ocupado === true
+      });
+
     });
 
-    function generarFilas() {
-      const contenedor = $('filasAsientos');
-      for (let fila = 1; fila <= 12; fila++) {
-        const div = document.createElement('div');
-        div.className = 'fila-bus';
-        div.innerHTML = `<span class="num-fila">${fila}</span>`;
+    mapas[tramo] = mapa;
 
-        ['A','B','','C','D'].forEach(col => {
-          if (col === '') {
-            // appendChild (no innerHTML +=) para no borrar los clics de los asientos A y B
-            const pasillo = document.createElement('span');
-            pasillo.className = 'pasillo-bus';
-            div.appendChild(pasillo);
-            return;
-          }
-          const id = `${fila}${col}`;
-          const esOcupado  = ocupados.includes(id);
-          const esPremium  = premium.includes(id) && !esOcupado;
-          let clase = esOcupado ? 'asiento-ocupado' : (esPremium ? 'asiento-premium' : 'asiento-libre');
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = `asiento-bus ${clase}`;
-          btn.dataset.numero = id;
-          btn.textContent = id;
-          btn.setAttribute('aria-label', `Asiento ${id}${esPremium?' Premium':''}, ${esOcupado?'ocupado':'disponible'}`);
-          if (!esOcupado) btn.addEventListener('click', () => toggleAsiento(btn));
-          div.appendChild(btn);
-        });
-        contenedor.appendChild(div);
+    console.log(
+      'Asientos cargados:',
+      tramo,
+      idViaje,
+      [...mapa.values()]
+    );
+  }
+
+  // ==========================================
+  // ESTADO DE LOS ASIENTOS
+  // ==========================================
+
+  function estaOcupado(numero, tramo = tramoActual) {
+
+    const asiento = mapas[tramo].get(numero);
+
+    if (!asiento) return true;
+
+    return (
+      asiento.ocupado === true ||
+      asiento.disponible === false
+    );
+  }
+
+  function esPremium(numero, tramo = tramoActual) {
+
+    const asiento = mapas[tramo].get(numero);
+
+    return asiento?.tipo === 'PREMIUM';
+  }
+
+  function bloqueadoPorClase(numero, tramo = tramoActual) {
+
+    return (
+      CLASE === 'ECONOMICA' &&
+      esPremium(numero, tramo)
+    );
+  }
+
+  // ==========================================
+  // CREAR MAPA DEL BUS
+  // ==========================================
+
+  function crearBoton(numero) {
+
+    const asiento = mapas[tramoActual].get(numero);
+
+    if (!asiento) return null;
+
+    const boton = document.createElement('button');
+
+    boton.type = 'button';
+    boton.className = 'asiento-bus';
+    boton.dataset.numero = numero;
+    boton.textContent = numero;
+
+    boton.addEventListener('click', function () {
+      seleccionarAsiento(numero);
+    });
+
+    return boton;
+  }
+
+  function generarMapa() {
+
+    const contenedor = $('filasAsientos');
+    const trasero = $('filaTrasera');
+
+    contenedor.innerHTML = '';
+    trasero.innerHTML = '';
+
+    const mapa = mapas[tramoActual];
+
+    const filas = new Set();
+
+    for (const numero of mapa.keys()) {
+
+      const coincidencia = numero.match(
+        /^(\d+)[ABCD]$/
+      );
+
+      if (coincidencia) {
+        filas.add(Number(coincidencia[1]));
       }
-
-      // Fila trasera: 41–45
-      const trasero = $('filaTrasera');
-      ['41','42','43','44','45'].forEach(n => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'asiento-bus asiento-libre';
-        btn.dataset.numero = n;
-        btn.textContent = n;
-        btn.setAttribute('aria-label', `Asiento ${n}, disponible`);
-        btn.addEventListener('click', () => toggleAsiento(btn));
-        trasero.appendChild(btn);
-      });
     }
 
-    // Repinta el mapa con los asientos del tramo actual
-    function pintarSeleccion() {
-      document.querySelectorAll('.asiento-bus[data-numero]').forEach(b => {
-        if (b.classList.contains('asiento-ocupado')) return;
-        const id = b.dataset.numero;
-        b.classList.remove('asiento-libre', 'asiento-premium', 'asiento-seleccionado');
-        b.classList.add(sel[tramoActual].includes(id)
-          ? 'asiento-seleccionado'
-          : (premium.includes(id) ? 'asiento-premium' : 'asiento-libre'));
+    const filasOrdenadas = [...filas].sort(
+      (a, b) => a - b
+    );
 
-        // Premium bloqueado si la tarifa elegida es económica
-        const bloqueado = bloqueadoPorClase(id);
-        b.classList.toggle('asiento-bloqueado', bloqueado);
-        if (bloqueado) {
-          b.setAttribute('aria-disabled', 'true');
-          b.title = 'Solo para tarifa Premium';
+    filasOrdenadas.forEach(fila => {
+
+      const div = document.createElement('div');
+
+      div.className = 'fila-bus';
+
+      const etiqueta = document.createElement('span');
+
+      etiqueta.className = 'num-fila';
+      etiqueta.textContent = fila;
+
+      div.appendChild(etiqueta);
+
+      ['A', 'B', '', 'C', 'D'].forEach(columna => {
+
+        if (!columna) {
+
+          const pasillo = document.createElement('span');
+
+          pasillo.className = 'pasillo-bus';
+
+          div.appendChild(pasillo);
+
+          return;
+        }
+
+        const numero = `${fila}${columna}`;
+
+        const boton = crearBoton(numero);
+
+        if (boton) {
+
+          div.appendChild(boton);
+
         } else {
-          b.removeAttribute('aria-disabled');
-          b.removeAttribute('title');
+
+          const espacio = document.createElement('span');
+
+          espacio.style.width = '38px';
+          espacio.style.height = '38px';
+          espacio.style.flexShrink = '0';
+
+          div.appendChild(espacio);
         }
+
       });
+
+      contenedor.appendChild(div);
+
+    });
+
+    // Asientos adicionales con numeración simple.
+    const adicionales = [...mapa.keys()]
+      .filter(numero => /^\d+$/.test(numero))
+      .sort((a, b) => Number(a) - Number(b));
+
+    adicionales.forEach(numero => {
+
+      const boton = crearBoton(numero);
+
+      if (boton) {
+        trasero.appendChild(boton);
+      }
+
+    });
+
+    trasero.style.display =
+      adicionales.length ? 'flex' : 'none';
+  }
+
+  // ==========================================
+  // PINTAR COLORES REALES
+  // ==========================================
+
+  function pintarAsientos() {
+
+    document.querySelectorAll(
+      '.asiento-bus[data-numero]'
+    ).forEach(boton => {
+
+      const numero = boton.dataset.numero;
+
+      const ocupado = estaOcupado(numero);
+      const premium = esPremium(numero);
+
+      const seleccionado =
+        seleccionados[tramoActual].includes(numero);
+
+      const bloqueado =
+        bloqueadoPorClase(numero);
+
+      boton.classList.remove(
+        'asiento-libre',
+        'asiento-ocupado',
+        'asiento-premium',
+        'asiento-seleccionado',
+        'asiento-bloqueado'
+      );
+
+      if (ocupado) {
+
+        boton.classList.add(
+          'asiento-ocupado'
+        );
+
+      } else if (seleccionado) {
+
+        boton.classList.add(
+          'asiento-seleccionado'
+        );
+
+      } else if (premium) {
+
+        boton.classList.add(
+          'asiento-premium'
+        );
+
+      } else {
+
+        boton.classList.add(
+          'asiento-libre'
+        );
+      }
+
+      if (bloqueado && !ocupado) {
+
+        boton.classList.add(
+          'asiento-bloqueado'
+        );
+      }
+
+      boton.disabled =
+        ocupado || bloqueado;
+
+      boton.title = ocupado
+        ? 'Asiento ocupado'
+        : bloqueado
+          ? 'Solo para tarifa Premium'
+          : premium
+            ? 'Asiento Premium disponible'
+            : 'Asiento estándar disponible';
+
+      boton.setAttribute(
+        'aria-label',
+        `Asiento ${numero}, ${
+          premium ? 'Premium' : 'Estándar'
+        }, ${
+          ocupado ? 'ocupado' : 'disponible'
+        }`
+      );
+
+    });
+  }
+
+  // ==========================================
+  // SELECCIONAR ASIENTO
+  // ==========================================
+
+  function seleccionarAsiento(numero) {
+
+    if (!cargado) return;
+
+    if (estaOcupado(numero)) {
+
+      avisar(
+        'El asiento ' + numero + ' está ocupado.',
+        'warning'
+      );
+
+      return;
     }
 
-    function toggleAsiento(btn) {
-      const id = btn.dataset.numero;
-      const lista = sel[tramoActual];
+    if (bloqueadoPorClase(numero)) {
 
-      if (lista.includes(id)) {
-        // Quitar selección
-        sel[tramoActual] = lista.filter(s => s !== id);
-      } else {
-        // Los asientos Premium no se pueden elegir con tarifa económica
-        if (bloqueadoPorClase(id)) {
-          UI.mostrarToast('El asiento ' + id + ' es Premium. Elige la tarifa Premium para poder reservarlo.', 'warning');
-          return;
-        }
-        // Agregar selección (hasta el número de pasajeros)
-        if (lista.length >= NUM_PASAJEROS) {
-          UI.mostrarToast(
-            'Solo puedes seleccionar ' + NUM_PASAJEROS + ' asiento' + (NUM_PASAJEROS > 1 ? 's' : ''),
-            'warning'
-          );
-          return;
-        }
-        lista.push(id);
+      avisar(
+        'El asiento ' + numero +
+        ' es Premium. Debes elegir tarifa Premium.',
+        'warning'
+      );
+
+      return;
+    }
+
+    const lista = seleccionados[tramoActual];
+
+    if (lista.includes(numero)) {
+
+      seleccionados[tramoActual] =
+        lista.filter(a => a !== numero);
+
+    } else {
+
+      if (lista.length >= NUM_PASAJEROS) {
+
+        avisar(
+          'Solo puedes seleccionar ' +
+          NUM_PASAJEROS + ' asiento(s).',
+          'warning'
+        );
+
+        return;
       }
-      pintarSeleccion();
+
+      lista.push(numero);
+    }
+
+    pintarAsientos();
+    actualizarResumen();
+
+    if (completo(tramoActual)) {
+
+      const otro = tramos.find(
+        t => t !== tramoActual && !completo(t)
+      );
+
+      if (otro) {
+
+        avisar(
+          'Ahora selecciona los asientos de la vuelta.',
+          'info'
+        );
+
+        setTimeout(() => cambiarTramo(otro), 500);
+      }
+    }
+  }
+
+  // ==========================================
+  // INFORMACIÓN DEL VIAJE
+  // ==========================================
+
+  function actualizarInfo() {
+
+    const viaje = VIAJE[tramoActual];
+
+    $('selRuta').textContent = nombreRuta(viaje);
+
+    let fecha = '';
+
+    if (viaje.ida) {
+
+      const d = new Date(
+        viaje.ida + 'T00:00:00'
+      );
+
+      fecha = d.toLocaleDateString(
+        'es-CO',
+        {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short'
+        }
+      ) + ' · ';
+    }
+
+    $('selSalida').textContent =
+      fecha + (viaje.salida || '—');
+
+    let ayuda =
+      'Selecciona ' + NUM_PASAJEROS +
+      ' asiento(s) para continuar.';
+
+    if (CLASE === 'ECONOMICA') {
+
+      ayuda +=
+        ' Los asientos Premium ⭐ son solo para tarifa Premium.';
+    }
+
+    $('textoAyuda').textContent = ayuda;
+  }
+
+  // ==========================================
+  // PESTAÑAS IDA / VUELTA
+  // ==========================================
+
+  function dibujarTabs() {
+
+    if (tramos.length < 2) return;
+
+    $('tabsTramo').classList.remove('d-none');
+
+    $('listaTabsTramo').innerHTML =
+      tramos.map(tramo => `
+
+        <li class="nav-item">
+
+          <button type="button"
+                  class="nav-link ${
+                    tramo === tramoActual ? 'active' : ''
+                  }"
+                  data-tramo="${tramo}">
+
+            ${etiquetaTramo(tramo)}
+
+            ${completo(tramo) ? '✓' : ''}
+
+          </button>
+
+        </li>
+
+      `).join('');
+  }
+
+  function cambiarTramo(tramo) {
+
+    if (!mapas[tramo]?.size) return;
+
+    tramoActual = tramo;
+
+    generarMapa();
+    pintarAsientos();
+    actualizarInfo();
+    actualizarResumen();
+  }
+
+  $('listaTabsTramo').addEventListener(
+    'click',
+    evento => {
+
+      const boton = evento.target.closest(
+        '[data-tramo]'
+      );
+
+      if (boton) {
+        cambiarTramo(boton.dataset.tramo);
+      }
+    }
+  );
+
+  // ==========================================
+  // RESUMEN Y SESSIONSTORAGE
+  // ==========================================
+
+  function actualizarResumen() {
+
+    const bloques = tramos.map(tramo => {
+
+      const titulo = tramos.length > 1
+        ? `<strong>${etiquetaTramo(tramo)}</strong><br>`
+        : '';
+
+      const lista = seleccionados[tramo];
+
+      if (!lista.length) {
+
+        return titulo +
+          'Ningún asiento seleccionado';
+      }
+
+      const lineas = lista.map(
+        (numero, indice) => {
+
+          const pasajero =
+            pasajerosGuardados[indice];
+
+          const nombre = pasajero?.nombre
+            ? ' (' + esc(pasajero.nombre) + ')'
+            : '';
+
+          return (
+            'Pasajero ' +
+            (indice + 1) +
+            nombre +
+            ': <strong>' +
+            esc(numero) +
+            '</strong>'
+          );
+        }
+      );
+
+      return titulo + lineas.join('<br>');
+    });
+
+    $('resumenAsientos').innerHTML =
+      bloques.join('<hr class="my-2">');
+
+    tramos.forEach(tramo => {
+
+      if (completo(tramo)) {
+
+        sessionStorage.setItem(
+          CLAVES[tramo],
+          JSON.stringify(
+            seleccionados[tramo]
+          )
+        );
+
+      } else {
+
+        sessionStorage.removeItem(
+          CLAVES[tramo]
+        );
+      }
+    });
+
+    if (completo('ida')) {
+
+      sessionStorage.setItem(
+        'concorde_asiento',
+        seleccionados.ida.join(', ')
+      );
+
+    } else {
+
+      sessionStorage.removeItem(
+        'concorde_asiento'
+      );
+    }
+
+    const todoCompleto =
+      cargado && tramos.every(completo);
+
+    const boton = $('btnContinuarAsientos');
+
+    boton.style.pointerEvents =
+      todoCompleto ? '' : 'none';
+
+    boton.style.opacity =
+      todoCompleto ? '' : '.6';
+
+    if (todoCompleto) {
+
+      boton.removeAttribute(
+        'aria-disabled'
+      );
+
+    } else {
+
+      boton.setAttribute(
+        'aria-disabled',
+        'true'
+      );
+    }
+
+    dibujarTabs();
+  }
+
+  // ==========================================
+  // RESTAURAR SELECCIÓN
+  // ==========================================
+
+  function restaurarSeleccion() {
+
+    tramos.forEach(tramo => {
+
+      const guardados = leer(
+        CLAVES[tramo]
+      );
+
+      if (!Array.isArray(guardados)) return;
+
+      seleccionados[tramo] = guardados
+        .map(normalizar)
+        .filter(numero => {
+
+          const asiento =
+            mapas[tramo].get(numero);
+
+          if (!asiento) return false;
+
+          if (estaOcupado(numero, tramo)) {
+            return false;
+          }
+
+          if (bloqueadoPorClase(numero, tramo)) {
+            return false;
+          }
+
+          return true;
+        })
+        .slice(0, NUM_PASAJEROS);
+    });
+  }
+
+  // ==========================================
+  // INICIALIZACIÓN
+  // ==========================================
+
+  async function iniciar() {
+
+    $('filasAsientos').innerHTML = `
+      <div class="text-center py-4">
+        <div class="spinner-border text-primary mb-2"
+             role="status"></div>
+        <p class="small mb-0">
+          Consultando disponibilidad real...
+        </p>
+      </div>
+    `;
+
+    $('filaTrasera').style.display = 'none';
+
+    try {
+
+      // Consultar cada viaje de forma independiente.
+      await Promise.all(
+        tramos.map(tramo => cargarAsientos(tramo))
+      );
+
+      restaurarSeleccion();
+
+      cargado = true;
+
+      generarMapa();
+      pintarAsientos();
+      actualizarInfo();
       actualizarResumen();
 
-      // Al completar un tramo, pasa al otro si aún le faltan asientos
-      if (completo(tramoActual)) {
-        const otro = tramos.find(t => t !== tramoActual && !completo(t));
-        if (otro) {
-          UI.mostrarToast('Ahora elige los asientos de la ' + etiquetaTramo(otro).toLowerCase(), 'info');
-          setTimeout(() => cambiarTramo(otro), 500);
+      console.log(
+        'CONCORDE: mapa de asientos actualizado',
+        {
+          viajeIda: obtenerIdViaje(viajeIda),
+          viajeVuelta: viajeVuelta
+            ? obtenerIdViaje(viajeVuelta)
+            : null,
+          asientosIda: mapas.ida.size,
+          asientosVuelta: mapas.vuelta.size
         }
-      }
+      );
+
+    } catch (error) {
+
+      console.error(
+        'Error al cargar asientos:',
+        error
+      );
+
+      cargado = false;
+
+      $('filasAsientos').innerHTML = `
+        <div class="alert alert-danger text-center">
+
+          <strong>
+            No se pudieron cargar los asientos.
+          </strong>
+
+          <p class="small mt-2">
+            ${esc(error.message)}
+          </p>
+
+          <button type="button"
+                  class="btn btn-outline-danger btn-sm"
+                  onclick="location.reload()">
+
+            Reintentar
+
+          </button>
+
+        </div>
+      `;
+
+      $('filaTrasera').style.display = 'none';
+
+      avisar(
+        'No se pudo verificar la disponibilidad.',
+        'danger'
+      );
+
+      actualizarResumen();
     }
+  }
 
-    function actualizarResumen() {
-      const el  = $('resumenAsientos');
-      const btn = $('btnContinuarAsientos');
+  iniciar();
 
-      const bloques = tramos.map(t => {
-        const titulo = tramos.length > 1 ? '<strong>' + etiquetaTramo(t) + '</strong><br>' : '';
-        const lista = sel[t];
-        if (!lista.length) return titulo + 'Ningún asiento seleccionado';
-        const lineas = lista.map((s, i) => {
-          const p = pasajerosGuardados[i];
-          const quien = p && p.nombre ? ' (' + esc(p.nombre) + ')' : '';
-          return 'Pasajero ' + (i + 1) + quien + ': <strong>' + esc(s) + '</strong>';
-        });
-        return titulo + lineas.join('<br>') +
-          (completo(t) ? '' : '<br><span class="text-muted">Faltan ' + (NUM_PASAJEROS - lista.length) + '</span>');
-      });
-      el.innerHTML = bloques.join('<hr class="my-2">');
+})();
+</script>
 
-      // Se guarda cada tramo solo cuando está completo
-      tramos.forEach(t => {
-        if (completo(t)) sessionStorage.setItem(CLAVES[t], JSON.stringify(sel[t]));
-        else sessionStorage.removeItem(CLAVES[t]);
-      });
-      // Compatibilidad: texto con los asientos de la ida separados por coma
-      if (completo('ida')) sessionStorage.setItem('concorde_asiento', sel.ida.join(', '));
-      else sessionStorage.removeItem('concorde_asiento');
-
-      const todo = tramos.every(completo);
-      btn.style.pointerEvents = todo ? '' : 'none';
-      btn.style.opacity = todo ? '' : '0.6';
-      if (todo) btn.removeAttribute('aria-disabled');
-      else btn.setAttribute('aria-disabled', 'true');
-
-      dibujarTabs();
-    }
-
-    // Si el usuario vuelve desde el resumen, se restauran sus asientos
-    function restaurarAsientos() {
-      tramos.forEach(t => {
-        const g = leer(CLAVES[t]);
-        if (!Array.isArray(g)) return;
-        sel[t] = g.slice(0, NUM_PASAJEROS).filter(id => {
-          const b = document.querySelector('.asiento-bus[data-numero="' + id + '"]');
-          // Se descartan los ocupados y los Premium si ahora la tarifa es económica
-          return b && !b.classList.contains('asiento-ocupado') && !bloqueadoPorClase(id);
-        });
-      });
-    }
-
-    generarFilas();
-    restaurarAsientos();
-    pintarSeleccion();
-    infoTramo();
-    actualizarResumen();
-  </script>
 </body>
 </html>

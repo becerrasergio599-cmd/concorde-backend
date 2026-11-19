@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Pago seguro - Concorde Transporte Terrestre">
+  <meta name="description" content="Pago - Concorde Transporte Terrestre">
 
   <title>Concorde Transporte Terrestre | Pago</title>
 
@@ -13,6 +14,92 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+
+  <style>
+    .metodo-pago {
+      border: 2px solid #e1e5eb;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: 0.2s;
+      height: 100%;
+      padding: 15px;
+      background: white;
+    }
+
+    .metodo-pago:hover {
+      border-color: #0055aa;
+      background: #f8fbff;
+    }
+
+    .metodo-pago.activo {
+      border-color: #0d6efd;
+      background: #f4f8ff;
+    }
+
+    .metodo-pago label {
+      cursor: pointer;
+      display: block;
+      width: 100%;
+      margin-top: 7px;
+    }
+
+    .seccion-pago {
+      animation: aparecerPago 0.2s ease;
+    }
+
+    @keyframes aparecerPago {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .campo-error {
+      border-color: #dc3545 !important;
+    }
+
+    .mensaje-pago {
+      border-radius: 7px;
+      padding: 12px 15px;
+      margin-bottom: 18px;
+      font-size: 14px;
+    }
+
+    .mensaje-pago.error {
+      background: #fff0f0;
+      border: 1px solid #dc3545;
+      color: #a51e2c;
+    }
+
+    .mensaje-pago.info {
+      background: #eef6ff;
+      border: 1px solid #b5d5ff;
+      color: #174c85;
+    }
+
+    .btn-pagar {
+      background: #eea11b;
+      color: #071c3b;
+      border: none;
+      font-weight: 700;
+      padding: 12px;
+      border-radius: 5px;
+    }
+
+    .btn-pagar:hover {
+      background: #d98e0c;
+      color: #071c3b;
+    }
+
+    .btn-pagar:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 
 <body>
@@ -23,191 +110,192 @@
     <div class="container">
 
       <h1 class="h4 fw-bold texto-azul mb-4">
-        <i class="bi bi-lock-fill me-2"></i>Pago Seguro
+        <i class="bi bi-lock-fill me-2"></i>
+        Pago Seguro
       </h1>
 
-      <!-- Seguridad -->
-      <div class="alerta-exito alerta-concorde mb-4">
-        <i class="bi bi-shield-check me-2" aria-hidden="true"></i>
-        Tu pago está protegido con cifrado SSL de 256 bits. Tus datos financieros están seguros.
+      <div class="alert alert-success mb-4">
+        <i class="bi bi-shield-check me-2"></i>
+        Simulación de pago de Concorde.
+        No ingreses datos bancarios reales.
       </div>
 
       <div class="row g-4">
 
+        <!-- FORMULARIO DE PAGO -->
         <div class="col-lg-8">
 
           <div class="card-concorde">
 
             <div class="card-header-concorde">
-              <i class="bi bi-credit-card me-2"></i>Método de pago
+              <i class="bi bi-credit-card me-2"></i>
+              Método de pago
             </div>
 
             <div class="card-body">
 
-              <!-- Métodos de pago -->
-              <fieldset class="mb-4" aria-label="Método de pago">
+              <h5 class="fw-bold mb-3">
+                Selecciona cómo pagar:
+              </h5>
 
-                <legend class="form-label fw-bold">
-                  Selecciona cómo pagar:
-                </legend>
+              <!-- MÉTODOS -->
+              <div class="row g-2 mb-4">
 
-                <div class="row g-2">
+                <div class="col-md-4">
+                  <div class="metodo-pago activo" id="cardTarjeta">
 
-                  <div class="col-md-4">
-                    <div class="form-check card p-3 h-100" style="border:2px solid var(--azul-claro);cursor:pointer">
+                    <input
+                      type="radio"
+                      name="metodoPago"
+                      id="metodoTarjeta"
+                      value="tarjeta"
+                      checked
+                    >
 
-                      <input
-                        type="radio"
-                        class="form-check-input"
-                        name="metodoPago"
-                        id="metodoTarjeta"
-                        value="tarjeta"
-                        checked
-                      >
+                    <label for="metodoTarjeta">
+                      <i class="bi bi-credit-card-2-front-fill text-primary fs-4 d-block mb-1"></i>
+                      Tarjeta de crédito/débito
+                    </label>
 
-                      <label class="form-check-label w-100" for="metodoTarjeta" style="cursor:pointer">
-                        <i class="bi bi-credit-card-2-front-fill text-primary d-block fs-4 mb-1"></i>
-                        Tarjeta de crédito/débito
-                      </label>
-
-                    </div>
                   </div>
-
-                  <div class="col-md-4">
-                    <div class="form-check card p-3 h-100" style="cursor:pointer">
-
-                      <input
-                        type="radio"
-                        class="form-check-input"
-                        name="metodoPago"
-                        id="metodoNequi"
-                        value="nequi"
-                      >
-
-                      <label class="form-check-label w-100" for="metodoNequi" style="cursor:pointer">
-                        <i class="bi bi-phone-fill text-success d-block fs-4 mb-1"></i>
-                        Nequi / Daviplata
-                      </label>
-
-                    </div>
-                  </div>
-
-                  <div class="col-md-4">
-                    <div class="form-check card p-3 h-100" style="cursor:pointer">
-
-                      <input
-                        type="radio"
-                        class="form-check-input"
-                        name="metodoPago"
-                        id="metodoPSE"
-                        value="pse"
-                      >
-
-                      <label class="form-check-label w-100" for="metodoPSE" style="cursor:pointer">
-                        <i class="bi bi-bank2 text-warning d-block fs-4 mb-1"></i>
-                        PSE / Transferencia
-                      </label>
-
-                    </div>
-                  </div>
-
                 </div>
-              </fieldset>
 
-              <!-- Pago con tarjeta -->
+                <div class="col-md-4">
+                  <div class="metodo-pago" id="cardNequi">
+
+                    <input
+                      type="radio"
+                      name="metodoPago"
+                      id="metodoNequi"
+                      value="nequi"
+                    >
+
+                    <label for="metodoNequi">
+                      <i class="bi bi-phone-fill text-success fs-4 d-block mb-1"></i>
+                      Nequi / Daviplata
+                    </label>
+
+                  </div>
+                </div>
+
+                <div class="col-md-4">
+                  <div class="metodo-pago" id="cardPSE">
+
+                    <input
+                      type="radio"
+                      name="metodoPago"
+                      id="metodoPSE"
+                      value="pse"
+                    >
+
+                    <label for="metodoPSE">
+                      <i class="bi bi-bank2 text-warning fs-4 d-block mb-1"></i>
+                      PSE / Transferencia
+                    </label>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <div
+                id="mensajePago"
+                class="mensaje-pago error d-none"
+                role="alert"
+              ></div>
+
+              <!-- ========================= -->
+              <!-- PAGO CON TARJETA -->
+              <!-- ========================= -->
+
               <div id="pago-tarjeta" class="seccion-pago">
 
-                <form id="formPago" class="form-concorde" data-action="pago" novalidate>
+                <form
+                  id="formPago"
+                  class="form-concorde"
+                  novalidate
+                  autocomplete="off"
+                >
 
                   <div class="row g-3">
 
                     <div class="col-12">
-
-                      <label class="form-label" for="nombreTarjeta">
-                        Nombre en la tarjeta <span class="text-danger">*</span>
+                      <label for="nombreTarjeta" class="form-label">
+                        Nombre en la tarjeta
+                        <span class="text-danger">*</span>
                       </label>
 
                       <input
                         type="text"
-                        class="form-control"
                         id="nombreTarjeta"
-                        placeholder="Como aparece en la tarjeta"
+                        class="form-control"
+                        placeholder="JUAN CARLOS GARCÍA"
+                        maxlength="100"
                         required
-                        autocomplete="cc-name"
                       >
-
                     </div>
 
                     <div class="col-12">
 
-                      <label class="form-label" for="numeroTarjeta">
-                        Número de tarjeta <span class="text-danger">*</span>
+                      <label for="numeroTarjeta" class="form-label">
+                        Número de tarjeta
+                        <span class="text-danger">*</span>
                       </label>
 
                       <div class="input-group">
 
                         <input
                           type="text"
-                          class="form-control"
                           id="numeroTarjeta"
+                          class="form-control"
                           placeholder="0000 0000 0000 0000"
-                          required
                           maxlength="19"
-                          autocomplete="cc-number"
                           inputmode="numeric"
+                          required
                         >
 
                         <span class="input-group-text">
-                          <i class="bi bi-credit-card" aria-hidden="true"></i>
+                          <i class="bi bi-credit-card"></i>
                         </span>
 
                       </div>
+
                     </div>
 
                     <div class="col-md-6">
 
-                      <label class="form-label" for="expiracion">
-                        Vencimiento <span class="text-danger">*</span>
+                      <label for="expiracion" class="form-label">
+                        Vencimiento
+                        <span class="text-danger">*</span>
                       </label>
 
                       <input
                         type="text"
-                        class="form-control"
                         id="expiracion"
+                        class="form-control"
                         placeholder="MM/AA"
-                        required
                         maxlength="5"
-                        autocomplete="cc-exp"
                         inputmode="numeric"
+                        required
                       >
 
                     </div>
 
                     <div class="col-md-6">
 
-                      <label class="form-label" for="cvv">
-                        CVV <span class="text-danger">*</span>
-
-                        <button
-                          type="button"
-                          class="btn btn-link btn-sm p-0 ms-1"
-                          data-bs-toggle="tooltip"
-                          title="Los 3 últimos dígitos en el reverso de tu tarjeta"
-                          aria-label="¿Qué es el CVV?"
-                        >
-                          <i class="bi bi-question-circle" aria-hidden="true"></i>
-                        </button>
+                      <label for="cvv" class="form-label">
+                        CVV
+                        <span class="text-danger">*</span>
                       </label>
 
                       <input
                         type="text"
-                        class="form-control"
                         id="cvv"
-                        placeholder="000"
-                        required
+                        class="form-control"
+                        placeholder="123"
                         maxlength="4"
-                        autocomplete="cc-csc"
                         inputmode="numeric"
+                        required
                       >
 
                     </div>
@@ -216,9 +304,10 @@
 
                       <button
                         type="submit"
-                        class="btn btn-concorde-dorado w-100 py-2 fw-bold"
+                        id="btnPagarTarjeta"
+                        class="btn btn-pagar w-100"
                       >
-                        <i class="bi bi-lock-fill me-2" aria-hidden="true"></i>
+                        <i class="bi bi-lock-fill me-2"></i>
                         Pagar <span id="btnTotal">$0</span> COP
                       </button>
 
@@ -230,53 +319,148 @@
 
               </div>
 
-              <!-- PSE -->
-              <div id="pago-pse" class="seccion-pago d-none">
+              <!-- ========================= -->
+              <!-- PAGO CON NEQUI -->
+              <!-- ========================= -->
 
-                <div class="alerta-info alerta-concorde">
-                  <i class="bi bi-bank2 me-2"></i>
-                  Serás redirigido al portal de tu banco para completar el pago de forma segura.
-                </div>
-
-                <button
-                  type="button"
-                  onclick="pagarYConfirmar('Redirigiendo a PSE...')"
-                  class="btn btn-concorde-dorado w-100 py-2 mt-3"
-                >
-                  Continuar con PSE
-                </button>
-
-              </div>
-
-              <!-- Nequi -->
               <div id="pago-nequi" class="seccion-pago d-none">
 
-                <div class="alerta-info alerta-concorde">
+                <div class="mensaje-pago info">
                   <i class="bi bi-phone me-2"></i>
-                  Ingresa tu número de Nequi o Daviplata y recibirás una notificación para aprobar el pago.
+                  Simulación de pago por Nequi o Daviplata.
                 </div>
 
-                <div class="mt-3 form-concorde">
+                <div class="mb-3">
 
-                  <label class="form-label" for="numNequi">
+                  <label for="billetera" class="form-label">
+                    Selecciona tu billetera
+                  </label>
+
+                  <select id="billetera" class="form-select">
+                    <option value="NEQUI">Nequi</option>
+                    <option value="DAVIPLATA">Daviplata</option>
+                  </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                  <label for="numNequi" class="form-label">
                     Número de celular
+                    <span class="text-danger">*</span>
                   </label>
 
                   <input
                     type="tel"
-                    class="form-control"
                     id="numNequi"
-                    placeholder="3XXXXXXXXX"
+                    class="form-control"
+                    placeholder="3001234567"
+                    maxlength="10"
+                    inputmode="numeric"
                   >
+
+                  <small class="text-muted">
+                    Ingresa un número colombiano de 10 dígitos.
+                  </small>
 
                 </div>
 
                 <button
                   type="button"
-                  onclick="pagarYConfirmar('Enviando notificación...')"
-                  class="btn btn-concorde-dorado w-100 py-2 mt-3"
+                  id="btnPagarNequi"
+                  class="btn btn-pagar w-100"
                 >
-                  Pagar con Nequi
+                  <i class="bi bi-phone me-2"></i>
+                  Simular pago con Nequi / Daviplata
+                </button>
+
+              </div>
+
+              <!-- ========================= -->
+              <!-- PAGO CON PSE -->
+              <!-- ========================= -->
+
+              <div id="pago-pse" class="seccion-pago d-none">
+
+                <div class="mensaje-pago info">
+                  <i class="bi bi-bank2 me-2"></i>
+                  Simulación de transferencia bancaria PSE.
+                  No se abrirá un banco real.
+                </div>
+
+                <div class="mb-3">
+
+                  <label for="bancoPSE" class="form-label">
+                    Selecciona tu banco
+                    <span class="text-danger">*</span>
+                  </label>
+
+                  <select id="bancoPSE" class="form-select">
+
+                    <option value="">
+                      Selecciona un banco
+                    </option>
+
+                    <option value="BANCOLOMBIA">
+                      Bancolombia
+                    </option>
+
+                    <option value="DAVIVIENDA">
+                      Davivienda
+                    </option>
+
+                    <option value="BANCO_BOGOTA">
+                      Banco de Bogotá
+                    </option>
+
+                    <option value="BBVA">
+                      BBVA
+                    </option>
+
+                    <option value="BANCO_POPULAR">
+                      Banco Popular
+                    </option>
+
+                    <option value="BANCO_AGRARIO">
+                      Banco Agrario
+                    </option>
+
+                    <option value="OTRO">
+                      Otro banco
+                    </option>
+
+                  </select>
+
+                </div>
+
+                <div class="mb-3">
+
+                  <label for="tipoPersonaPSE" class="form-label">
+                    Tipo de persona
+                  </label>
+
+                  <select
+                    id="tipoPersonaPSE"
+                    class="form-select"
+                  >
+                    <option value="NATURAL">
+                      Persona natural
+                    </option>
+
+                    <option value="JURIDICA">
+                      Persona jurídica
+                    </option>
+                  </select>
+
+                </div>
+
+                <button
+                  type="button"
+                  id="btnPagarPSE"
+                  class="btn btn-pagar w-100"
+                >
+                  <i class="bi bi-bank2 me-2"></i>
+                  Simular pago con PSE
                 </button>
 
               </div>
@@ -285,52 +469,88 @@
           </div>
         </div>
 
-        <!-- Resumen de reserva -->
+        <!-- ========================= -->
+        <!-- RESUMEN DE RESERVA -->
+        <!-- ========================= -->
+
         <div class="col-lg-4">
 
-          <div class="card-concorde" style="position:sticky;top:80px">
+          <div
+            class="card-concorde"
+            style="position:sticky;top:80px"
+          >
 
             <div class="card-header-concorde">
-              <i class="bi bi-receipt me-2"></i>Tu reserva
+              <i class="bi bi-receipt me-2"></i>
+              Tu reserva
             </div>
 
             <div class="card-body small">
 
-              <p class="mb-1 fw-bold" id="resRuta">—</p>
-              <p class="mb-1 text-muted" id="resFecha">—</p>
-              <p class="mb-1 text-muted" id="resClase">—</p>
+              <p
+                class="mb-1 fw-bold"
+                id="resRuta"
+              >—</p>
 
-              <!-- Vuelta (solo si la compra es de ida y vuelta) -->
+              <p
+                class="mb-1 text-muted"
+                id="resFecha"
+              >—</p>
+
+              <p
+                class="mb-1 text-muted"
+                id="resClase"
+              >—</p>
+
               <div id="resVuelta" class="d-none">
+
                 <hr class="my-2">
-                <p class="mb-1 fw-bold" id="resRutaV">—</p>
-                <p class="mb-1 text-muted" id="resFechaV">—</p>
-                <p class="mb-1 text-muted" id="resClaseV">—</p>
+
+                <p
+                  class="mb-1 fw-bold"
+                  id="resRutaV"
+                >—</p>
+
+                <p
+                  class="mb-1 text-muted"
+                  id="resFechaV"
+                >—</p>
+
+                <p
+                  class="mb-1 text-muted"
+                  id="resClaseV"
+                >—</p>
+
               </div>
 
               <hr class="my-2">
-              <div class="mb-1 text-muted" id="resPasajero">—</div>
+
+              <div
+                class="mb-1 text-muted"
+                id="resPasajero"
+              >—</div>
 
               <hr>
 
               <div class="d-flex justify-content-between fw-bold fs-5">
+
                 <span>Total</span>
-                <span class="texto-azul" id="resTotal">$0</span>
+
+                <span
+                  class="texto-azul"
+                  id="resTotal"
+                >$0</span>
+
               </div>
 
-              <div
-                class="mt-3 d-flex gap-2 justify-content-center flex-wrap"
-                aria-label="Métodos de pago aceptados"
-              >
-
-                <img src="https://via.placeholder.com/40x25?text=VISA" alt="Visa" style="height:25px;border-radius:4px">
-                <img src="https://via.placeholder.com/40x25?text=MC" alt="Mastercard" style="height:25px;border-radius:4px">
-                <img src="https://via.placeholder.com/40x25?text=PSE" alt="PSE" style="height:25px;border-radius:4px">
-
+              <div class="text-muted mt-3">
+                <i class="bi bi-info-circle me-1"></i>
+                Pago de demostración para el proyecto Concorde.
               </div>
 
             </div>
           </div>
+
         </div>
 
       </div>
@@ -339,372 +559,1074 @@
 
   <div id="footer-placeholder"></div>
 
-  <!-- Bootstrap -->
+  <!-- LIBRERÍAS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- Autenticación -->
   <script src="js/auth.js"></script>
-
-  <script>
-    (function () {
-      var u = Auth.getUsuario();
-
-      if (!u) {
-        window.location.href = "p03-login.html";
-      } else if (u.rol === "administrador") {
-        window.location.href = "admin-panel.html";
-      }
-    })();
-  </script>
-
-  <!-- Componentes y funciones generales -->
   <script src="js/componentes.js"></script>
   <script src="js/main.js"></script>
 
-  <!-- Lógica de pago y creación de reserva -->
   <script>
-    (function () {
+  (function () {
+    'use strict';
 
-      var viaje = JSON.parse(
-        sessionStorage.getItem('concorde_viaje') || 'null'
+    // =========================================
+    // FUNCIONES AUXILIARES
+    // =========================================
+
+    function elemento(id) {
+      return document.getElementById(id);
+    }
+
+    function leerJSON(clave) {
+      try {
+        return JSON.parse(
+          sessionStorage.getItem(clave) || 'null'
+        );
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function dinero(valor) {
+      return '$' +
+        Math.round(Number(valor) || 0)
+          .toLocaleString('es-CO');
+    }
+
+    function escapar(texto) {
+      return String(texto).replace(
+        /[&<>"']/g,
+        function (caracter) {
+          return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+          }[caracter];
+        }
+      );
+    }
+
+    function mostrarError(mensaje) {
+      var caja = elemento('mensajePago');
+
+      caja.textContent = mensaje;
+      caja.classList.remove('d-none');
+
+      caja.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+
+      console.warn('Concorde:', mensaje);
+    }
+
+    function limpiarError() {
+      elemento('mensajePago').classList.add('d-none');
+
+      document.querySelectorAll('.campo-error')
+        .forEach(function (campo) {
+          campo.classList.remove('campo-error');
+        });
+    }
+
+    function errorCampo(id, mensaje) {
+      var campo = elemento(id);
+
+      if (campo) {
+        campo.classList.add('campo-error');
+        campo.focus();
+      }
+
+      mostrarError(mensaje);
+
+      return false;
+    }
+
+    function claseDe(v) {
+      var clase = String(v.clase || 'ECONOMICA')
+        .trim()
+        .toUpperCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '');
+
+      return clase === 'PREMIUM'
+        ? 'PREMIUM'
+        : 'ECONOMICA';
+    }
+
+    function fechaCorta(v) {
+      if (!v || !v.ida) {
+        return 'Fecha no disponible';
+      }
+
+      var fecha = new Date(v.ida + 'T00:00:00');
+
+      if (isNaN(fecha.getTime())) {
+        return v.ida;
+      }
+
+      return fecha.toLocaleDateString('es-CO', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short'
+      });
+    }
+
+    function fechaConAnio(v) {
+      if (!v || !v.ida) {
+        return 'Fecha no disponible';
+      }
+
+      var fecha = new Date(v.ida + 'T00:00:00');
+
+      if (isNaN(fecha.getTime())) {
+        return v.ida;
+      }
+
+      return fecha.toLocaleDateString('es-CO', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    function normalizarAsientos(valor) {
+      if (Array.isArray(valor)) {
+        return valor.map(function (a) {
+          return String(a).trim().toUpperCase();
+        }).filter(Boolean);
+      }
+
+      if (valor) {
+        return String(valor)
+          .split(',')
+          .map(function (a) {
+            return a.trim().toUpperCase();
+          })
+          .filter(Boolean);
+      }
+
+      return [];
+    }
+
+    // =========================================
+    // DATOS DE LA RESERVA
+    // =========================================
+
+    var viaje = leerJSON('concorde_viaje');
+
+    var usuario = (
+      typeof Auth !== 'undefined' &&
+      typeof Auth.getUsuario === 'function'
+    ) ? Auth.getUsuario() : null;
+
+    if (!usuario) {
+      window.location.replace('p03-login.html');
+      return;
+    }
+
+    if (!viaje) {
+      window.location.replace('index.html');
+      return;
+    }
+
+    var viajeV = leerJSON('concorde_viaje_vuelta');
+
+    var hayVuelta = !!viajeV;
+
+    var numPax = Number(viaje.pasajeros || 1) || 1;
+
+    var asRaw = leerJSON('concorde_asientos');
+
+    if (!asRaw) {
+      asRaw = sessionStorage.getItem('concorde_asiento');
+    }
+
+    var listaAsientos = normalizarAsientos(asRaw);
+
+    var listaAsientosV = normalizarAsientos(
+      leerJSON('concorde_asientos_vuelta')
+    );
+
+    var paxRaw = leerJSON('concorde_pasajeros');
+
+    if (!paxRaw) {
+      paxRaw = leerJSON('concorde_pasajero');
+    }
+
+    var listaPax = Array.isArray(paxRaw)
+      ? paxRaw
+      : (paxRaw ? [paxRaw] : []);
+
+    var nombreRespaldo =
+      usuario.nombreCompleto ||
+      usuario.nombre ||
+      'Pasajero';
+
+    var nombres = [];
+
+    for (var i = 0; i < numPax; i++) {
+      var pasajero = listaPax[i];
+
+      nombres.push(
+        pasajero && pasajero.nombre
+          ? pasajero.nombre
+          : (
+              i === 0
+                ? nombreRespaldo
+                : 'Pasajero ' + (i + 1)
+            )
+      );
+    }
+
+    var nombrePasajero = nombres.join(', ');
+
+    var asiento = listaAsientos.join(', ');
+
+    var asientoV = listaAsientosV.join(', ');
+
+    var fecha = fechaCorta(viaje);
+
+    var fechaV = hayVuelta
+      ? fechaCorta(viajeV)
+      : '';
+
+    var claseBackend = claseDe(viaje);
+
+    var claseNombre = claseBackend === 'PREMIUM'
+      ? 'Premium'
+      : 'Económico';
+
+    var claseBackendV = hayVuelta
+      ? claseDe(viajeV)
+      : '';
+
+    var claseNombreV = claseBackendV === 'PREMIUM'
+      ? 'Premium'
+      : 'Económico';
+
+    var unit = Number(
+      viaje.precioUnitario ||
+      viaje.precio ||
+      0
+    );
+
+    var unitV = hayVuelta
+      ? Number(
+          viajeV.precioUnitario ||
+          viajeV.precio ||
+          0
+        )
+      : 0;
+
+    var subIda = unit * numPax;
+
+    var subVuelta = unitV * numPax;
+
+    var totalCalculado = hayVuelta
+      ? subIda + subVuelta
+      : (
+          viaje.total
+            ? Number(viaje.total)
+            : subIda
+        );
+
+    var totalGuardado = Number(
+      sessionStorage.getItem('concorde_total')
+    );
+
+    var totalNumero = totalGuardado > 0
+      ? totalGuardado
+      : totalCalculado;
+
+    var total = dinero(totalNumero);
+
+    var totalIda = totalNumero;
+
+    var totalVuelta = 0;
+
+    if (hayVuelta && (subIda + subVuelta) > 0) {
+      totalIda = Math.round(
+        totalNumero * subIda / (subIda + subVuelta)
       );
 
-      var usuario = Auth.getUsuario();
+      totalVuelta = Math.round(totalNumero) - totalIda;
+    }
 
-      if (!viaje) {
-        window.location.href = 'index.html';
-        return;
-      }
+    // =========================================
+    // MOSTRAR RESUMEN
+    // =========================================
 
-      if (!usuario) {
-        window.location.href = 'p03-login.html';
-        return;
-      }
+    elemento('resRuta').textContent =
+      (viaje.terminalOrigen || '') +
+      ' → ' +
+      (viaje.terminalDestino || '');
 
-      function leerJSON(k) {
-        try { return JSON.parse(sessionStorage.getItem(k) || 'null'); } catch (e) { return null; }
-      }
+    elemento('resFecha').textContent =
+      fecha + ' · ' + (viaje.salida || '');
 
-      function esc(s) {
-        return String(s).replace(/[&<>"']/g, function (c) {
-          return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
-        });
-      }
+    elemento('resClase').textContent =
+      (hayVuelta ? 'Ida · ' : '') +
+      'Directo · ' +
+      claseNombre;
 
-      // Normaliza la clase del servicio a lo que espera el backend
-      function claseDe(v) {
-        var n = String(v.clase || 'ECONOMICA')
-          .trim()
-          .toUpperCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
-        return n === 'PREMIUM' ? 'PREMIUM' : 'ECONOMICA';
-      }
+    if (hayVuelta) {
+      elemento('resVuelta').classList.remove('d-none');
 
-      function fechaCorta(v) {
-        return new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', {
-          weekday: 'short', day: 'numeric', month: 'short'
-        });
-      }
+      elemento('resRutaV').textContent =
+        (viajeV.terminalOrigen || '') +
+        ' → ' +
+        (viajeV.terminalDestino || '');
 
-      function fechaConAnio(v) {
-        return new Date(v.ida + 'T00:00:00').toLocaleDateString('es-CO', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        });
-      }
+      elemento('resFechaV').textContent =
+        fechaV + ' · ' + (viajeV.salida || '');
 
-      var numPax = Number(viaje.pasajeros || 1) || 1;
+      elemento('resClaseV').textContent =
+        'Vuelta · Directo · ' + claseNombreV;
+    }
 
-      // Vuelta (solo si la compra es de ida y vuelta)
-      var viajeV = leerJSON('concorde_viaje_vuelta');
-      var hayVuelta = !!viajeV;
+    elemento('resPasajero').innerHTML =
+      nombres.map(function (nombre, indice) {
 
-      // Asientos de la ida: acepta arreglo (nuevo) o texto (formato anterior)
-      var asRaw = leerJSON('concorde_asientos') || sessionStorage.getItem('concorde_asiento');
-      var listaAsientos = Array.isArray(asRaw)
-        ? asRaw
-        : (asRaw ? String(asRaw).split(',').map(function (s) { return s.trim(); }).filter(Boolean) : []);
-      var asiento = listaAsientos.join(', ');
+        var asientoIda = listaAsientos[indice] || '—';
 
-      // Asientos de la vuelta
-      var asRawV = leerJSON('concorde_asientos_vuelta');
-      var listaAsientosV = Array.isArray(asRawV) ? asRawV : [];
-      var asientoV = listaAsientosV.join(', ');
+        var textoAsiento = hayVuelta
+          ? (
+              'Ida ' +
+              asientoIda +
+              ' · Vuelta ' +
+              (listaAsientosV[indice] || '—')
+            )
+          : 'Asiento ' + asientoIda;
 
-      // Pasajeros: acepta arreglo (nuevo) u objeto único (formato anterior)
-      var paxRaw = leerJSON('concorde_pasajeros') || leerJSON('concorde_pasajero');
-      var listaPax = Array.isArray(paxRaw) ? paxRaw : (paxRaw ? [paxRaw] : []);
+        return escapar(nombre) +
+          ' · ' +
+          escapar(textoAsiento);
 
-      var nombreRespaldo = usuario.nombreCompleto || usuario.nombre || 'Pasajero';
-      var nombres = [];
-      for (var i = 0; i < numPax; i++) {
-        var p = listaPax[i];
-        nombres.push((p && p.nombre) ? p.nombre : (i === 0 ? nombreRespaldo : 'Pasajero ' + (i + 1)));
-      }
-      var nombrePasajero = nombres.join(', ');
-
-      // Fechas del viaje
-      var fecha = fechaCorta(viaje);
-      var fechaV = hayVuelta ? fechaCorta(viajeV) : '';
-
-      // Clases
-      var claseBackend = claseDe(viaje);
-      var claseNombre = claseBackend === 'PREMIUM' ? 'Premium' : 'Económico';
-      var claseBackendV = hayVuelta ? claseDe(viajeV) : '';
-      var claseNombreV = claseBackendV === 'PREMIUM' ? 'Premium' : 'Económico';
-
-      // Subtotales por tramo (tarifa × pasajeros)
-      var unit = Number(viaje.precioUnitario || viaje.precio || 0);
-      var unitV = hayVuelta ? Number(viajeV.precioUnitario || viajeV.precio || 0) : 0;
-      var subIda = unit * numPax;
-      var subVuelta = unitV * numPax;
-      var totalCalculado = hayVuelta
-        ? subIda + subVuelta
-        : (viaje.total ? Number(viaje.total) : subIda);
-
-      // Recuperar total final del resumen (incluye descuento si se aplicó)
-      var totalGuardado = Number(
-        sessionStorage.getItem('concorde_total')
-      );
-
-      var totalNumero = totalGuardado > 0
-        ? totalGuardado
-        : totalCalculado;
-
-      var total = '$' + Math.round(totalNumero).toLocaleString('es-CO');
-
-      // El total pagado se reparte entre las dos reservas en proporción a cada tramo
-      var totalIda = totalNumero;
-      var totalVuelta = 0;
-      if (hayVuelta && (subIda + subVuelta) > 0) {
-        totalIda = Math.round(totalNumero * subIda / (subIda + subVuelta));
-        totalVuelta = Math.round(totalNumero) - totalIda;
-      }
-
-      function dinero(n) { return '$' + Math.round(n).toLocaleString('es-CO'); }
-
-      // Mostrar información
-      document.getElementById('resRuta').textContent =
-        viaje.terminalOrigen + ' → ' + viaje.terminalDestino;
-
-      document.getElementById('resFecha').textContent =
-        fecha + ' · ' + (viaje.salida || '');
-
-      document.getElementById('resClase').textContent =
-        (hayVuelta ? 'Ida · ' : '') + 'Directo · ' + claseNombre;
-
-      if (hayVuelta) {
-        document.getElementById('resVuelta').classList.remove('d-none');
-        document.getElementById('resRutaV').textContent =
-          viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino;
-        document.getElementById('resFechaV').textContent =
-          fechaV + ' · ' + (viajeV.salida || '');
-        document.getElementById('resClaseV').textContent =
-          'Vuelta · Directo · ' + claseNombreV;
-      }
-
-      // Un renglón por pasajero con su asiento
-      document.getElementById('resPasajero').innerHTML = nombres.map(function (n, i) {
-        var a = listaAsientos[i] ? esc(listaAsientos[i]) : '—';
-        var txt = hayVuelta
-          ? 'Ida ' + a + ' · Vuelta ' + (listaAsientosV[i] ? esc(listaAsientosV[i]) : '—')
-          : (listaAsientos[i] ? 'Asiento ' + a : '');
-        return esc(n) + (txt ? ' · ' + txt : '');
       }).join('<br>');
 
-      document.getElementById('resTotal').textContent = total;
-      document.getElementById('btnTotal').textContent = total;
+    elemento('resTotal').textContent = total;
 
-      // Evitar reservas duplicadas
-      var procesandoPago = false;
+    elemento('btnTotal').textContent = total;
 
-      // Reservas ya creadas (si falla la segunda, al reintentar solo se crea la que falta)
-      var reservaIda = null;
-      var reservaVuelta = null;
+    // =========================================
+    // CAMBIAR MÉTODO DE PAGO
+    // =========================================
 
-      // Crea una reserva en el backend (un viaje por reserva)
-      async function crearReserva(v, claseBack, totalN, asientosSeleccionados) {
+    var metodoActual = 'tarjeta';
 
-        var idUsuario = usuario.idUsuario || usuario.id;
-        var idViaje = Number(v.idViaje);
+    function cambiarMetodo(metodo) {
 
-        if (!idUsuario || !idViaje) {
-          throw new Error('No se encontró el usuario o el viaje.');
+      metodoActual = metodo;
+
+      limpiarError();
+
+      elemento('pago-tarjeta')
+        .classList.toggle('d-none', metodo !== 'tarjeta');
+
+      elemento('pago-nequi')
+        .classList.toggle('d-none', metodo !== 'nequi');
+
+      elemento('pago-pse')
+        .classList.toggle('d-none', metodo !== 'pse');
+
+      elemento('cardTarjeta')
+        .classList.toggle('activo', metodo === 'tarjeta');
+
+      elemento('cardNequi')
+        .classList.toggle('activo', metodo === 'nequi');
+
+      elemento('cardPSE')
+        .classList.toggle('activo', metodo === 'pse');
+
+      var radio = document.querySelector(
+        'input[name="metodoPago"][value="' + metodo + '"]'
+      );
+
+      if (radio) {
+        radio.checked = true;
+      }
+    }
+
+    document.querySelectorAll(
+      'input[name="metodoPago"]'
+    ).forEach(function (radio) {
+
+      radio.addEventListener('change', function () {
+        cambiarMetodo(this.value);
+      });
+
+    });
+
+    [
+      ['cardTarjeta', 'tarjeta'],
+      ['cardNequi', 'nequi'],
+      ['cardPSE', 'pse']
+    ].forEach(function (config) {
+
+      elemento(config[0]).addEventListener(
+        'click',
+        function () {
+          cambiarMetodo(config[1]);
         }
+      );
 
-        if (!Number.isFinite(totalN) || totalN <= 0) {
-          throw new Error('El total de la reserva no es válido.');
-        }
+    });
 
-        var res = await fetch('/api/reservas', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            usuario: {
-              idUsuario: idUsuario
-            },
-            viaje: {
-              idViaje: idViaje
-            },
-            estado: 'CONFIRMADA',
-            clase: claseBack,
-            total: Math.round(totalN),
-            numerosAsientos: asientosSeleccionados.map(function (n) { return String(n).trim().toUpperCase(); })
-          })
-        });
+    cambiarMetodo('tarjeta');
 
-        if (!res.ok) {
-          var errorTexto = await res.text();
+    // =========================================
+    // FORMATO AUTOMÁTICO TARJETA
+    // =========================================
 
-          throw new Error(
-            'HTTP ' + res.status + ': ' + errorTexto
-          );
-        }
+    var inputTarjeta = elemento('numeroTarjeta');
 
-        return res.json();
+    inputTarjeta.addEventListener('input', function () {
+
+      var numeros = this.value
+        .replace(/\D/g, '')
+        .slice(0, 16);
+
+      this.value = numeros
+        .replace(/(.{4})/g, '$1 ')
+        .trim();
+
+      this.classList.remove('campo-error');
+    });
+
+    // =========================================
+    // VENCIMIENTO MM/AA
+    // =========================================
+
+    var inputExpiracion = elemento('expiracion');
+
+    inputExpiracion.addEventListener('input', function () {
+
+      var numeros = this.value
+        .replace(/\D/g, '')
+        .slice(0, 4);
+
+      if (numeros.length >= 2) {
+        this.value =
+          numeros.slice(0, 2) +
+          '/' +
+          numeros.slice(2);
+      } else {
+        this.value = numeros;
       }
 
-      window.pagarYConfirmar = async function (mensaje) {
+      this.classList.remove('campo-error');
+    });
 
-        if (procesandoPago) {
-          return;
-        }
+    // =========================================
+    // CVV SOLO NÚMEROS
+    // =========================================
 
-        // No dejar pagar si se perdieron datos del flujo
-        if (listaPax.length < numPax) {
-          UI.mostrarToast('Faltan datos de pasajeros. Vuelve al paso de pasajeros.', 'warning');
-          return;
-        }
+    elemento('cvv').addEventListener('input', function () {
 
-        if (listaAsientos.length < numPax) {
-          UI.mostrarToast('Faltan asientos por elegir. Vuelve al paso de asientos.', 'warning');
-          return;
-        }
+      this.value = this.value
+        .replace(/\D/g, '')
+        .slice(0, 4);
 
-        if (hayVuelta && listaAsientosV.length < numPax) {
-          UI.mostrarToast('Faltan los asientos de la vuelta. Vuelve al paso de asientos.', 'warning');
-          return;
-        }
+      this.classList.remove('campo-error');
+    });
 
-        procesandoPago = true;
+    // =========================================
+    // CELULAR SOLO NÚMEROS
+    // =========================================
 
-        UI.mostrarLoader(mensaje || 'Procesando pago...');
+    elemento('numNequi').addEventListener('input', function () {
 
-        try {
+      this.value = this.value
+        .replace(/\D/g, '')
+        .slice(0, 10);
 
-          if (!reservaIda) {
-            reservaIda = await crearReserva(viaje, claseBackend, totalIda, listaAsientos);
-          }
+      this.classList.remove('campo-error');
+    });
 
-          if (hayVuelta && !reservaVuelta) {
-            reservaVuelta = await crearReserva(viajeV, claseBackendV, totalVuelta, listaAsientosV);
-          }
+    // =========================================
+    // VALIDAR TARJETA
+    // =========================================
 
-          // Guardar datos de confirmación
-          // "pasajero" y "asiento" siguen siendo texto (con todos separados por coma),
-          // así la página de confirmación actual los muestra completos.
-          var confirmacion = {
-            idReserva: reservaIda.idReserva,
-            ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
-            fecha: fecha,
-            hora: viaje.salida,
-            asiento: asiento || '—',
-            pasajero: nombrePasajero,
-            pasajeros: nombres,
-            asientos: listaAsientos,
-            clase: claseNombre,
-            total: total
-          };
+    function validarTarjeta() {
 
-          if (hayVuelta) {
-            confirmacion.vuelta = {
-              idReserva: reservaVuelta.idReserva,
-              ruta: viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino,
-              fecha: fechaV,
-              hora: viajeV.salida,
-              asiento: asientoV || '—',
-              asientos: listaAsientosV,
-              clase: claseNombreV,
-              total: dinero(totalVuelta)
-            };
-          }
+      limpiarError();
 
-          sessionStorage.setItem('concorde_confirmacion', JSON.stringify(confirmacion));
+      var nombre = elemento('nombreTarjeta')
+        .value.trim();
 
-          // Respaldo para Mis Reservas (una entrada por reserva)
-          var info = JSON.parse(
-            localStorage.getItem('concorde_reservas_info') || '{}'
-          );
+      var numero = elemento('numeroTarjeta')
+        .value.replace(/\D/g, '');
 
-          info[reservaIda.idReserva] = {
-            ruta: viaje.terminalOrigen + ' → ' + viaje.terminalDestino,
-            fecha: fechaConAnio(viaje),
-            clase: claseNombre,
-            total: dinero(totalIda),
-            tramo: hayVuelta ? 'Ida' : '',
-            pasajeros: nombres,
-            asientos: listaAsientos
-          };
+      var vencimiento = elemento('expiracion')
+        .value.trim();
 
-          if (hayVuelta) {
-            info[reservaVuelta.idReserva] = {
-              ruta: viajeV.terminalOrigen + ' → ' + viajeV.terminalDestino,
-              fecha: fechaConAnio(viajeV),
-              clase: claseNombreV,
-              total: dinero(totalVuelta),
-              tramo: 'Vuelta',
-              pasajeros: nombres,
-              asientos: listaAsientosV
-            };
-          }
+      var cvv = elemento('cvv')
+        .value.replace(/\D/g, '');
 
-          localStorage.setItem(
-            'concorde_reservas_info',
-            JSON.stringify(info)
-          );
+      if (nombre.length < 3) {
+        return errorCampo(
+          'nombreTarjeta',
+          'Ingresa el nombre de la tarjeta.'
+        );
+      }
 
-          // Ir a confirmación
-          window.location.href = 'p10-confirmacion.html';
+      if (!/^\d{16}$/.test(numero)) {
+        return errorCampo(
+          'numeroTarjeta',
+          'El número de tarjeta de prueba debe tener 16 dígitos.'
+        );
+      }
 
-        } catch (error) {
+      if (!/^\d{2}\/\d{2}$/.test(vencimiento)) {
+        return errorCampo(
+          'expiracion',
+          'Ingresa el vencimiento en formato MM/AA.'
+        );
+      }
 
-          console.error('Error al guardar la reserva:', error);
+      var partes = vencimiento.split('/');
 
-          procesandoPago = false;
+      var mes = Number(partes[0]);
 
-          UI.ocultarLoader();
+      var anio = 2000 + Number(partes[1]);
 
-          if (reservaIda && hayVuelta && !reservaVuelta) {
-            UI.mostrarToast(
-              'Se guardó la ida, pero no la vuelta. Pulsa pagar de nuevo para completar la vuelta.',
-              'danger'
-            );
-          } else {
-            UI.mostrarToast(
-              'No se pudo guardar la reserva. Intenta de nuevo.',
-              'danger'
-            );
-          }
-        }
-      };
+      var hoy = new Date();
 
-      // Validación y envío del formulario de tarjeta
-      var form = document.getElementById('formPago');
+      var anioActual = hoy.getFullYear();
 
-      form.addEventListener('submit', function (e) {
+      var mesActual = hoy.getMonth() + 1;
 
-        e.preventDefault();
-        e.stopImmediatePropagation();
+      if (mes < 1 || mes > 12) {
+        return errorCampo(
+          'expiracion',
+          'El mes debe estar entre 01 y 12.'
+        );
+      }
 
-        if (Validacion.validarForm(form)) {
-          window.pagarYConfirmar('Procesando pago...');
-        }
+      if (
+        anio < anioActual ||
+        (anio === anioActual && mes < mesActual)
+      ) {
+        return errorCampo(
+          'expiracion',
+          'La fecha de vencimiento ya pasó.'
+        );
+      }
+
+      if (!/^\d{3,4}$/.test(cvv)) {
+        return errorCampo(
+          'cvv',
+          'El CVV debe tener 3 o 4 números.'
+        );
+      }
+
+      return true;
+    }
+
+    // =========================================
+    // VALIDAR NEQUI
+    // =========================================
+
+    function validarNequi() {
+
+      limpiarError();
+
+      var celular = elemento('numNequi')
+        .value.replace(/\D/g, '');
+
+      if (!/^3\d{9}$/.test(celular)) {
+        return errorCampo(
+          'numNequi',
+          'Ingresa un número de celular válido de 10 dígitos que empiece por 3.'
+        );
+      }
+
+      return true;
+    }
+
+    // =========================================
+    // VALIDAR PSE
+    // =========================================
+
+    function validarPSE() {
+
+      limpiarError();
+
+      if (!elemento('bancoPSE').value) {
+        return errorCampo(
+          'bancoPSE',
+          'Selecciona el banco para continuar.'
+        );
+      }
+
+      return true;
+    }
+
+    // =========================================
+    // CREAR RESERVA EN SPRING BOOT
+    // =========================================
+
+    async function crearReserva(
+      v,
+      claseBack,
+      totalN,
+      asientosSeleccionados
+    ) {
+
+      var idUsuario =
+        usuario.idUsuario ||
+        usuario.id;
+
+      var idViaje = Number(v.idViaje);
+
+      if (!idUsuario || !idViaje) {
+        throw new Error(
+          'No se encontró el usuario o el viaje.'
+        );
+      }
+
+      if (
+        !Number.isFinite(totalN) ||
+        totalN <= 0
+      ) {
+        throw new Error(
+          'El valor de la reserva no es válido.'
+        );
+      }
+
+      var numerosAsientos =
+        asientosSeleccionados.map(function (numero) {
+          return String(numero)
+            .trim()
+            .toUpperCase();
+        });
+
+      var respuesta = await fetch('/api/reservas', {
+
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json'
+        },
+
+        body: JSON.stringify({
+
+          usuario: {
+            idUsuario: idUsuario
+          },
+
+          viaje: {
+            idViaje: idViaje
+          },
+
+          estado: 'CONFIRMADA',
+
+          clase: claseBack,
+
+          total: Math.round(totalN),
+
+          numerosAsientos: numerosAsientos
+
+        })
 
       });
 
-    })();
+      if (!respuesta.ok) {
+
+        var textoError = await respuesta.text();
+
+        throw new Error(
+          'Error HTTP ' +
+          respuesta.status +
+          ': ' +
+          textoError
+        );
+      }
+
+      return await respuesta.json();
+    }
+
+    // =========================================
+    // PROCESAR PAGO
+    // =========================================
+
+    var procesandoPago = false;
+
+    var reservaIda = null;
+
+    var reservaVuelta = null;
+
+    function bloquearBotones(bloquear) {
+
+      [
+        'btnPagarTarjeta',
+        'btnPagarNequi',
+        'btnPagarPSE'
+      ].forEach(function (id) {
+
+        var boton = elemento(id);
+
+        if (boton) {
+          boton.disabled = bloquear;
+        }
+
+      });
+    }
+
+    window.pagarYConfirmar = async function (mensaje) {
+
+      if (procesandoPago) {
+        return;
+      }
+
+      limpiarError();
+
+      // Comprobar datos del viaje
+
+      if (listaPax.length < numPax) {
+        mostrarError(
+          'Faltan los datos de los pasajeros. Regresa al paso anterior.'
+        );
+        return;
+      }
+
+      if (listaAsientos.length < numPax) {
+        mostrarError(
+          'Faltan asientos de ida. Regresa a seleccionar los asientos.'
+        );
+        return;
+      }
+
+      if (
+        hayVuelta &&
+        listaAsientosV.length < numPax
+      ) {
+        mostrarError(
+          'Faltan asientos de vuelta. Regresa a seleccionar los asientos.'
+        );
+        return;
+      }
+
+      if (
+        !Number.isFinite(totalNumero) ||
+        totalNumero <= 0
+      ) {
+        mostrarError(
+          'El total del pago no es válido.'
+        );
+        return;
+      }
+
+      // Validar según método
+
+      if (
+        metodoActual === 'tarjeta' &&
+        !validarTarjeta()
+      ) {
+        return;
+      }
+
+      if (
+        metodoActual === 'nequi' &&
+        !validarNequi()
+      ) {
+        return;
+      }
+
+      if (
+        metodoActual === 'pse' &&
+        !validarPSE()
+      ) {
+        return;
+      }
+
+      procesandoPago = true;
+
+      bloquearBotones(true);
+
+      var loaderActivo = false;
+
+      try {
+
+        if (
+          typeof UI !== 'undefined' &&
+          typeof UI.mostrarLoader === 'function'
+        ) {
+          UI.mostrarLoader(
+            mensaje || 'Procesando reserva...'
+          );
+
+          loaderActivo = true;
+        }
+
+        // Crear reserva de ida
+
+        if (!reservaIda) {
+
+          reservaIda = await crearReserva(
+            viaje,
+            claseBackend,
+            totalIda,
+            listaAsientos
+          );
+
+        }
+
+        // Crear reserva de vuelta
+
+        if (hayVuelta && !reservaVuelta) {
+
+          reservaVuelta = await crearReserva(
+            viajeV,
+            claseBackendV,
+            totalVuelta,
+            listaAsientosV
+          );
+
+        }
+
+        // =====================================
+        // GUARDAR CONFIRMACIÓN
+        // =====================================
+
+        var confirmacion = {
+
+          idReserva: reservaIda.idReserva,
+
+          ruta:
+            viaje.terminalOrigen +
+            ' → ' +
+            viaje.terminalDestino,
+
+          fecha: fecha,
+
+          hora: viaje.salida,
+
+          asiento: asiento || '—',
+
+          pasajero: nombrePasajero,
+
+          pasajeros: nombres,
+
+          asientos: listaAsientos,
+
+          clase: claseNombre,
+
+          total: total,
+
+          metodoPago: metodoActual
+
+        };
+
+        if (hayVuelta) {
+
+          confirmacion.vuelta = {
+
+            idReserva: reservaVuelta.idReserva,
+
+            ruta:
+              viajeV.terminalOrigen +
+              ' → ' +
+              viajeV.terminalDestino,
+
+            fecha: fechaV,
+
+            hora: viajeV.salida,
+
+            asiento: asientoV || '—',
+
+            asientos: listaAsientosV,
+
+            clase: claseNombreV,
+
+            total: dinero(totalVuelta)
+
+          };
+
+        }
+
+        sessionStorage.setItem(
+          'concorde_confirmacion',
+          JSON.stringify(confirmacion)
+        );
+
+        // =====================================
+        // GUARDAR DATOS PARA MIS RESERVAS
+        // =====================================
+
+        var info = {};
+
+        try {
+          info = JSON.parse(
+            localStorage.getItem(
+              'concorde_reservas_info'
+            ) || '{}'
+          );
+        } catch (error) {
+          info = {};
+        }
+
+        info[reservaIda.idReserva] = {
+
+          ruta:
+            viaje.terminalOrigen +
+            ' → ' +
+            viaje.terminalDestino,
+
+          fecha: fechaConAnio(viaje),
+
+          clase: claseNombre,
+
+          total: dinero(totalIda),
+
+          tramo: hayVuelta ? 'Ida' : '',
+
+          pasajeros: nombres,
+
+          asientos: listaAsientos
+
+        };
+
+        if (hayVuelta) {
+
+          info[reservaVuelta.idReserva] = {
+
+            ruta:
+              viajeV.terminalOrigen +
+              ' → ' +
+              viajeV.terminalDestino,
+
+            fecha: fechaConAnio(viajeV),
+
+            clase: claseNombreV,
+
+            total: dinero(totalVuelta),
+
+            tramo: 'Vuelta',
+
+            pasajeros: nombres,
+
+            asientos: listaAsientosV
+
+          };
+
+        }
+
+        localStorage.setItem(
+          'concorde_reservas_info',
+          JSON.stringify(info)
+        );
+
+        // =====================================
+        // IR A CONFIRMACIÓN
+        // =====================================
+
+        window.location.href =
+          'p10-confirmacion.html';
+
+      } catch (error) {
+
+        console.error(
+          'Error al guardar la reserva:',
+          error
+        );
+
+        procesandoPago = false;
+
+        bloquearBotones(false);
+
+        if (
+          loaderActivo &&
+          typeof UI.ocultarLoader === 'function'
+        ) {
+          UI.ocultarLoader();
+        }
+
+        if (
+          reservaIda &&
+          hayVuelta &&
+          !reservaVuelta
+        ) {
+
+          mostrarError(
+            'La ida se guardó, pero la vuelta no. Puedes intentar completar la vuelta sin duplicar la ida.'
+          );
+
+        } else {
+
+          mostrarError(
+            'No se pudo guardar la reserva. ' +
+            'Revisa que los asientos sigan disponibles. ' +
+            error.message
+          );
+
+        }
+
+      }
+
+    };
+
+    // =========================================
+    // EVENTO BOTÓN TARJETA
+    // =========================================
+
+    elemento('formPago').addEventListener(
+      'submit',
+      function (evento) {
+
+        evento.preventDefault();
+
+        evento.stopPropagation();
+
+        evento.stopImmediatePropagation();
+
+        window.pagarYConfirmar(
+          'Procesando pago de prueba...'
+        );
+
+      },
+      true
+    );
+
+    // =========================================
+    // EVENTO BOTÓN NEQUI
+    // =========================================
+
+    elemento('btnPagarNequi').addEventListener(
+      'click',
+      function () {
+
+        window.pagarYConfirmar(
+          'Procesando pago de prueba con Nequi / Daviplata...'
+        );
+
+      }
+    );
+
+    // =========================================
+    // EVENTO BOTÓN PSE
+    // =========================================
+
+    elemento('btnPagarPSE').addEventListener(
+      'click',
+      function () {
+
+        window.pagarYConfirmar(
+          'Procesando transferencia de prueba...'
+        );
+
+      }
+    );
+
+    console.log(
+      'Concorde: formulario de pago inicializado.'
+    );
+
+  })();
   </script>
 
 </body>

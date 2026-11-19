@@ -981,7 +981,7 @@
           <div id="form-asientos" class="mb-3" style="display:none"></div>
           <div id="asientos-mapa-admin" style="display:none"></div>
           <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
-          <p class="small text-muted mt-3 mb-0">La ocupación corresponde al primer viaje cargado. Las reservas sin detalle de asiento no permiten identificar una silla ocupada. Para consultar otra salida se necesitaría volver a mostrar el selector de viaje.</p>
+          <p class="small text-muted mt-3 mb-0">Vista general de todos los vehículos. 🔴 Con reservas activas = el asiento está reservado en al menos un viaje; no significa que esté ocupado en todas las salidas. Las reservas antiguas sin detalle de asiento no pueden identificarse.</p>
         </div>
       </section>
 
@@ -1363,134 +1363,87 @@
     return raw;
   }
 
-  // OCUPACIÓN POR VIAJE: se consulta detalle_reserva, no asiento.disponible.
-  let viajeAsientosAdmin = '';
-  let viajesAsientosAdmin = [];
+  // VISTA GENERAL: ocupación histórica de todos los vehículos, basada en detalles de reservas activas.
   let detallesAsientosAdmin = [];
   let errorAsientosAdmin = '';
   let ocupacionVerificadaAdmin = false;
-
-  async function apiListaAsientosAdmin(ruta) {
-    const r = await fetch(`${API}/${ruta}`, {cache:'no-store'});
-    if (!r.ok) throw new Error(`${ruta}: HTTP ${r.status}`);
-    const datos = await r.json();
-    if (!Array.isArray(datos)) throw new Error(`${ruta}: respuesta inesperada`);
-    return datos;
-  }
-
-  function idVehiculoAsientosAdmin(v) {
-    return Number(v?.idVehiculo ?? v?.vehiculo?.idVehiculo ?? -1);
-  }
-
-  function rutaAsientosAdmin(v) {
-    const r=v?.ruta || {};
-    return `${r.terminalOrigen?.ciudad || r.origen?.ciudad || 'Origen'} → ${r.terminalDestino?.ciudad || r.destino?.ciudad || 'Destino'}`;
-  }
 
   function escaparAsientoAdmin(valor) {
     return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
   function categoriaAsientoAdmin(a) {
-    return ['PREMIUM','PREMIUN'].includes(String(a.tipo||'').trim().toUpperCase()) ? 'PREMIUM' : 'ECONOMICO';
+    return ['PREMIUM','PREMIUN'].includes(String(a.tipo || '').trim().toUpperCase()) ? 'PREMIUM' : 'ECONOMICO';
   }
 
   async function cargarOcupacionAsientosAdmin() {
-    errorAsientosAdmin='';
-    ocupacionVerificadaAdmin=false;
-    const select=document.getElementById('asientos-viaje-select');
-    if(!select) return;
+    errorAsientosAdmin = '';
+    ocupacionVerificadaAdmin = false;
     try {
-      // El endpoint /api/viajes puede estar paginado: aquí solo se muestran los viajes devueltos.
-      viajesAsientosAdmin=await apiListaAsientosAdmin('viajes');
-      const ordenados=[...viajesAsientosAdmin].sort((a,b)=>
-        `${a.fechaViaje||''} ${a.horaSalida||''}`.localeCompare(`${b.fechaViaje||''} ${b.horaSalida||''}`));
-      select.replaceChildren();
-      for(const v of ordenados){
-        const op=document.createElement('option');
-        op.value=String(v.idViaje);
-        op.textContent=`${rutaAsientosAdmin(v)} | ${v.fechaViaje||'Sin fecha'} ${v.horaSalida||''} | ${v.vehiculo?.placa||'Sin vehículo'} | #${v.idViaje}`;
-        select.appendChild(op);
-      }
-      if(!ordenados.length){
-        select.innerHTML='<option value="">No se encontraron viajes</option>';
-        viajeAsientosAdmin='';
-        return;
-      }
-      if(!ordenados.some(v=>String(v.idViaje)===viajeAsientosAdmin)) viajeAsientosAdmin=String(ordenados[0].idViaje);
-      select.value=viajeAsientosAdmin;
-      detallesAsientosAdmin=await apiListaAsientosAdmin('detalle-reservas');
-      ocupacionVerificadaAdmin=true;
-    }catch(e){
-      errorAsientosAdmin=e.message;
-      console.error('Error al consultar asientos:',e);
+      const respuesta = await fetch(`${API}/detalle-reservas`, {cache:'no-store'});
+      if (!respuesta.ok) throw new Error(`detalle-reservas: HTTP ${respuesta.status}`);
+      const datos = await respuesta.json();
+      if (!Array.isArray(datos)) throw new Error('Respuesta inesperada de detalle-reservas');
+      detallesAsientosAdmin = datos;
+      ocupacionVerificadaAdmin = true;
+    } catch (error) {
+      errorAsientosAdmin = error.message;
+      console.error('No se pudo consultar la ocupación:', error);
     }
-  }
-
-  async function cambiarViajeAsientos(valor) {
-    viajeAsientosAdmin=String(valor||'');
-    const wrap=document.getElementById('tabla-asientos');
-    if(wrap) wrap.textContent='Consultando ocupación…';
-    // Los detalles se vuelven a consultar para reflejar reservas recientes.
-    try{
-      detallesAsientosAdmin=await apiListaAsientosAdmin('detalle-reservas');
-      ocupacionVerificadaAdmin=true;
-      errorAsientosAdmin='';
-    }catch(e){
-      ocupacionVerificadaAdmin=false;
-      errorAsientosAdmin=e.message;
-    }
-    renderTabla('asientos');
   }
 
   function ocupadosAsientosAdmin() {
-    const ids=new Set();
-    if(!ocupacionVerificadaAdmin || !viajeAsientosAdmin) return ids;
-    for(const d of detallesAsientosAdmin){
-      const r=d.reserva;
-      if(!r || String(r.viaje?.idViaje)!==viajeAsientosAdmin) continue;
-      const estado=String(r.estado||'').toUpperCase();
-      if(['CANCELADA','CANCELADO','ANULADA','ANULADO'].includes(estado)) continue;
-      const id=Number(d.asiento?.idAsiento);
-      if(Number.isFinite(id)) ids.add(id);
+    const ids = new Set();
+    for (const detalle of detallesAsientosAdmin) {
+      const reserva = detalle.reserva;
+      const asiento = detalle.asiento;
+      if (!reserva || !asiento) continue;
+      const estado = String(reserva.estado || '').trim().toUpperCase();
+      if (['CANCELADA','CANCELADO','ANULADA','ANULADO'].includes(estado)) continue;
+      const id = Number(asiento.idAsiento);
+      if (Number.isFinite(id)) ids.add(id);
     }
     return ids;
   }
 
   function renderTablaAsientosAdmin() {
-    const wrap=document.getElementById('tabla-asientos');
-    const resumen=document.getElementById('asientos-viaje-resumen');
-    if(!wrap || !resumen) return;
-    if(errorAsientosAdmin || !ocupacionVerificadaAdmin){
-      resumen.textContent='No se pudo verificar la ocupación';
-      wrap.innerHTML=`<div class="alert alert-danger m-3">Error al consultar reservas: ${escaparAsientoAdmin(errorAsientosAdmin || 'Sin datos')}. No se mostrarán estados inventados.</div>`;
+    const wrap = document.getElementById('tabla-asientos');
+    const resumen = document.getElementById('asientos-viaje-resumen');
+    if (!wrap || !resumen) return;
+    if (!ocupacionVerificadaAdmin) {
+      resumen.textContent = 'No se pudo verificar la ocupación';
+      wrap.innerHTML = `<div class="alert alert-danger m-3">No se pudieron consultar las reservas: ${escaparAsientoAdmin(errorAsientosAdmin || 'Sin datos')}.</div>`;
       return;
     }
-    const viaje=viajesAsientosAdmin.find(v=>String(v.idViaje)===viajeAsientosAdmin);
-    if(!viaje){resumen.textContent='Selecciona un viaje';wrap.innerHTML='<div class="p-3 text-muted">No hay viaje seleccionado.</div>';return;}
-    const todos=(dataCache.asientos||[]).filter(a=>idVehiculoAsientosAdmin(a.vehiculo)===idVehiculoAsientosAdmin(viaje.vehiculo));
-    const ocupados=ocupadosAsientosAdmin();
-    const estado=a=>a.disponible===false?'inhabilitado':ocupados.has(Number(a.idAsiento))?'ocupado':'libre';
-    const disponibles=todos.filter(a=>estado(a)==='libre').length;
-    const vendidos=todos.filter(a=>estado(a)==='ocupado').length;
-    resumen.innerHTML=`<strong>${escaparAsientoAdmin(rutaAsientosAdmin(viaje))}</strong> · ${escaparAsientoAdmin(viaje.fechaViaje)} ${escaparAsientoAdmin(viaje.horaSalida)} · Bus ${escaparAsientoAdmin(viaje.vehiculo?.placa)} · <strong class="text-success">${disponibles} disponibles</strong> · <strong class="text-danger">${vendidos} ocupados</strong> · ${todos.length} en total`;
-    const filtro=document.getElementById('asientos-filtro')?.value||'todos';
-    const busqueda='';
-    const visibles=todos.filter(a=>{
-      const e=estado(a),tipo=categoriaAsientoAdmin(a);
-      const coincide=filtro==='todos'||(filtro==='libres'&&e==='libre')||(filtro==='ocupados'&&e==='ocupado')||(filtro==='inhabilitados'&&e==='inhabilitado')||(filtro==='premium'&&tipo==='PREMIUM')||(filtro==='economico'&&tipo==='ECONOMICO');
-      const texto=`${a.idAsiento} ${a.numeroAsiento||''} ${a.vehiculo?.placa||''} ${tipo}`.toLowerCase();
-      return coincide && texto.includes(busqueda);
-    }).sort((a,b)=>String(a.numeroAsiento||'').localeCompare(String(b.numeroAsiento||''),'es',{numeric:true}));
-    if(!visibles.length){wrap.innerHTML='<div class="p-4 text-center text-muted">No hay asientos en esta categoría para el viaje mostrado.</div>';return;}
-    let html='<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>ID</th><th>Vehículo</th><th>N.º asiento</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
-    for(const a of visibles){
-      const id=Number(a.idAsiento),e=estado(a),tipo=categoriaAsientoAdmin(a);
-      const badge=e==='ocupado'?'<span class="badge bg-danger">🔴 Ocupado</span>':e==='inhabilitado'?'<span class="badge bg-secondary">Inhabilitado</span>':'<span class="badge bg-success">🟢 Disponible</span>';
-      const tipoBadge=tipo==='PREMIUM'?'<span class="badge bg-warning text-dark">⭐ Premium</span>':'<span class="badge bg-primary">Económico</span>';
-      html+=`<tr><td><strong>#${id}</strong></td><td>${escaparAsientoAdmin(a.vehiculo?.placa||'—')}</td><td><strong>${escaparAsientoAdmin(a.numeroAsiento)}</strong></td><td>${tipoBadge}</td><td>${badge}</td><td><button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('asientos',${id})">Editar</button><button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('asientos',${id})">Eliminar</button></td></tr>`;
+    const todos = Array.isArray(dataCache.asientos) ? dataCache.asientos : [];
+    const ocupados = ocupadosAsientosAdmin();
+    const estado = a => a.disponible === false ? 'inhabilitado' : ocupados.has(Number(a.idAsiento)) ? 'ocupado' : 'libre';
+    const vendidos = todos.filter(a => ocupados.has(Number(a.idAsiento))).length;
+    const disponibles = todos.filter(a => estado(a) === 'libre').length;
+    const inhabilitados = todos.filter(a => a.disponible === false).length;
+    resumen.innerHTML = `<strong>Todos los vehículos</strong> · <strong class="text-danger">${vendidos} asientos con reservas activas</strong> · <strong class="text-success">${disponibles} sin reservas activas y habilitados</strong> · ${inhabilitados} inhabilitados · ${todos.length} registrados`;
+    const filtro = document.getElementById('asientos-filtro')?.value || 'todos';
+    const visibles = todos.filter(a => {
+      const e = estado(a), tipo = categoriaAsientoAdmin(a);
+      return filtro === 'todos' ||
+        (filtro === 'libres' && e === 'libre') ||
+        (filtro === 'ocupados' && ocupados.has(Number(a.idAsiento))) ||
+        (filtro === 'premium' && tipo === 'PREMIUM') ||
+        (filtro === 'economico' && tipo === 'ECONOMICO');
+    }).sort((a,b) => String(a.vehiculo?.placa || '').localeCompare(String(b.vehiculo?.placa || ''),'es',{numeric:true}) || String(a.numeroAsiento || '').localeCompare(String(b.numeroAsiento || ''),'es',{numeric:true}));
+    if (!visibles.length) {
+      wrap.innerHTML = '<div class="p-4 text-center text-muted">No hay asientos que coincidan con este filtro.</div>';
+      return;
     }
-    wrap.innerHTML=html+'</tbody></table></div>';
+    let html = '<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>ID</th><th>Vehículo</th><th>N.º asiento</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+    for (const a of visibles) {
+      const id = Number(a.idAsiento), e = estado(a), tipo = categoriaAsientoAdmin(a);
+      const reservado = ocupados.has(id);
+      const badge = reservado ? '<span class="badge bg-danger">🔴 Con reserva activa</span>' : e === 'inhabilitado' ? '<span class="badge bg-secondary">Inhabilitado</span>' : '<span class="badge bg-success">🟢 Sin reserva activa</span>';
+      const tipoBadge = tipo === 'PREMIUM' ? '<span class="badge bg-warning text-dark">⭐ Premium</span>' : '<span class="badge bg-primary">Económico</span>';
+      html += `<tr><td><strong>#${id}</strong></td><td>${escaparAsientoAdmin(a.vehiculo?.placa || '—')}</td><td><strong>${escaparAsientoAdmin(a.numeroAsiento)}</strong></td><td>${tipoBadge}</td><td>${badge}</td><td><button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('asientos',${id})">Editar</button><button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('asientos',${id})">Eliminar</button></td></tr>`;
+    }
+    wrap.innerHTML = html + '</tbody></table></div>';
   }
 
   function renderTabla(key) {

@@ -1,13 +1,17 @@
 package com.concorde.springboot.controlador;
 
+import com.concorde.springboot.modelo.Pago;
 import com.concorde.springboot.modelo.Reserva;
+import com.concorde.springboot.repositorio.PagoRepository;
 import com.concorde.springboot.repositorio.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -16,6 +20,9 @@ public class ReservaController {
 
     @Autowired
     private ReservaRepository repository;
+
+    @Autowired
+    private PagoRepository pagoRepository;
 
     @GetMapping
     public List<Reserva> listar() {
@@ -30,13 +37,25 @@ public class ReservaController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<Reserva> crear(@RequestBody Reserva r) {
         // Si no llega la clase, se asume económica
         if (r.getClase() == null || r.getClase().isBlank()) {
             r.setClase("ECONOMICA");
         }
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(repository.save(r));
+
+        Reserva guardada = repository.save(r);
+
+        // Pago automático de la reserva
+        Pago pago = new Pago();
+        pago.setReserva(guardada);
+        pago.setMetodoPago("TARJETA");
+        pago.setValorPagado(guardada.getTotal() != null ? guardada.getTotal().floatValue() : 0f);
+        pago.setFechaPago(LocalDate.now());
+        pago.setEstado("PROCESADO");
+        pagoRepository.save(pago);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(guardada);
     }
 
     @PutMapping("/{id}")

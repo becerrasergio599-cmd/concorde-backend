@@ -378,6 +378,26 @@
       .admin-hero h1 { font-size: 1.2rem; }
       .stat-numero { font-size: 1.5rem; }
     }
+
+     /* Control de asientos Concorde */
+     .asiento-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}
+     .asiento-kpi{border:1px solid #e8edf4;background:#f8fafc;border-radius:12px;padding:15px;text-align:center}
+     .asiento-kpi strong{display:block;font-size:1.7rem;color:#092b60}
+     .asiento-kpi span{font-size:.78rem;color:#64748b}
+     .asiento-leyenda{display:flex;gap:15px;flex-wrap:wrap;justify-content:center;margin:15px 0;font-size:.8rem}
+     .asiento-leyenda span{display:flex;align-items:center;gap:5px}
+     .asiento-muestra{width:15px;height:15px;border-radius:4px;display:inline-block;border:1px solid}
+     .asiento-bus{max-width:370px;margin:15px auto;padding:18px;background:#f3f6fb;border:1px solid #dbe3ed;border-radius:18px}
+     .asiento-conductor{background:#08438f;color:white;text-align:center;border-radius:8px;padding:10px;font-weight:700;font-size:.82rem;margin-bottom:16px}
+     .asiento-fila{display:grid;grid-template-columns:20px repeat(2,minmax(0,1fr)) 18px repeat(2,minmax(0,1fr));gap:7px;align-items:center;margin-bottom:7px}
+     .asiento-fila-num{font-size:.7rem;color:#7c8796;text-align:center}
+     .asiento-cuadro{border:1px solid;border-radius:7px;min-height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;line-height:1.2}
+     .asiento-cuadro small{font-size:.55rem;font-weight:500}
+     .asiento-libre{background:#e8f8ec;color:#166534;border-color:#22a447}
+     .asiento-premium{background:#fff4df;color:#a56508;border-color:#f4b64c}
+     .asiento-ocupado{background:#ffe4e8;color:#a51f36;border-color:#e6455b}
+     .asiento-inhabilitado{background:#e2e8f0;color:#64748b;border-color:#94a3b8}
+     @media(max-width:600px){.asiento-kpis{gap:6px}.asiento-kpi{padding:9px}.asiento-kpi strong{font-size:1.3rem}}
   </style>
 </head>
 <body>
@@ -938,29 +958,29 @@
         </div>
       </section>
 
-      <section id="sec-asientos" class="d-none" aria-label="Gestión de asientos">
-        <h2 class="admin-section-titulo"><i class="bi bi-grid-3x3-gap-fill" aria-hidden="true"></i>Gestión de Asientos</h2>
-        <div class="config-card">
-          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-            <input type="search" class="form-control" style="max-width:280px" placeholder="Buscar..." aria-label="Buscar asiento" oninput="filtrarTabla('asientos', this.value)">
-            <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
-          </div>
-          <div id="asientos-viaje-control" class="border rounded-3 p-3 mb-3" style="background:#f5f8ff">
-            <label for="asientos-viaje-select" class="form-label fw-bold">🚌 Consultar ocupación por viaje</label>
-            <div class="d-flex gap-2 flex-wrap">
-              <select id="asientos-viaje-select" class="form-select flex-grow-1" style="min-width:240px" onchange="cambiarViajeAsientos(this.value)">
-                <option value="">Todos los vehículos (estado físico, no ocupación)</option>
-              </select>
-              <button type="button" class="btn btn-outline-primary" onclick="cargarEntidad('asientos')">Actualizar</button>
-            </div>
-            <div id="asientos-viaje-resumen" class="small text-muted mt-2">Selecciona un viaje para consultar los asientos ocupados.</div>
-          </div>
-          <div id="form-asientos" class="mb-3" style="display:none;"></div>
-          <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
-        </div>
-      </section>
+             <section id="sec-asientos" class="d-none" aria-label="Gestión de asientos">
+         <h2 class="admin-section-titulo"><i class="bi bi-grid-3x3-gap-fill"></i>Control de asientos y ocupación</h2>
+         <div class="config-card">
+           <div class="d-flex justify-content-between align-items-center gap-2 flex-wrap mb-3">
+             <div><h5 class="fw-bold mb-1">🚌 Ocupación por viaje</h5><p class="small text-muted mb-0">Elige una salida para ver sus asientos disponibles y vendidos.</p></div>
+             <button type="button" class="btn btn-outline-primary btn-sm" onclick="cargarEntidad('asientos')"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
+           </div>
+           <div class="row g-3 mb-3">
+             <div class="col-lg-8"><label for="asientos-viaje-select" class="form-label fw-semibold">Salida (ruta, fecha, hora y vehículo)</label><select id="asientos-viaje-select" class="form-select" onchange="cambiarViajeAsientos(this.value)"><option value="">Cargando viajes…</option></select></div>
+             <div class="col-lg-4"><label for="asientos-filtro" class="form-label fw-semibold">Mostrar</label><select id="asientos-filtro" class="form-select" onchange="renderTabla('asientos')"><option value="todos">Todos los asientos</option><option value="libres">Solo disponibles</option><option value="ocupados">Solo ocupados</option><option value="premium">Solo Premium</option><option value="economico">Solo Económicos</option></select></div>
+           </div>
+           <div id="asientos-viaje-resumen" class="small text-muted mb-3">Consultando ocupación…</div>
+           <div id="asientos-mapa-admin" class="mb-4"></div>
+           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+             <h5 class="fw-bold mb-0">Detalle de los asientos</h5>
+             <button class="btn btn-concorde-dorado btn-sm" onclick="abrirFormulario('asientos')"><i class="bi bi-plus-lg me-1"></i>Nuevo asiento</button>
+           </div>
+           <div id="form-asientos" class="mb-3" style="display:none"></div>
+           <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
+         </div>
+       </section>
 
-      <section id="sec-reservas" class="d-none" aria-label="Gestión de reservas">
+<section id="sec-reservas" class="d-none" aria-label="Gestión de reservas">
         <h2 class="admin-section-titulo"><i class="bi bi-ticket-detailed-fill" aria-hidden="true"></i>Gestión de Reservas</h2>
         <div class="config-card">
           <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -1261,7 +1281,7 @@
     asientos: { idField:'idAsiento', fields:[
       {name:'vehiculo', label:'Vehículo', type:'fk', fk:'vehiculos', fkIdField:'idVehiculo', fkLabelFn:v=>v.placa},
       {name:'numeroAsiento', label:'N° Asiento', type:'text', required:true},
-      {name:'tipo', label:'Tipo', type:'text', default:'ESTANDAR'},
+      {name:'tipo', label:'Categoría', type:'select', options:['ESTANDAR','PREMIUM'], default:'ESTANDAR'},
       {name:'disponible', label:'Habilitado físicamente', type:'checkbox', default:true}
     ], columns:['idAsiento','vehiculo','numeroAsiento','tipo','disponible']},
 
@@ -1338,12 +1358,12 @@
     return raw;
   }
 
-  // Ocupación por VIAJE: asiento.disponible es una habilitación física,
-  // NO indica que esté vendido para todas las fechas o rutas.
+  // OCUPACIÓN POR VIAJE: se consulta detalle_reserva, no asiento.disponible.
   let viajeAsientosAdmin = '';
   let viajesAsientosAdmin = [];
   let detallesAsientosAdmin = [];
   let errorAsientosAdmin = '';
+  let ocupacionVerificadaAdmin = false;
 
   async function apiListaAsientosAdmin(ruta) {
     const r = await fetch(`${API}/${ruta}`, {cache:'no-store'});
@@ -1358,95 +1378,134 @@
   }
 
   function rutaAsientosAdmin(v) {
-    return `${v?.ruta?.terminalOrigen?.ciudad || 'Origen'} → ${v?.ruta?.terminalDestino?.ciudad || 'Destino'}`;
+    const r=v?.ruta || {};
+    return `${r.terminalOrigen?.ciudad || r.origen?.ciudad || 'Origen'} → ${r.terminalDestino?.ciudad || r.destino?.ciudad || 'Destino'}`;
+  }
+
+  function escaparAsientoAdmin(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function categoriaAsientoAdmin(a) {
+    return ['PREMIUM','PREMIUN'].includes(String(a.tipo||'').trim().toUpperCase()) ? 'PREMIUM' : 'ECONOMICO';
   }
 
   async function cargarOcupacionAsientosAdmin() {
-    errorAsientosAdmin = '';
-    const select = document.getElementById('asientos-viaje-select');
+    errorAsientosAdmin='';
+    ocupacionVerificadaAdmin=false;
+    const select=document.getElementById('asientos-viaje-select');
+    if(!select) return;
     try {
-      viajesAsientosAdmin = await apiListaAsientosAdmin('viajes');
-      select.innerHTML = '<option value="">Todos los vehículos (estado físico, no ocupación)</option>';
-      [...viajesAsientosAdmin].sort((a,b) => String(b.fechaViaje || '').localeCompare(String(a.fechaViaje || ''))).forEach(v => {
-        const opt = document.createElement('option');
-        opt.value = String(v.idViaje);
-        opt.textContent = `#${v.idViaje} | ${rutaAsientosAdmin(v)} | ${v.fechaViaje || ''} ${v.horaSalida || ''} | ${v.vehiculo?.placa || ''}`;
-        select.appendChild(opt);
-      });
-      if (!viajesAsientosAdmin.some(v => String(v.idViaje) === viajeAsientosAdmin)) viajeAsientosAdmin = '';
-      select.value = viajeAsientosAdmin;
-      if (viajeAsientosAdmin) {
-        detallesAsientosAdmin = await apiListaAsientosAdmin('detalle-reservas');
-      } else {
-        detallesAsientosAdmin = [];
+      // El endpoint /api/viajes puede estar paginado: aquí solo se muestran los viajes devueltos.
+      viajesAsientosAdmin=await apiListaAsientosAdmin('viajes');
+      const ordenados=[...viajesAsientosAdmin].sort((a,b)=>
+        `${a.fechaViaje||''} ${a.horaSalida||''}`.localeCompare(`${b.fechaViaje||''} ${b.horaSalida||''}`));
+      select.replaceChildren();
+      for(const v of ordenados){
+        const op=document.createElement('option');
+        op.value=String(v.idViaje);
+        op.textContent=`${rutaAsientosAdmin(v)} | ${v.fechaViaje||'Sin fecha'} ${v.horaSalida||''} | ${v.vehiculo?.placa||'Sin vehículo'} | #${v.idViaje}`;
+        select.appendChild(op);
       }
-    } catch (e) {
-      errorAsientosAdmin = e.message;
-      console.error('No se pudo cargar la ocupación de asientos:', e);
+      if(!ordenados.length){
+        select.innerHTML='<option value="">No se encontraron viajes</option>';
+        viajeAsientosAdmin='';
+        return;
+      }
+      if(!ordenados.some(v=>String(v.idViaje)===viajeAsientosAdmin)) viajeAsientosAdmin=String(ordenados[0].idViaje);
+      select.value=viajeAsientosAdmin;
+      detallesAsientosAdmin=await apiListaAsientosAdmin('detalle-reservas');
+      ocupacionVerificadaAdmin=true;
+    }catch(e){
+      errorAsientosAdmin=e.message;
+      console.error('Error al consultar asientos:',e);
     }
   }
 
   async function cambiarViajeAsientos(valor) {
-    viajeAsientosAdmin = String(valor || '');
-    const tabla = document.getElementById('tabla-asientos');
-    if (tabla) tabla.textContent = 'Consultando reservas del viaje…';
-    await cargarOcupacionAsientosAdmin();
+    viajeAsientosAdmin=String(valor||'');
+    const wrap=document.getElementById('tabla-asientos');
+    if(wrap) wrap.textContent='Consultando ocupación…';
+    // Los detalles se vuelven a consultar para reflejar reservas recientes.
+    try{
+      detallesAsientosAdmin=await apiListaAsientosAdmin('detalle-reservas');
+      ocupacionVerificadaAdmin=true;
+      errorAsientosAdmin='';
+    }catch(e){
+      ocupacionVerificadaAdmin=false;
+      errorAsientosAdmin=e.message;
+    }
     renderTabla('asientos');
   }
 
   function ocupadosAsientosAdmin() {
-    const ids = new Set();
-    if (!viajeAsientosAdmin) return ids;
-    detallesAsientosAdmin.forEach(d => {
-      const reserva = d.reserva;
-      const estado = String(reserva?.estado || '').toUpperCase();
-      if (!reserva || ['CANCELADA','CANCELADO','ANULADA','ANULADO'].includes(estado)) return;
-      if (String(reserva?.viaje?.idViaje) !== viajeAsientosAdmin) return;
-      const id = Number(d.asiento?.idAsiento);
-      if (Number.isFinite(id)) ids.add(id);
-    });
+    const ids=new Set();
+    if(!ocupacionVerificadaAdmin || !viajeAsientosAdmin) return ids;
+    for(const d of detallesAsientosAdmin){
+      const r=d.reserva;
+      if(!r || String(r.viaje?.idViaje)!==viajeAsientosAdmin) continue;
+      const estado=String(r.estado||'').toUpperCase();
+      if(['CANCELADA','CANCELADO','ANULADA','ANULADO'].includes(estado)) continue;
+      const id=Number(d.asiento?.idAsiento);
+      if(Number.isFinite(id)) ids.add(id);
+    }
     return ids;
   }
 
   function renderTablaAsientosAdmin() {
-    const wrap = document.getElementById('tabla-asientos');
-    const resumen = document.getElementById('asientos-viaje-resumen');
-    if (errorAsientosAdmin) {
-      wrap.innerHTML = `<div class="alert alert-danger m-2">No se pudo verificar la ocupación: ${errorAsientosAdmin.replace(/</g,'&lt;')}. No se mostrarán estados sin verificar.</div>`;
-      if (resumen) resumen.textContent = 'Error de consulta';
+    const wrap=document.getElementById('tabla-asientos');
+    const mapa=document.getElementById('asientos-mapa-admin');
+    const resumen=document.getElementById('asientos-viaje-resumen');
+    if(!wrap || !mapa) return;
+    if(errorAsientosAdmin || !ocupacionVerificadaAdmin){
+      const msg=escaparAsientoAdmin(errorAsientosAdmin || 'No se pudo verificar la ocupación');
+      resumen.textContent='Ocupación sin verificar';
+      mapa.innerHTML='';
+      wrap.innerHTML=`<div class="alert alert-danger m-3">No se pudo consultar la ocupación: ${msg}. No se mostrarán estados inventados.</div>`;
       return;
     }
-    const viaje = viajesAsientosAdmin.find(v => String(v.idViaje) === viajeAsientosAdmin);
-    const todos = dataCache.asientos || [];
-    const data = viaje ? todos.filter(a => idVehiculoAsientosAdmin(a.vehiculo) === idVehiculoAsientosAdmin(viaje.vehiculo)) : todos;
-    const ocupados = ocupadosAsientosAdmin();
-    const libres = data.filter(a => a.disponible !== false && !ocupados.has(Number(a.idAsiento))).length;
-    const vendidos = data.filter(a => ocupados.has(Number(a.idAsiento))).length;
-    if (resumen) resumen.textContent = viaje
-      ? `Viaje #${viaje.idViaje} | ${rutaAsientosAdmin(viaje)} | 🟢 ${libres} disponibles · 🔴 ${vendidos} ocupados · ⭐ ${data.filter(a => String(a.tipo).toUpperCase()==='PREMIUM').length} Premium`
-      : `${data.length} asientos registrados. «Habilitado» NO significa disponible en todos los viajes.`;
-    if (!data.length) {
-      wrap.innerHTML = '<div class="p-4 text-muted">No hay asientos registrados para esta selección.</div>';
-      return;
+    const viaje=viajesAsientosAdmin.find(v=>String(v.idViaje)===viajeAsientosAdmin);
+    if(!viaje){mapa.innerHTML='';wrap.textContent='Selecciona un viaje.';return;}
+    const todos=(dataCache.asientos||[]).filter(a=>idVehiculoAsientosAdmin(a.vehiculo)===idVehiculoAsientosAdmin(viaje.vehiculo));
+    const ocupados=ocupadosAsientosAdmin();
+    const estado=a=>a.disponible===false?'inhabilitado':ocupados.has(Number(a.idAsiento))?'ocupado':'libre';
+    const disponibles=todos.filter(a=>estado(a)==='libre').length;
+    const vendidos=todos.filter(a=>estado(a)==='ocupado').length;
+    const premium=todos.filter(a=>categoriaAsientoAdmin(a)==='PREMIUM').length;
+    resumen.innerHTML=`<strong>Viaje #${escaparAsientoAdmin(viaje.idViaje)}</strong> · ${escaparAsientoAdmin(rutaAsientosAdmin(viaje))} · ${escaparAsientoAdmin(viaje.fechaViaje)} ${escaparAsientoAdmin(viaje.horaSalida)} · Bus ${escaparAsientoAdmin(viaje.vehiculo?.placa)}`;
+    const filtro=document.getElementById('asientos-filtro')?.value||'todos';
+    const visibles=todos.filter(a=>filtro==='todos'||(filtro==='libres'&&estado(a)==='libre')||(filtro==='ocupados'&&estado(a)==='ocupado')||(filtro==='premium'&&categoriaAsientoAdmin(a)==='PREMIUM')||(filtro==='economico'&&categoriaAsientoAdmin(a)==='ECONOMICO'));
+    const agrupados=new Map();
+    for(const a of [...visibles].sort((a,b)=>String(a.numeroAsiento).localeCompare(String(b.numeroAsiento),'es',{numeric:true}))){
+      const n=String(a.numeroAsiento||'').trim().toUpperCase();
+      const match=n.match(/^(\d+)([A-D])$/);
+      if(!match) continue;
+      if(!agrupados.has(match[1])) agrupados.set(match[1],{});
+      agrupados.get(match[1])[match[2]]=a;
     }
-    let html = `<div class="table-responsive"><table class="table table-hover align-middle" data-key="asientos"><thead><tr><th>ID</th><th>Vehículo</th><th>N° Asiento</th><th>Tipo</th><th>${viaje ? 'Estado en este viaje' : 'Estado físico'}</th><th>Acciones</th></tr></thead><tbody>`;
-    data.forEach(a => {
-      const id = Number(a.idAsiento);
-      const vendido = ocupados.has(id);
-      const estado = a.disponible === false
-        ? '<span class="badge bg-secondary">Inhabilitado</span>'
-        : !viaje
-          ? '<span class="badge bg-secondary">Habilitado</span>'
-          : vendido
-            ? '<span class="badge bg-danger">🔴 Ocupado</span>'
-            : '<span class="badge bg-success">🟢 Disponible</span>';
-      const premium = ['PREMIUM','PREMIUN'].includes(String(a.tipo || '').toUpperCase());
-      const tipo = premium ? '<span class="badge bg-warning text-dark">⭐ PREMIUM</span>' : '<span class="badge bg-primary">ESTANDAR</span>';
-      const placa = String(a.vehiculo?.placa || '—').replace(/</g,'&lt;');
-      const numero = String(a.numeroAsiento || '—').replace(/</g,'&lt;');
-      html += `<tr${vendido && viaje ? ' style="background:#fff1f2"' : ''}><td><strong>#${id}</strong></td><td>${placa}</td><td>${numero}</td><td>${tipo}</td><td>${estado}</td><td><button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('asientos',${id})">Editar</button><button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('asientos',${id})">Eliminar</button></td></tr>`;
-    });
-    wrap.innerHTML = html + '</tbody></table></div>';
+    let filas='';
+    for(const [num,letras] of [...agrupados].sort((a,b)=>Number(a[0])-Number(b[0]))){
+      const caja=letra=>{
+        const a=letras[letra];if(!a)return '<div></div>';
+        const e=estado(a),tipo=categoriaAsientoAdmin(a);
+        const clase=e==='ocupado'?'asiento-ocupado':e==='inhabilitado'?'asiento-inhabilitado':tipo==='PREMIUM'?'asiento-premium':'asiento-libre';
+        return `<div class="asiento-cuadro ${clase}" title="${escaparAsientoAdmin(a.numeroAsiento)} · ${tipo==='PREMIUM'?'Premium':'Económico'} · ${e}">${escaparAsientoAdmin(a.numeroAsiento)}<small>${e==='ocupado'?'Ocupado':e==='inhabilitado'?'Bloqueado':tipo==='PREMIUM'?'⭐ Premium':'Libre'}</small></div>`;
+      };
+      filas+=`<div class="asiento-fila"><span class="asiento-fila-num">${num}</span>${caja('A')}${caja('B')}<span></span>${caja('C')}${caja('D')}</div>`;
+    }
+    mapa.innerHTML=`<div class="asiento-kpis"><div class="asiento-kpi"><strong>${disponibles}</strong><span>🟢 Disponibles</span></div><div class="asiento-kpi"><strong>${vendidos}</strong><span>🔴 Ocupados</span></div><div class="asiento-kpi"><strong>${todos.length}</strong><span>🚌 Total asientos</span></div></div>
+      <div class="asiento-leyenda"><span><i class="asiento-muestra" style="background:#e8f8ec;border-color:#22a447"></i> Económico libre</span><span><i class="asiento-muestra" style="background:#fff4df;border-color:#f4b64c"></i> Premium libre ⭐</span><span><i class="asiento-muestra" style="background:#ffe4e8;border-color:#e6455b"></i> Ocupado</span><span><i class="asiento-muestra" style="background:#e2e8f0;border-color:#94a3b8"></i> Inhabilitado</span></div>
+      <div class="asiento-bus"><div class="asiento-conductor">🚌 FRENTE · CONDUCTOR</div>${filas||'<div class="text-center text-muted">No hay asientos para este filtro</div>'}</div>
+      <p class="small text-muted text-center">La ocupación se calcula únicamente para el viaje seleccionado. Los asientos de reservas antiguas sin detalle no se pueden identificar.</p>`;
+    if(!visibles.length){wrap.innerHTML='<div class="p-3 text-muted">No hay asientos que coincidan con el filtro.</div>';return;}
+    let html='<div class="table-responsive"><table class="table table-hover align-middle"><thead><tr><th>ID</th><th>Asiento</th><th>Categoría</th><th>Estado del viaje</th><th>Acciones</th></tr></thead><tbody>';
+    for(const a of visibles){
+      const id=Number(a.idAsiento),e=estado(a),tipo=categoriaAsientoAdmin(a);
+      const badge=e==='ocupado'?'<span class="badge bg-danger">🔴 Ocupado</span>':e==='inhabilitado'?'<span class="badge bg-secondary">Inhabilitado</span>':'<span class="badge bg-success">🟢 Disponible</span>';
+      const tipoBadge=tipo==='PREMIUM'?'<span class="badge bg-warning text-dark">⭐ Premium</span>':'<span class="badge bg-primary">Económico</span>';
+      html+=`<tr><td>#${id}</td><td><strong>${escaparAsientoAdmin(a.numeroAsiento)}</strong></td><td>${tipoBadge}</td><td>${badge}</td><td><button class="btn btn-sm btn-outline-primary me-1" onclick="editarRegistro('asientos',${id})">Editar</button><button class="btn btn-sm btn-outline-danger" onclick="eliminarRegistro('asientos',${id})">Eliminar</button></td></tr>`;
+    }
+    wrap.innerHTML=html+'</tbody></table></div>';
   }
 
   function renderTabla(key) {

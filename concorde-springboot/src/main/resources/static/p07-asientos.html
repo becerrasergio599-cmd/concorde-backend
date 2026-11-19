@@ -82,7 +82,7 @@
       border-radius: 3px 3px 0 0;
     }
 
-    /* VERDE: DISPONIBLE */
+    /* VERDE: ASIENTO DISPONIBLE */
     .asiento-libre {
       background: #e8f4ea;
       border-color: #28a745;
@@ -95,7 +95,7 @@
       transform: scale(1.07);
     }
 
-    /* ROJO: OCUPADO REALMENTE */
+    /* ROJO: ASIENTO OCUPADO REALMENTE */
     .asiento-ocupado,
     .asiento-ocupado:hover {
       background: #f8d7da !important;
@@ -106,7 +106,7 @@
       opacity: 1 !important;
     }
 
-    /* NARANJA CLARO: PREMIUM */
+    /* NARANJA CLARO: ASIENTO PREMIUM */
     .asiento-premium {
       background: #fff2d8;
       border-color: #f5a623;
@@ -119,7 +119,7 @@
       transform: scale(1.07);
     }
 
-    /* NARANJA FUERTE: SELECCIONADO */
+    /* NARANJA FUERTE: ASIENTO SELECCIONADO */
     .asiento-seleccionado,
     .asiento-seleccionado:hover {
       background: #f5a623 !important;
@@ -129,7 +129,7 @@
       box-shadow: 0 3px 10px rgba(245, 166, 35, .4);
     }
 
-    /* PREMIUM BLOQUEADO PARA ECONÓMICA */
+    /* PREMIUM BLOQUEADO PARA TARIFA ECONÓMICA */
     .asiento-bloqueado {
       opacity: .45;
       cursor: not-allowed;
@@ -454,17 +454,27 @@
   // CONFIGURACIÓN PREMIUM
   // ==========================================
 
-  // Estos cuatro asientos SIEMPRE se muestran
-  // como Premium en el mapa.
+  // ARREGLO:
+  // TODA LA PRIMERA Y SEGUNDA FILA ES PREMIUM.
+  //
+  // INCLUYE EL ASIENTO 2B.
+  //
+  // 1A  1B  |  1C  1D
+  // 2A  2B  |  2C  2D
+  //
+  // También se respetan los demás asientos
+  // PREMIUM registrados en PostgreSQL.
+
   const PRIMEROS_ASIENTOS_PREMIUM = new Set([
     '1A',
     '1B',
     '1C',
-    '1D'
+    '1D',
+    '2A',
+    '2B',
+    '2C',
+    '2D'
   ]);
-
-  // Los demás asientos Premium registrados
-  // en PostgreSQL también se respetan.
 
   // ==========================================
   // DATOS DEL VIAJE
@@ -511,6 +521,10 @@
     );
   }
 
+  // ==========================================
+  // IDENTIFICAR LA TARIFA ELEGIDA
+  // ==========================================
+
   function obtenerClase() {
 
     const candidatos = [
@@ -546,6 +560,10 @@
   }
 
   const CLASE = obtenerClase();
+
+  // ==========================================
+  // CANTIDAD DE PASAJEROS
+  // ==========================================
 
   function obtenerPasajeros() {
 
@@ -722,8 +740,12 @@
       return false;
     }
 
-    // NUEVO ARREGLO:
-    // Toda la primera fila es Premium.
+    // PRIMERA Y SEGUNDA FILA:
+    // 1A, 1B, 1C, 1D
+    // 2A, 2B, 2C, 2D
+    //
+    // TODOS SE PINTAN PREMIUM.
+
     if (
       PRIMEROS_ASIENTOS_PREMIUM.has(
         normalizar(numero)
@@ -732,7 +754,9 @@
       return true;
     }
 
-    // Conservar los demás Premium de la BD.
+    // TAMBIÉN RESPETAR LOS PREMIUM
+    // QUE YA EXISTEN EN LA BASE DE DATOS.
+
     return asiento.tipo === 'PREMIUM';
   }
 
@@ -861,6 +885,7 @@
     });
 
     // ASIENTOS ADICIONALES DE LA PARTE TRASERA
+
     const adicionales = [...mapa.keys()]
       .filter(numero => /^\d+$/.test(numero))
       .sort((a, b) => Number(a) - Number(b));
@@ -910,6 +935,8 @@
       );
 
       // PRIORIDAD 1: OCUPADO
+      // SI ESTÁ RESERVADO, SIEMPRE ROJO.
+
       if (ocupado) {
 
         boton.classList.add(
@@ -917,6 +944,7 @@
         );
 
       // PRIORIDAD 2: SELECCIONADO
+
       } else if (seleccionado) {
 
         boton.classList.add(
@@ -924,6 +952,8 @@
         );
 
       // PRIORIDAD 3: PREMIUM
+      // INCLUYE 2B.
+
       } else if (premium) {
 
         boton.classList.add(
@@ -931,6 +961,7 @@
         );
 
       // PRIORIDAD 4: DISPONIBLE
+
       } else {
 
         boton.classList.add(
@@ -1202,6 +1233,7 @@
       bloques.join('<hr class="my-2">');
 
     // GUARDAR ASIENTOS PARA EL PAGO
+
     tramos.forEach(tramo => {
 
       if (completo(tramo)) {
@@ -1331,6 +1363,7 @@
     try {
 
       // CONSULTAR CADA VIAJE POR SEPARADO
+
       await Promise.all(
         tramos.map(
           tramo => cargarAsientos(tramo)
@@ -1359,11 +1392,15 @@
 
           asientosVuelta: mapas.vuelta.size,
 
-          premiumPrimeraFila: [
+          premiumPrimerasDosFilas: [
             '1A',
             '1B',
             '1C',
-            '1D'
+            '1D',
+            '2A',
+            '2B',
+            '2C',
+            '2D'
           ]
         }
       );

@@ -124,7 +124,7 @@ const BusquedaVuelos = {
       UI.mostrarLoader('Buscando trayectos disponibles...');
       setTimeout(() => {
         window.location.href = 'p02-resultados.html?' + params.toString();
-      }, 800);
+      }, 1500);
     });
   },
 
@@ -331,25 +331,130 @@ const UI = {
     this.initFiltrosResultados();
   },
 
+  // ---------- LOADER: bus en blanco y negro sobre la carretera ----------
+  _loaderTimer: null,
+
+  _inyectarEstilosLoader() {
+    if (document.getElementById('estilosLoaderBus')) return;
+    const style = document.createElement('style');
+    style.id = 'estilosLoaderBus';
+    style.textContent = `
+      #loaderGlobal {
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(0, 32, 91, .94);
+      }
+      .lb { width: min(340px, 85vw); text-align: center; color: #fff; }
+      .lb__escena { position: relative; }
+
+      .lb__bus {
+        width: 210px; display: block; margin: 0 auto; position: relative; z-index: 1;
+        animation: lb-rebote .45s ease-in-out infinite alternate;
+      }
+      @keyframes lb-rebote { to { transform: translateY(-2px); } }
+
+      .lb__rueda { transform-box: fill-box; transform-origin: center; animation: lb-gira .5s linear infinite; }
+      @keyframes lb-gira { to { transform: rotate(360deg); } }
+
+      .lb__carretera {
+        height: 14px; margin-top: -1px; border-radius: 3px;
+        background-color: #000;
+        background-image: repeating-linear-gradient(90deg, #fff 0 22px, transparent 22px 48px);
+        background-size: 48px 3px; background-repeat: repeat-x; background-position: 0 center;
+        box-shadow: 0 -1px 0 #fff;
+        animation: lb-ruta .45s linear infinite;
+      }
+      @keyframes lb-ruta { to { background-position-x: -48px; } }
+
+      .lb__lineas { position: absolute; left: 0; top: 18px; width: 60px; height: 50px; z-index: 0; }
+      .lb__lineas span {
+        position: absolute; right: 0; height: 3px; border-radius: 2px; background: #fff; opacity: 0;
+        animation: lb-vel .9s linear infinite;
+      }
+      .lb__lineas span:nth-child(1) { top: 4px;  width: 34px; animation-delay: 0s; }
+      .lb__lineas span:nth-child(2) { top: 22px; width: 46px; animation-delay: .3s; }
+      .lb__lineas span:nth-child(3) { top: 40px; width: 28px; animation-delay: .6s; }
+      @keyframes lb-vel {
+        0%   { opacity: 0;  transform: translateX(20px); }
+        30%  { opacity: .7; }
+        100% { opacity: 0;  transform: translateX(-30px); }
+      }
+
+      .lb__texto { margin-top: 20px; font-weight: 700; transition: opacity .3s; }
+
+      @media (prefers-reduced-motion: reduce) {
+        #loaderGlobal * { animation: none !important; }
+      }`;
+    document.head.appendChild(style);
+  },
+
   mostrarLoader(mensaje = 'Cargando...') {
     // Evita duplicar el loader si ya hay uno visible
     this.ocultarLoader();
+    this._inyectarEstilosLoader();
+
     const loader = document.createElement('div');
-    loader.className = 'loader-overlay';
     loader.id = 'loaderGlobal';
     loader.setAttribute('role', 'status');
     loader.setAttribute('aria-live', 'polite');
     loader.innerHTML = `
-                        <div class="loader-avion" aria-hidden="true">🚌</div>
-      <p class="mt-3 fw-semibold">${mensaje}</p>
-    `;
+      <div class="lb">
+        <div class="lb__escena">
+          <div class="lb__lineas"><span></span><span></span><span></span></div>
+          <svg class="lb__bus" viewBox="0 0 240 88" aria-hidden="true">
+            <path d="M10 30 Q10 20 22 20 H180 Q196 20 206 36 L214 52 V72 H10 Z"
+                  fill="#fff" stroke="#000" stroke-width="3" stroke-linejoin="round"/>
+            <rect x="11" y="52" width="202" height="8" fill="#000"/>
+            <rect x="22"  y="28" width="30" height="20" rx="3" fill="#000"/>
+            <rect x="58"  y="28" width="30" height="20" rx="3" fill="#000"/>
+            <rect x="94"  y="28" width="30" height="20" rx="3" fill="#000"/>
+            <rect x="130" y="28" width="30" height="20" rx="3" fill="#000"/>
+            <path d="M168 28 H182 Q194 30 202 44 H168 Z" fill="#000"/>
+            <rect x="206" y="60" width="8" height="6" rx="2" fill="#000"/>
+            <g class="lb__rueda">
+              <circle cx="48" cy="74" r="13" fill="#000" stroke="#fff" stroke-width="2"/>
+              <circle cx="48" cy="74" r="5" fill="#fff"/>
+              <rect x="47" y="63" width="2" height="22" fill="#fff"/>
+            </g>
+            <g class="lb__rueda">
+              <circle cx="166" cy="74" r="13" fill="#000" stroke="#fff" stroke-width="2"/>
+              <circle cx="166" cy="74" r="5" fill="#fff"/>
+              <rect x="165" y="63" width="2" height="22" fill="#fff"/>
+            </g>
+          </svg>
+          <div class="lb__carretera"></div>
+        </div>
+        <p class="lb__texto" id="lbTexto">${mensaje}</p>
+      </div>`;
     document.body.appendChild(loader);
+
+    // Mensajes rotativos solo cuando se están buscando trayectos
+    if (/trayectos/i.test(mensaje)) {
+      const mensajes = [
+        'Buscando trayectos disponibles...',
+        'Comparando horarios y precios...',
+        'Casi listo, ya arrancamos...'
+      ];
+      let i = 0;
+      const texto = loader.querySelector('#lbTexto');
+      this._loaderTimer = setInterval(() => {
+        i = (i + 1) % mensajes.length;
+        texto.style.opacity = 0;
+        setTimeout(() => {
+          texto.textContent = mensajes[i];
+          texto.style.opacity = 1;
+        }, 300);
+      }, 1800);
+    }
   },
 
   ocultarLoader() {
+    clearInterval(this._loaderTimer);
+    this._loaderTimer = null;
     const loader = document.getElementById('loaderGlobal');
     if (loader) loader.remove();
   },
+  // ---------- FIN LOADER ----------
 
   mostrarToast(mensaje, tipo = 'info') {
     const colores = {

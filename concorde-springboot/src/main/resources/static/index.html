@@ -700,7 +700,10 @@
           return;
         }
 
-        // FECHA MÍNIMA
+        // ==========================================
+        // FECHA ACTUAL AUTOMÁTICA
+        // ==========================================
+
         function fechaLocalHoy() {
           const hoy = new Date();
           const anio = hoy.getFullYear();
@@ -712,8 +715,16 @@
 
         const fechaHoy = fechaLocalHoy();
 
+        // No permitir fechas anteriores a hoy
         fechaIda.min = fechaHoy;
         fechaVuelta.min = fechaHoy;
+
+        // ARREGLO PRINCIPAL:
+        // Mostrar automáticamente la fecha de hoy
+        fechaIda.value = fechaHoy;
+
+        // La vuelta no puede ser anterior a la ida
+        fechaVuelta.min = fechaIda.value;
 
         fechaIda.addEventListener("change", function () {
 
@@ -728,7 +739,10 @@
           }
         });
 
+        // ==========================================
         // TIPO DE VIAJE
+        // ==========================================
+
         let tipoViaje = tabSoloIda.classList.contains("active")
           ? "solo-ida"
           : "ida-vuelta";
@@ -781,7 +795,10 @@
 
         actualizarTipoViaje();
 
+        // ==========================================
         // INTERCAMBIAR CIUDADES
+        // ==========================================
+
         if (btnSwap) {
           btnSwap.addEventListener("click", function () {
 
@@ -793,7 +810,10 @@
           });
         }
 
+        // ==========================================
         // PASAJEROS
+        // ==========================================
+
         function cambiarPasajeros(cantidad) {
 
           let actual = Number(pasajeros.value) || 1;
@@ -817,7 +837,10 @@
           });
         }
 
-        // BUSCAR
+        // ==========================================
+        // BUSCAR VIAJES
+        // ==========================================
+
         formulario.addEventListener("submit", function (evento) {
 
           evento.preventDefault();
@@ -851,7 +874,7 @@
             return;
           }
 
-          if (ida < fechaHoy) {
+          if (ida < fechaLocalHoy()) {
             alert("La fecha de ida no puede ser anterior a hoy.");
             return;
           }
@@ -888,7 +911,10 @@
 
         }, true);
 
+        // ==========================================
         // DESTINOS POPULARES
+        // ==========================================
+
         document.querySelectorAll(
           'a[href^="p02-resultados.html?"]'
         ).forEach(function (enlace) {

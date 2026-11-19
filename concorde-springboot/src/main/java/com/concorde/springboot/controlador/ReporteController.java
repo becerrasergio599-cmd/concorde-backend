@@ -1,143 +1,436 @@
+
 package com.concorde.springboot.controlador;
 
 import com.concorde.springboot.modelo.*;
 import com.concorde.springboot.repositorio.*;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-// Todos los reportes se calculan aquí mismo con streams de Java, a partir
-// de los datos que ya traen los repositorios -- sin SQL nativo ni queries
-// complejas, para que sea fácil de explicar y de seguir.
 @RestController
 @RequestMapping("/api/reportes")
 public class ReporteController {
 
-    @Autowired private PagoRepository pagoRepository;
-    @Autowired private ViajeRepository viajeRepository;
-    @Autowired private ReservaRepository reservaRepository;
-    @Autowired private DetalleReservaRepository detalleReservaRepository;
-    @Autowired private UsuarioRepository usuarioRepository;
+    @Autowired
+    private PagoRepository pagoRepository;
 
-    // ── 1. Ingresos por ruta ──────────────────────────────
+    @Autowired
+    private ReservaRepository reservaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    // ==========================================
+    // 1. INGRESOS POR RUTA
+    // ==========================================
+
     @GetMapping("/ingresos-por-ruta")
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> ingresosPorRuta() {
-        List<Pago> pagos = pagoRepository.findAll().stream()
-                .filter(p -> "PROCESADO".equals(p.getEstado()))
-                .collect(Collectors.toList());
 
-        Map<String, Double> totales = new LinkedHashMap<>();
-        for (Pago pago : pagos) {
-            Ruta ruta = pago.getReserva().getViaje().getRuta();
-            String etiqueta = ruta.getTerminalOrigen().getCiudad() + " → " + ruta.getTerminalDestino().getCiudad();
-            totales.merge(etiqueta, pago.getValorPagado().doubleValue(), Double::sum);
+        String sql = """
+            SELECT
+                origen.ciudad || ' → ' ||
+                destino.ciudad AS ruta,
+                COALESCE(SUM(p.valor_pagado), 0) AS ingresos
+            FROM pago p
+            JOIN reserva r
+                ON p.id_reserva = r.id_reserva
+            JOIN viaje v
+                ON r.id_viaje = v.id_viaje
+            JOIN ruta ru
+                ON v.id_ruta = ru.id_ruta
+            JOIN terminal origen
+                ON ru.id_terminal_origen = origen.id_terminal
+            JOIN terminal destino
+                ON ru.id_terminal_destino = destino.id_terminal
+            WHERE p.estado = 'PROCESADO'
+            GROUP BY origen.ciudad, destino.ciudad
+            ORDER BY ingresos DESC
+            """;
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        List<Map<String, Object>> resultado =
+                new ArrayList<>();
+
+        for (Object fila : filas) {
+            Object[] f = (Object[]) fila;
+
+            Map<String, Object> dato =
+                    new LinkedHashMap<>();
+
+            dato.put("ruta", f[0]);
+            dato.put("ingresos",
+                    ((Number) f[1]).doubleValue());
+
+            resultado.add(dato);
         }
 
-        return totales.entrySet().stream()
-                .map(e -> Map.<String, Object>of("ruta", e.getKey(), "ingresos", e.getValue()))
-                .sorted((a, b) -> Double.compare((double) b.get("ingresos"), (double) a.get("ingresos")))
-                .collect(Collectors.toList());
-    }
-
-    // ── 2. Ingresos por fecha ─────────────────────────────
-    @GetMapping("/ingresos-por-fecha")
-    public List<Map<String, Object>> ingresosPorFecha() {
-        List<Pago> pagos = pagoRepository.findAll().stream()
-                .filter(p -> "PROCESADO".equals(p.getEstado()))
-                .collect(Collectors.toList());
-
-        Map<LocalDate, Double> totales = new TreeMap<>();
-        for (Pago pago : pagos) {
-            totales.merge(pago.getFechaPago(), pago.getValorPagado().doubleValue(), Double::sum);
-        }
-
-        return totales.entrySet().stream()
-                .map(e -> Map.<String, Object>of("fecha", e.getKey().toString(), "ingresos", e.getValue()))
-                .collect(Collectors.toList());
-    }
-
-    // ── 3. Ocupación de viajes (incluye cuáles están agotados) ──
-    @GetMapping("/ocupacion-viajes")
-    public List<Map<String, Object>> ocupacionViajes() {
-        List<Viaje> viajes = viajeRepository.findAll();
-        List<DetalleReserva> detalles = detalleReservaRepository.findAll();
-
-        List<Map<String, Object>> resultado = new ArrayList<>();
-        for (Viaje viaje : viajes) {
-            int capacidad = viaje.getVehiculo().getCapacidad();
-
-            long ocupados = detalles.stream()
-                    .filter(d -> d.getReserva().getViaje().getIdViaje().equals(viaje.getIdViaje()))
-                    .filter(d -> !"CANCELADA".equals(d.getReserva().getEstado()))
-                    .count();
-
-            long disponibles = Math.max(0, capacidad - ocupados);
-
-            Map<String, Object> fila = new LinkedHashMap<>();
-            fila.put("idViaje", viaje.getIdViaje());
-            fila.put("ruta", viaje.getRuta().getTerminalOrigen().getCiudad() + " → " + viaje.getRuta().getTerminalDestino().getCiudad());
-            fila.put("fechaViaje", viaje.getFechaViaje().toString());
-            fila.put("horaSalida", viaje.getHoraSalida().toString());
-            fila.put("capacidad", capacidad);
-            fila.put("ocupados", ocupados);
-            fila.put("disponibles", disponibles);
-            fila.put("agotado", disponibles == 0);
-            resultado.add(fila);
-        }
         return resultado;
     }
 
-    // ── 3b. Solo los viajes agotados (para el aviso) ──────
-    @GetMapping("/viajes-agotados")
-    public List<Map<String, Object>> viajesAgotados() {
-        return ocupacionViajes().stream()
-                .filter(f -> (boolean) f.get("agotado"))
-                .filter(f -> !"CANCELADO".equals(
-                        viajeRepository.findById((Integer) f.get("idViaje")).map(Viaje::getEstadoViaje).orElse("")))
-                .collect(Collectors.toList());
-    }
+    // ==========================================
+    // 2. INGRESOS POR FECHA
+    // ==========================================
 
-    // ── 4. Viajes por estado ──────────────────────────────
-    @GetMapping("/viajes-por-estado")
-    public Map<String, Long> viajesPorEstado() {
-        return viajeRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Viaje::getEstadoViaje, LinkedHashMap::new, Collectors.counting()));
-    }
+    @GetMapping("/ingresos-por-fecha")
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> ingresosPorFecha() {
 
-    // ── 5. Reservas por estado ─────────────────────────────
-    @GetMapping("/reservas-por-estado")
-    public Map<String, Long> reservasPorEstado() {
-        return reservaRepository.findAll().stream()
-                .collect(Collectors.groupingBy(Reserva::getEstado, LinkedHashMap::new, Collectors.counting()));
-    }
+        String sql = """
+            SELECT
+                fecha_pago,
+                COALESCE(SUM(valor_pagado), 0)
+                    AS ingresos
+            FROM pago
+            WHERE estado = 'PROCESADO'
+              AND fecha_pago IS NOT NULL
+            GROUP BY fecha_pago
+            ORDER BY fecha_pago
+            """;
 
-    // ── 6. Usuarios por rol ────────────────────────────────
-    @GetMapping("/usuarios-por-rol")
-    public Map<String, Long> usuariosPorRol() {
-        return usuarioRepository.findAll().stream()
-                .collect(Collectors.groupingBy(u -> u.getRol().getNombreRol(), LinkedHashMap::new, Collectors.counting()));
-    }
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
 
-    // ── 7. Rutas más vendidas (por cantidad de reservas) ───
-    @GetMapping("/rutas-mas-vendidas")
-    public List<Map<String, Object>> rutasMasVendidas() {
-        List<Reserva> reservas = reservaRepository.findAll().stream()
-                .filter(r -> !"CANCELADA".equals(r.getEstado()))
-                .collect(Collectors.toList());
+        List<Map<String, Object>> resultado =
+                new ArrayList<>();
 
-        Map<String, Long> conteo = new LinkedHashMap<>();
-        for (Reserva reserva : reservas) {
-            Ruta ruta = reserva.getViaje().getRuta();
-            String etiqueta = ruta.getTerminalOrigen().getCiudad() + " → " + ruta.getTerminalDestino().getCiudad();
-            conteo.merge(etiqueta, 1L, Long::sum);
+        for (Object fila : filas) {
+            Object[] f = (Object[]) fila;
+
+            Map<String, Object> dato =
+                    new LinkedHashMap<>();
+
+            dato.put("fecha", f[0].toString());
+            dato.put("ingresos",
+                    ((Number) f[1]).doubleValue());
+
+            resultado.add(dato);
         }
 
-        return conteo.entrySet().stream()
-                .map(e -> Map.<String, Object>of("ruta", e.getKey(), "reservas", e.getValue()))
-                .sorted((a, b) -> Long.compare((long) b.get("reservas"), (long) a.get("reservas")))
-                .collect(Collectors.toList());
+        return resultado;
+    }
+
+    // ==========================================
+    // CONSULTA OPTIMIZADA DE OCUPACION
+    // ==========================================
+
+    private String sqlOcupacion() {
+
+        return """
+            WITH capacidad_bus AS (
+                SELECT
+                    id_vehiculo,
+                    COUNT(*) AS capacidad
+                FROM asiento
+                GROUP BY id_vehiculo
+            ),
+            asientos_ocupados AS (
+                SELECT
+                    r.id_viaje,
+                    COUNT(DISTINCT d.id_asiento)
+                        AS ocupados
+                FROM detalle_reserva d
+                JOIN reserva r
+                    ON d.id_reserva = r.id_reserva
+                WHERE COALESCE(
+                    UPPER(r.estado), ''
+                ) <> 'CANCELADA'
+                GROUP BY r.id_viaje
+            )
+            SELECT
+                v.id_viaje,
+                origen.ciudad || ' → ' ||
+                    destino.ciudad AS ruta,
+                v.fecha_viaje,
+                v.hora_salida,
+                COALESCE(
+                    cb.capacidad, ve.capacidad, 0
+                ) AS capacidad,
+                COALESCE(ao.ocupados, 0)
+                    AS ocupados,
+                GREATEST(
+                    COALESCE(
+                        cb.capacidad, ve.capacidad, 0
+                    ) - COALESCE(ao.ocupados, 0),
+                    0
+                ) AS disponibles
+            FROM viaje v
+            JOIN vehiculo ve
+                ON v.id_vehiculo = ve.id_vehiculo
+            JOIN ruta ru
+                ON v.id_ruta = ru.id_ruta
+            JOIN terminal origen
+                ON ru.id_terminal_origen =
+                    origen.id_terminal
+            JOIN terminal destino
+                ON ru.id_terminal_destino =
+                    destino.id_terminal
+            LEFT JOIN capacidad_bus cb
+                ON v.id_vehiculo = cb.id_vehiculo
+            LEFT JOIN asientos_ocupados ao
+                ON v.id_viaje = ao.id_viaje
+            """;
+    }
+
+    private Map<String, Object> convertirOcupacion(
+            Object[] f) {
+
+        int capacidad =
+                ((Number) f[4]).intValue();
+
+        long ocupados =
+                ((Number) f[5]).longValue();
+
+        long disponibles =
+                ((Number) f[6]).longValue();
+
+        Map<String, Object> dato =
+                new LinkedHashMap<>();
+
+        dato.put("idViaje",
+                ((Number) f[0]).intValue());
+
+        dato.put("ruta", f[1]);
+
+        dato.put("fechaViaje",
+                f[2] != null ? f[2].toString() : "");
+
+        dato.put("horaSalida",
+                f[3] != null ? f[3].toString() : "");
+
+        dato.put("capacidad", capacidad);
+        dato.put("ocupados", ocupados);
+        dato.put("disponibles", disponibles);
+
+        dato.put("agotado",
+                capacidad > 0 && disponibles == 0);
+
+        return dato;
+    }
+
+    // ==========================================
+    // 3. OCUPACION DE VIAJES
+    // ==========================================
+
+    @GetMapping("/ocupacion-viajes")
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> ocupacionViajes() {
+
+        String sql = sqlOcupacion()
+                + " ORDER BY v.fecha_viaje DESC, "
+                + "v.hora_salida DESC";
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        List<Map<String, Object>> resultado =
+                new ArrayList<>();
+
+        for (Object fila : filas) {
+            resultado.add(
+                convertirOcupacion((Object[]) fila)
+            );
+        }
+
+        return resultado;
+    }
+
+    // ==========================================
+    // 3B. VIAJES AGOTADOS
+    // ==========================================
+
+    @GetMapping("/viajes-agotados")
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> viajesAgotados() {
+
+        String sql = sqlOcupacion()
+                + """
+                  WHERE v.estado_viaje <> 'CANCELADO'
+                  AND COALESCE(
+                      cb.capacidad, ve.capacidad, 0
+                  ) > 0
+                  AND COALESCE(ao.ocupados, 0) >=
+                      COALESCE(
+                          cb.capacidad, ve.capacidad, 0
+                      )
+                  ORDER BY v.fecha_viaje,
+                           v.hora_salida
+                  """;
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        List<Map<String, Object>> resultado =
+                new ArrayList<>();
+
+        for (Object fila : filas) {
+            resultado.add(
+                convertirOcupacion((Object[]) fila)
+            );
+        }
+
+        return resultado;
+    }
+
+    // ==========================================
+    // 4. VIAJES POR ESTADO
+    // ==========================================
+
+    @GetMapping("/viajes-por-estado")
+    @Transactional(readOnly = true)
+    public Map<String, Long> viajesPorEstado() {
+
+        String sql = """
+            SELECT
+                COALESCE(estado_viaje, 'SIN_ESTADO'),
+                COUNT(*)
+            FROM viaje
+            GROUP BY estado_viaje
+            ORDER BY COUNT(*) DESC
+            """;
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        Map<String, Long> resultado =
+                new LinkedHashMap<>();
+
+        for (Object fila : filas) {
+            Object[] f = (Object[]) fila;
+
+            resultado.put(
+                f[0].toString(),
+                ((Number) f[1]).longValue()
+            );
+        }
+
+        return resultado;
+    }
+
+    // ==========================================
+    // 5. RESERVAS POR ESTADO
+    // ==========================================
+
+    @GetMapping("/reservas-por-estado")
+    @Transactional(readOnly = true)
+    public Map<String, Long> reservasPorEstado() {
+
+        String sql = """
+            SELECT
+                COALESCE(estado, 'SIN_ESTADO'),
+                COUNT(*)
+            FROM reserva
+            GROUP BY estado
+            ORDER BY COUNT(*) DESC
+            """;
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        Map<String, Long> resultado =
+                new LinkedHashMap<>();
+
+        for (Object fila : filas) {
+            Object[] f = (Object[]) fila;
+
+            resultado.put(
+                f[0].toString(),
+                ((Number) f[1]).longValue()
+            );
+        }
+
+        return resultado;
+    }
+
+    // ==========================================
+    // 6. USUARIOS POR ROL
+    // ==========================================
+
+    @GetMapping("/usuarios-por-rol")
+    @Transactional(readOnly = true)
+    public Map<String, Long> usuariosPorRol() {
+
+        return usuarioRepository.findAll()
+                .stream()
+                .filter(u -> u.getRol() != null)
+                .collect(Collectors.groupingBy(
+                    u -> u.getRol().getNombreRol(),
+                    LinkedHashMap::new,
+                    Collectors.counting()
+                ));
+    }
+
+    // ==========================================
+    // 7. RUTAS MAS VENDIDAS
+    // ==========================================
+
+    @GetMapping("/rutas-mas-vendidas")
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> rutasMasVendidas() {
+
+        String sql = """
+            SELECT
+                origen.ciudad || ' → ' ||
+                    destino.ciudad AS ruta,
+                COUNT(*) AS reservas
+            FROM reserva r
+            JOIN viaje v
+                ON r.id_viaje = v.id_viaje
+            JOIN ruta ru
+                ON v.id_ruta = ru.id_ruta
+            JOIN terminal origen
+                ON ru.id_terminal_origen =
+                    origen.id_terminal
+            JOIN terminal destino
+                ON ru.id_terminal_destino =
+                    destino.id_terminal
+            WHERE COALESCE(
+                UPPER(r.estado), ''
+            ) <> 'CANCELADA'
+            GROUP BY origen.ciudad, destino.ciudad
+            ORDER BY reservas DESC
+            """;
+
+        List<?> filas = entityManager
+                .createNativeQuery(sql)
+                .getResultList();
+
+        List<Map<String, Object>> resultado =
+                new ArrayList<>();
+
+        for (Object fila : filas) {
+            Object[] f = (Object[]) fila;
+
+            Map<String, Object> dato =
+                    new LinkedHashMap<>();
+
+            dato.put("ruta", f[0]);
+            dato.put("reservas",
+                    ((Number) f[1]).longValue());
+
+            resultado.add(dato);
+        }
+
+        return resultado;
     }
 }

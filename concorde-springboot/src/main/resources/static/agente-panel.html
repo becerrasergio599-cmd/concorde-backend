@@ -721,6 +721,19 @@
     } catch (e) { rolClienteId = null; }
   }
 
+  // Texto de la reserva: "Juan Pérez · Tunja → Bogotá"
+  function textoReserva(r) {
+    if (!r) return '—';
+    const nombre = r.usuario && r.usuario.nombreCompleto;
+    const ruta = r.viaje && r.viaje.ruta;
+    const origen = ruta && ruta.terminalOrigen && ruta.terminalOrigen.ciudad;
+    const destino = ruta && ruta.terminalDestino && ruta.terminalDestino.ciudad;
+    const partes = [];
+    if (nombre) partes.push(nombre);
+    if (origen && destino) partes.push(`${origen} → ${destino}`);
+    return partes.length ? partes.join(' · ') : `Reserva #${r.idReserva}`;
+  }
+
   const entities = {
     usuarios: {
       idField:'idUsuario',
@@ -741,7 +754,7 @@
       {name:'estado', label:'Estado', type:'select', options:['PENDIENTE','CONFIRMADA','CANCELADA'], default:'PENDIENTE'}
     ], columns:['idReserva','usuario','viaje','estado']},
     pagos: { idField:'idPago', fields:[
-      {name:'reserva', label:'Reserva', type:'fk', fk:'reservas', fkIdField:'idReserva', fkLabelFn:r=>`Reserva #${r.idReserva}`},
+      {name:'reserva', label:'Reserva', type:'fk', fk:'reservas', fkIdField:'idReserva', fkLabelFn:textoReserva},
       {name:'metodoPago', label:'Método de pago', type:'text', required:true},
       {name:'valorPagado', label:'Valor pagado', type:'number', required:true},
       {name:'estado', label:'Estado', type:'select', options:['PROCESADO','REEMBOLSADO','FALLIDO'], default:'PROCESADO'}
@@ -807,6 +820,16 @@
     }
     if (field.type === 'select') {
       return `<span class="estado-badge ${badgeMap[raw] || ''}">${raw ?? '—'}</span>`;
+    }
+    if (field.name === 'valorPagado') {
+      // Si el pago no trae valor, se toma el total de la reserva o el precio del viaje
+      const idRes = row.reserva ? row.reserva.idReserva : null;
+      const res = (fkCache.reservas || []).find(x => x.idReserva === idRes) || row.reserva || {};
+      const valor = (raw !== null && raw !== undefined && raw !== '')
+        ? raw
+        : (res.total ?? (res.viaje && res.viaje.precio));
+      if (valor === null || valor === undefined) return '<span class="text-muted">—</span>';
+      return '$' + Number(valor).toLocaleString('es-CO');
     }
     if (raw === null || raw === undefined || raw === '') return '<span class="text-muted">—</span>';
     return raw;

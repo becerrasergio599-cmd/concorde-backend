@@ -961,10 +961,18 @@
       <section id="sec-asientos" class="d-none" aria-label="Gestión de asientos">
         <h2 class="admin-section-titulo"><i class="bi bi-grid-3x3-gap-fill"></i>Gestión de Asientos</h2>
         <div class="config-card">
-          <div class="row g-2 mb-3 align-items-end">
-            <div class="col-lg-6"><label class="form-label fw-semibold" for="asientos-viaje-select">Viaje</label><select class="form-select" id="asientos-viaje-select" onchange="cambiarViajeAsientos(this.value)"><option value="">Cargando viajes…</option></select></div>
-            <div class="col-lg-3"><label class="form-label fw-semibold" for="asientos-busqueda">Buscar asiento o vehículo</label><input class="form-control" id="asientos-busqueda" placeholder="Ej. 2B o CON028" oninput="renderTabla('asientos')"></div>
-            <div class="col-lg-3"><label class="form-label fw-semibold" for="asientos-filtro">Estado o categoría</label><select class="form-select" id="asientos-filtro" onchange="renderTabla('asientos')"><option value="todos">Todos</option><option value="libres">Disponibles</option><option value="ocupados">Ocupados</option><option value="premium">Premium</option><option value="economico">Económicos</option><option value="inhabilitados">Inhabilitados</option></select></div>
+          <div class="d-flex align-items-end gap-3 flex-wrap mb-3">
+            <div style="width:min(100%,340px)">
+              <label class="form-label fw-semibold" for="asientos-filtro">Buscar asientos por estado o categoría</label>
+              <select class="form-select" id="asientos-filtro" onchange="renderTabla('asientos')">
+                <option value="todos">Todos los asientos</option>
+                <option value="libres">🟢 Disponibles</option>
+                <option value="ocupados">🔴 Ocupados</option>
+                <option value="premium">⭐ Premium</option>
+                <option value="economico">Económicos</option>
+              </select>
+            </div>
+            <select id="asientos-viaje-select" style="display:none" aria-hidden="true" tabindex="-1"><option value="">Cargando viajes…</option></select>
           </div>
           <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
             <div id="asientos-viaje-resumen" class="small text-muted">Consultando ocupación…</div>
@@ -973,7 +981,7 @@
           <div id="form-asientos" class="mb-3" style="display:none"></div>
           <div id="asientos-mapa-admin" style="display:none"></div>
           <div class="admin-tabla"><div id="tabla-asientos">Cargando…</div></div>
-          <p class="small text-muted mt-3 mb-0">El estado Ocupado corresponde al viaje elegido, no a todos los viajes del vehículo. Las reservas sin detalle de asiento no permiten identificar una silla ocupada.</p>
+          <p class="small text-muted mt-3 mb-0">La ocupación corresponde al primer viaje cargado. Las reservas sin detalle de asiento no permiten identificar una silla ocupada. Para consultar otra salida se necesitaría volver a mostrar el selector de viaje.</p>
         </div>
       </section>
 
@@ -1467,14 +1475,14 @@
     const vendidos=todos.filter(a=>estado(a)==='ocupado').length;
     resumen.innerHTML=`<strong>${escaparAsientoAdmin(rutaAsientosAdmin(viaje))}</strong> · ${escaparAsientoAdmin(viaje.fechaViaje)} ${escaparAsientoAdmin(viaje.horaSalida)} · Bus ${escaparAsientoAdmin(viaje.vehiculo?.placa)} · <strong class="text-success">${disponibles} disponibles</strong> · <strong class="text-danger">${vendidos} ocupados</strong> · ${todos.length} en total`;
     const filtro=document.getElementById('asientos-filtro')?.value||'todos';
-    const busqueda=(document.getElementById('asientos-busqueda')?.value||'').trim().toLowerCase();
+    const busqueda='';
     const visibles=todos.filter(a=>{
       const e=estado(a),tipo=categoriaAsientoAdmin(a);
       const coincide=filtro==='todos'||(filtro==='libres'&&e==='libre')||(filtro==='ocupados'&&e==='ocupado')||(filtro==='inhabilitados'&&e==='inhabilitado')||(filtro==='premium'&&tipo==='PREMIUM')||(filtro==='economico'&&tipo==='ECONOMICO');
       const texto=`${a.idAsiento} ${a.numeroAsiento||''} ${a.vehiculo?.placa||''} ${tipo}`.toLowerCase();
       return coincide && texto.includes(busqueda);
     }).sort((a,b)=>String(a.numeroAsiento||'').localeCompare(String(b.numeroAsiento||''),'es',{numeric:true}));
-    if(!visibles.length){wrap.innerHTML='<div class="p-4 text-center text-muted">No hay asientos que coincidan con la búsqueda o el filtro.</div>';return;}
+    if(!visibles.length){wrap.innerHTML='<div class="p-4 text-center text-muted">No hay asientos en esta categoría para el viaje mostrado.</div>';return;}
     let html='<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>ID</th><th>Vehículo</th><th>N.º asiento</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
     for(const a of visibles){
       const id=Number(a.idAsiento),e=estado(a),tipo=categoriaAsientoAdmin(a);

@@ -1537,61 +1537,87 @@
   }
 
   async function cargarReportes() {
-    cargarAvisoAgotados('aviso-reportes-agotados');
+    // Cada consulta es independiente: una lenta no bloquea las demás.
+    async function consultarReporte(ruta, timeoutMs = 12000) {
+      const controlador = new AbortController();
+      const temporizador = setTimeout(() => controlador.abort(), timeoutMs);
+      try {
+        const respuesta = await fetch(`${API}/reportes/${ruta}`, { signal: controlador.signal });
+        if (!respuesta.ok) throw new Error(`HTTP ${respuesta.status}`);
+        return await respuesta.json();
+      } finally {
+        clearTimeout(temporizador);
+      }
+    }
 
-    try {
-      const [ingresosRuta, rutasVendidas, ocupacion, viajesEstado, reservasEstado, usuariosRol] = await Promise.all([
-        fetch(`${API}/reportes/ingresos-por-ruta`).then(r => r.json()),
-        fetch(`${API}/reportes/rutas-mas-vendidas`).then(r => r.json()),
-        fetch(`${API}/reportes/ocupacion-viajes`).then(r => r.json()),
-        fetch(`${API}/reportes/viajes-por-estado`).then(r => r.json()),
-        fetch(`${API}/reportes/reservas-por-estado`).then(r => r.json()),
-        fetch(`${API}/reportes/usuarios-por-rol`).then(r => r.json())
-      ]);
+    function errorReporte(id, error) {
+      console.error(`Error cargando ${id}:`, error);
+      const elemento = document.getElementById(id);
+      if (elemento) elemento.textContent = 'No se pudo cargar este reporte.';
+    }
 
-      // Tarjetas resumen
-      const totalIngresos = ingresosRuta.reduce((s, r) => s + r.ingresos, 0);
-      document.getElementById('repIngresosTotales').textContent = formatoMoneda(totalIngresos);
-      document.getElementById('repViajesAgotados').textContent = ocupacion.filter(v => v.agotado).length;
-      document.getElementById('repReservasConfirmadas').textContent = reservasEstado['CONFIRMADA'] || 0;
+    // El aviso de agotados usa la consulta pesada; no debe bloquear el panel.
+    // Se evita invocarlo aquí hasta optimizar /ocupacion-viajes en el backend.
+    const aviso = document.getElementById('aviso-reportes-agotados');
+    if (aviso) aviso.innerHTML = '';
 
-      // Ingresos por ruta
-      document.getElementById('rep-ingresos-ruta').innerHTML = tablaSimple(ingresosRuta, [
+    consultarReporte('ingresos-por-ruta').then(datos => {
+      const total = datos.reduce((suma, fila) => suma + Number(fila.ingresos || 0), 0);
+      document.getElementById('repIngresosTotales').textContent = formatoMoneda(total);
+      document.getElementById('rep-ingresos-ruta').innerHTML = tablaSimple(datos, [
         { label: 'Ruta', key: 'ruta' },
-        { label: 'Ingresos', render: f => formatoMoneda(f.ingresos) }
+        { label: 'Ingresos', render: fila => formatoMoneda(fila.ingresos) }
       ]);
+    }).catch(error => {
+      errorReporte('rep-ingresos-ruta', error);
+      document.getElementById('repIngresosTotales').textContent = 'No disponible';
+    });
 
-      // Rutas más vendidas
-      document.getElementById('rep-rutas-vendidas').innerHTML = tablaSimple(rutasVendidas, [
+    consultarReporte('rutas-mas-vendidas').then(datos => {
+      document.getElementById('rep-rutas-vendidas').innerHTML = tablaSimple(datos, [
         { label: 'Ruta', key: 'ruta' },
         { label: 'Reservas', key: 'reservas' }
       ]);
+    }).catch(error => errorReporte('rep-rutas-vendidas', error));
 
-      // Ocupación de viajes
-      document.getElementById('rep-ocupacion').innerHTML = tablaSimple(ocupacion, [
-        { label: 'Viaje', render: f => `#${f.idViaje}` },
+    consultarReporte('ocupacion-viajes', 15000).then(datos => {
+      document.getElementById('repViajesAgotados').textContent = datos.filter(fila => fila.agotado).length;
+      document.getElementById('rep-ocupacion').innerHTML = tablaSimple(datos, [
+        { label: 'Viaje', render: fila => `#${fila.idViaje}` },
         { label: 'Ruta', key: 'ruta' },
-        { label: 'Fecha', render: f => `${f.fechaViaje} ${f.horaSalida}` },
-        { label: 'Ocupados / Capacidad', render: f => `${f.ocupados} / ${f.capacidad}` },
-        { label: 'Estado', render: f => f.agotado
-            ? '<span class="estado-badge eb-cancelada">Agotado</span>'
-            : `<span class="estado-badge eb-exitoso">${f.disponibles} disponibles</span>` }
+        { label: 'Fecha', render: fila => `${fila.fechaViaje} ${fila.horaSalida}` },
+        { label: 'Ocupados / Capacidad', render: fila => `${fila.ocupados} / ${fila.capacidad}` },
+        { label: 'Estado', render: fila => fila.agotado
+          ? '<span class="estado-badge eb-cancelada">Agotado</span>'
+          : `<span class="estado-badge eb-exitoso">${fila.disponibles} disponibles</span>` }
       ]);
+    }).catch(error => {
+      errorReporte('rep-ocupacion', error);
+      document.getElementById('repViajesAgotados').textContent = 'No disponible';
+    });
 
-      // Distribuciones
-      document.getElementById('rep-viajes-estado').innerHTML = listaBadges(viajesEstado, {
-        PROGRAMADO: 'eb-registrado', EN_CURSO: 'eb-pendiente', FINALIZADO: 'eb-completada', CANCELADO: 'eb-cancelada'
+    consultarReporte('viajes-por-estado').then(datos => {
+      document.getElementById('rep-viajes-estado').innerHTML = listaBadges(datos, {
+        PROGRAMADO: 'eb-registrado', EN_CURSO: 'eb-pendiente',
+        FINALIZADO: 'eb-completada', CANCELADO: 'eb-cancelada'
       });
-      document.getElementById('rep-reservas-estado').innerHTML = listaBadges(reservasEstado, {
+    }).catch(error => errorReporte('rep-viajes-estado', error));
+
+    consultarReporte('reservas-por-estado').then(datos => {
+      document.getElementById('repReservasConfirmadas').textContent = datos.CONFIRMADA || 0;
+      document.getElementById('rep-reservas-estado').innerHTML = listaBadges(datos, {
         PENDIENTE: 'eb-pendiente', CONFIRMADA: 'eb-completada', CANCELADA: 'eb-cancelada'
       });
-      document.getElementById('rep-usuarios-rol').innerHTML = listaBadges(usuariosRol, {
+    }).catch(error => {
+      errorReporte('rep-reservas-estado', error);
+      document.getElementById('repReservasConfirmadas').textContent = 'No disponible';
+    });
+
+    consultarReporte('usuarios-por-rol').then(datos => {
+      document.getElementById('rep-usuarios-rol').innerHTML = listaBadges(datos, {
         CLIENTE: 'eb-registrado', AGENTE: 'eb-actualizado', ADMIN: 'eb-pendiente'
       });
-
-    } catch (err) {
-      mostrarToastAdmin('No se pudieron cargar los reportes: ' + err.message, 'danger');
-    }
+    }).catch(error => errorReporte('rep-usuarios-rol', error));
   }
 
   function exportarReportesPDF() {

@@ -689,29 +689,22 @@ const UI = {
                 Z"
               fill="#ffffff"/>
 
-            <!--
-              ESPEJO RETROVISOR DELANTERO
-              Colocado junto al parabrisas,
-              en el extremo derecho del bus.
-            -->
+            <!-- ESPEJO RETROVISOR DELANTERO UNIDO AL BUS -->
             <path
-              d="
-                M526 111
-                Q543 109 550 119
-                Q556 128 555 145
-              "
+              d="M523 135 L536 135 Q545 135 548 145"
               fill="none"
               stroke="#ffffff"
-              stroke-width="6"
-              stroke-linecap="round"/>
+              stroke-width="5"
+              stroke-linecap="round"
+              stroke-linejoin="round"/>
 
-            <!-- Soporte del espejo -->
+            <!-- Carcasa del espejo, conectada al soporte -->
             <path
-              d="M527 117 L543 117"
-              fill="none"
+              d="M545 140 Q551 138 554 144 L558 155 Q559 160 553 160 L550 160 Q547 158 547 153 Z"
+              fill="#050505"
               stroke="#ffffff"
-              stroke-width="4"
-              stroke-linecap="round"/>
+              stroke-width="3"
+              stroke-linejoin="round"/>
 
             <!--
               TRES RUEDAS:

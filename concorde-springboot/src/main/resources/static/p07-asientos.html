@@ -161,6 +161,37 @@
       color: white;
     }
 
+    /* Leyenda alineada en dos columnas, también en Android WebView */
+    .leyenda-concorde {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 12px;
+      row-gap: 12px;
+      max-width: 330px;
+      margin-left: auto;
+      margin-right: auto;
+      align-items: center;
+    }
+
+    .leyenda-concorde .leyenda-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    .leyenda-concorde .leyenda-asiento {
+      flex: 0 0 22px;
+      box-sizing: border-box;
+    }
+
+    .leyenda-concorde .leyenda-item small {
+      font-size: clamp(11px, 3vw, 14px);
+      line-height: 1.2;
+    }
+
     .leyenda-asiento {
       width: 22px;
       height: 22px;
@@ -259,24 +290,24 @@
             </div>
 
             <!-- LEYENDA -->
-            <div class="d-flex flex-wrap gap-3 mb-4 justify-content-center">
+            <div class="leyenda-concorde mb-4">
 
-              <span class="d-flex align-items-center gap-1">
+              <span class="leyenda-item">
                 <span class="leyenda-asiento leyenda-libre"></span>
                 <small>Disponible</small>
               </span>
 
-              <span class="d-flex align-items-center gap-1">
+              <span class="leyenda-item">
                 <span class="leyenda-asiento leyenda-ocupado"></span>
                 <small>Ocupado</small>
               </span>
 
-              <span class="d-flex align-items-center gap-1">
+              <span class="leyenda-item">
                 <span class="leyenda-asiento leyenda-seleccionado"></span>
                 <small>Seleccionado</small>
               </span>
 
-              <span class="d-flex align-items-center gap-1">
+              <span class="leyenda-item">
                 <span class="leyenda-asiento leyenda-premium"></span>
                 <small>Premium ⭐</small>
               </span>

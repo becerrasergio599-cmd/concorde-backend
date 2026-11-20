@@ -1700,8 +1700,18 @@
       ]);
     }).catch(error => errorReporte('rep-rutas-vendidas', error));
 
+    // Contador independiente: no depende del reporte completo de ocupación.
+    const contadorAgotados = document.getElementById('repViajesAgotados');
+    contadorAgotados.textContent = 'Consultando…';
+    consultarReporte('viajes-agotados', 12000).then(datos => {
+      if (!Array.isArray(datos)) throw new Error('Respuesta de viajes agotados no válida');
+      contadorAgotados.textContent = datos.length.toLocaleString('es-CO');
+    }).catch(error => {
+      console.warn('No se pudo obtener el número de viajes agotados:', error);
+      contadorAgotados.textContent = 'No disponible';
+    });
+
     consultarReporte('ocupacion-viajes', 15000).then(datos => {
-      document.getElementById('repViajesAgotados').textContent = datos.filter(fila => fila.agotado).length;
       document.getElementById('rep-ocupacion').innerHTML = tablaSimple(datos, [
         { label: 'Viaje', render: fila => `#${fila.idViaje}` },
         { label: 'Ruta', key: 'ruta' },
@@ -1713,7 +1723,6 @@
       ]);
     }).catch(error => {
       errorReporte('rep-ocupacion', error);
-      document.getElementById('repViajesAgotados').textContent = 'No disponible';
     });
 
     consultarReporte('viajes-por-estado').then(datos => {

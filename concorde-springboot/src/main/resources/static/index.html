@@ -905,9 +905,15 @@
             parametros.toString()
           );
 
-          window.location.assign(
-            "p02-resultados.html?" + parametros.toString()
-          );
+          // Mostrar el bus original antes de navegar a resultados.
+          if (typeof UI !== "undefined" && typeof UI.mostrarLoader === "function") {
+            UI.mostrarLoader("Buscando trayectos disponibles...");
+          }
+          setTimeout(function () {
+            window.location.assign(
+              "p02-resultados.html?" + parametros.toString()
+            );
+          }, 1500);
 
         }, true);
 

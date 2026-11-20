@@ -197,7 +197,7 @@
       overflow: hidden;
     }
     .admin-hero::after {
-      content: '✈';
+      content: '🚌';
       position: absolute;
       right: 2rem; top: 50%;
       transform: translateY(-50%);
@@ -596,40 +596,12 @@
           <div class="col-lg-6">
             <div class="chart-container">
               <h3 class="h6 fw-bold texto-azul mb-3">
-                <i class="bi bi-graph-up me-2" aria-hidden="true"></i>Reservas por mes (2025)
+                <i class="bi bi-graph-up me-2" aria-hidden="true"></i>Reservas por mes (<span id="anioReservasGrafica"></span>)
               </h3>
-              <div class="d-flex align-items-end gap-2 justify-content-between" style="height:160px" role="img" aria-label="Gráfica de reservas por mes 2025">
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">240</span>
-                  <div class="chart-bar w-100" style="height:55%" data-bs-toggle="tooltip" title="Enero: 240 reservas"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">Ene</span>
-                </div>
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">310</span>
-                  <div class="chart-bar w-100" style="height:70%;background:linear-gradient(180deg,#27ae60,#2ecc71)" data-bs-toggle="tooltip" title="Febrero: 310 reservas"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">Feb</span>
-                </div>
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">285</span>
-                  <div class="chart-bar w-100" style="height:65%" data-bs-toggle="tooltip" title="Marzo: 285 reservas"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">Mar</span>
-                </div>
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">420</span>
-                  <div class="chart-bar w-100" style="height:95%;background:linear-gradient(180deg,var(--admin-accent),#f39c12)" data-bs-toggle="tooltip" title="Abril: 420 reservas"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">Abr</span>
-                </div>
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">390</span>
-                  <div class="chart-bar w-100" style="height:88%" data-bs-toggle="tooltip" title="Mayo: 390 reservas"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">May</span>
-                </div>
-                <div class="d-flex flex-column align-items-center gap-1" style="flex:1">
-                  <span style="font-size:.65rem;color:var(--gris-texto)">-- </span>
-                  <div class="chart-bar w-100" style="height:20%;background:rgba(0,87,183,.2)" data-bs-toggle="tooltip" title="Junio: en curso"></div>
-                  <span style="font-size:.62rem;color:var(--gris-texto)">Jun</span>
-                </div>
+              <div id="graficaReservasMes" class="d-flex align-items-end gap-2 justify-content-between" style="height:175px" role="img" aria-label="Reservas mensuales reales">
+                <span class="small text-muted">Cargando reservas…</span>
               </div>
+              <div id="avisoGraficaReservas" class="small text-muted mt-2"></div>
             </div>
           </div>
           <div class="col-lg-6">
@@ -1147,6 +1119,49 @@
     }, dur / pasos);
   }
 
+  // Gráfica de reservas reales, agrupadas por fecha de creación (fechaInicial).
+  function dibujarReservasPorMes(reservas) {
+    const contenedor = document.getElementById('graficaReservasMes');
+    if (!contenedor) return;
+    const anio = new Date().getFullYear();
+    document.getElementById('anioReservasGrafica').textContent = anio;
+    const cantidades = Array(12).fill(0);
+    let sinFecha = 0;
+    reservas.forEach(r => {
+      const raw = r.fechaInicial;
+      if (!raw) { sinFecha++; return; }
+      // Spring Boot LocalDate: YYYY-MM-DD; admitir también ISO datetime.
+      const fecha = String(raw).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!fecha) { sinFecha++; return; }
+      const anioReserva = Number(fecha[1]);
+      const mes = Number(fecha[2]);
+      if (anioReserva === anio && mes >= 1 && mes <= 12) cantidades[mes - 1]++;
+    });
+    const max = Math.max(1, ...cantidades);
+    const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    contenedor.replaceChildren();
+    meses.forEach((mes, i) => {
+      const columna = document.createElement('div');
+      columna.className = 'd-flex flex-column align-items-center justify-content-end gap-1';
+      columna.style.cssText = 'flex:1;min-width:0;height:100%';
+      const cantidad = document.createElement('span');
+      cantidad.style.cssText = 'font-size:.7rem;color:#334155;font-weight:600';
+      cantidad.textContent = cantidades[i];
+      const barra = document.createElement('div');
+      barra.className = 'chart-bar w-100';
+      barra.style.height = cantidades[i] ? Math.max(5, cantidades[i] / max * 110) + 'px' : '3px';
+      barra.style.opacity = cantidades[i] ? '1' : '.25';
+      barra.title = `${mes}: ${cantidades[i]} reservas`;
+      const etiqueta = document.createElement('span');
+      etiqueta.style.cssText = 'font-size:.65rem;color:#64748b';
+      etiqueta.textContent = mes;
+      columna.append(cantidad, barra, etiqueta);
+      contenedor.append(columna);
+    });
+    const aviso = document.getElementById('avisoGraficaReservas');
+    if (aviso) aviso.textContent = sinFecha ? `${sinFecha} reserva(s) sin fecha válida no se incluyeron.` : '';
+  }
+
   // ── Estadísticas reales del Dashboard (API Spring Boot) ──
   async function cargarStatsDashboard() {
     try {
@@ -1158,6 +1173,7 @@
       ]);
       animarContador('statUsuarios', usuarios.length);
       animarContador('statReservas', reservas.length);
+      dibujarReservasPorMes(reservas);
       const totalIngresos = pagos
         .filter(p => p.estado === 'PROCESADO')
         .reduce((sum, p) => sum + (p.valorPagado || 0), 0);
@@ -1171,6 +1187,8 @@
       document.getElementById('badge-usuarios').textContent = usuarios.length;
       document.getElementById('badge-reservas').textContent = reservas.length;
     } catch (e) {
+      const grafica = document.getElementById('graficaReservasMes');
+      if (grafica) grafica.textContent = 'No se pudieron cargar las reservas.';
       mostrarToastAdmin('No se pudo conectar a la API (puerto 8082). Verifica que el backend esté corriendo.', 'danger');
     }
   }

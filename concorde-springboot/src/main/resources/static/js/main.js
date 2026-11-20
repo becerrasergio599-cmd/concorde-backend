@@ -604,8 +604,8 @@ const UI = {
 
           <!-- ===================================
                BUS CONCORDE NEGRO
-               DISEÑO SIMILAR A LA REFERENCIA
-               FRENTE Y ESPEJO A LA DERECHA
+               DISEÑO DE DOS RUEDAS
+               FRENTE HACIA LA DERECHA
                =================================== -->
 
           <svg
@@ -614,179 +614,215 @@ const UI = {
             xmlns="http://www.w3.org/2000/svg"
             aria-hidden="true">
 
-            <!-- Carrocería negra -->
-            <path
-              d="
-                M45 85
-                Q45 67 64 67
-                H405
-                Q445 67 474 83
-                Q509 102 528 140
-                Q538 159 538 180
-                Q538 190 527 190
-                H53
-                Q40 190 40 177
-                V100
-                Q40 85 45 85
-                Z"
-              fill="#050505"
-              stroke="#ffffff"
-              stroke-width="2"/>
+            <!-- Bus invertido horizontalmente -->
+            <g transform="translate(600 0) scale(-1 1)">
 
-            <!-- Ventana trasera -->
-            <path
-              d="
-                M66 82
-                H129
-                L146 127
-                H67
-                Q56 127 56 115
-                V94
-                Q56 82 66 82
-                Z"
-              fill="#ffffff"/>
-
-            <!-- Ventana 2 -->
-            <path
-              d="
-                M144 82
-                H215
-                L232 127
-                H161
-                Z"
-              fill="#ffffff"/>
-
-            <!-- Ventana 3 -->
-            <path
-              d="
-                M230 82
-                H300
-                L317 127
-                H247
-                Z"
-              fill="#ffffff"/>
-
-            <!-- Ventana 4 -->
-            <path
-              d="
-                M316 82
-                H386
-                L403 127
-                H333
-                Z"
-              fill="#ffffff"/>
-
-            <!-- Parabrisas delantero -->
-            <path
-              d="
-                M401 82
-                H417
-                Q454 82 480 106
-                Q495 120 502 141
-                Q507 156 492 156
-                H427
-                Q414 156 409 143
-                Z"
-              fill="#ffffff"/>
-
-            <!-- ESPEJO RETROVISOR DELANTERO UNIDO AL BUS -->
-            <path
-              d="M523 135 L536 135 Q545 135 548 145"
-              fill="none"
-              stroke="#ffffff"
-              stroke-width="5"
-              stroke-linecap="round"
-              stroke-linejoin="round"/>
-
-            <!-- Carcasa del espejo, conectada al soporte -->
-            <path
-              d="M545 140 Q551 138 554 144 L558 155 Q559 160 553 160 L550 160 Q547 158 547 153 Z"
-              fill="#050505"
-              stroke="#ffffff"
-              stroke-width="3"
-              stroke-linejoin="round"/>
-
-            <!--
-              TRES RUEDAS:
-              DOS TRASERAS A LA IZQUIERDA
-              UNA DELANTERA A LA DERECHA
-            -->
-
-            <!-- Rueda trasera 1 -->
-            <g class="lb__rueda">
-              <circle
-                cx="126"
-                cy="190"
-                r="27"
-                fill="#050505"
-                stroke="#ffffff"
-                stroke-width="5"/>
-
-              <circle
-                cx="126"
-                cy="190"
-                r="16"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="4"/>
-
+              <!-- Saliente delantero del techo -->
               <path
-                d="M126 179 V201"
-                stroke="#ffffff"
-                stroke-width="3"
-                stroke-linecap="round"/>
-            </g>
+                d="M155 67
+                   Q155 57 165 57
+                   H193
+                   Q203 57 203 67
+                   Z"
+                fill="#000000"/>
 
-            <!-- Rueda trasera 2 -->
-            <g class="lb__rueda">
-              <circle
-                cx="182"
-                cy="190"
-                r="27"
-                fill="#050505"
-                stroke="#ffffff"
-                stroke-width="5"/>
-
-              <circle
-                cx="182"
-                cy="190"
-                r="16"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="4"/>
-
+              <!-- Saliente central del techo -->
               <path
-                d="M182 179 V201"
-                stroke="#ffffff"
-                stroke-width="3"
-                stroke-linecap="round"/>
-            </g>
+                d="M224 67
+                   Q228 48 244 48
+                   H351
+                   Q367 48 372 67
+                   Z"
+                fill="#000000"/>
 
-            <!-- Rueda delantera -->
-            <g class="lb__rueda">
-              <circle
-                cx="453"
-                cy="190"
-                r="27"
-                fill="#050505"
-                stroke="#ffffff"
-                stroke-width="5"/>
-
-              <circle
-                cx="453"
-                cy="190"
-                r="16"
-                fill="none"
-                stroke="#ffffff"
-                stroke-width="4"/>
-
+              <!-- Saliente trasero del techo -->
               <path
-                d="M453 179 V201"
-                stroke="#ffffff"
-                stroke-width="3"
-                stroke-linecap="round"/>
-            </g>
+                d="M443 67
+                   Q443 57 453 57
+                   H481
+                   Q491 57 491 67
+                   Z"
+                fill="#000000"/>
 
+              <!-- Carrocería principal -->
+              <path
+                d="
+                  M55 110
+                  Q57 83 83 75
+                  Q101 67 139 67
+                  H543
+                  Q560 67 563 84
+                  L567 174
+                  Q568 191 550 191
+                  H68
+                  Q53 191 53 177
+                  Z"
+                fill="#000000"/>
+
+              <!-- Frente curvado -->
+              <path
+                d="
+                  M55 110
+                  Q65 79 98 73
+                  L139 67
+                  V191
+                  H68
+                  Q53 191 53 177
+                  Z"
+                fill="#000000"/>
+
+              <!-- Parabrisas delantero -->
+              <path
+                d="
+                  M68 129
+                  Q75 95 102 86
+                  Q112 82 125 82
+                  V139
+                  Q125 147 116 152
+                  L68 165
+                  Q61 165 63 155
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Primera ventana lateral -->
+              <path
+                d="
+                  M136 82
+                  H209
+                  V132
+                  H136
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Segunda ventana lateral -->
+              <path
+                d="
+                  M214 82
+                  H289
+                  V132
+                  H214
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Tercera ventana lateral -->
+              <path
+                d="
+                  M294 82
+                  H369
+                  V132
+                  H294
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Cuarta ventana lateral -->
+              <path
+                d="
+                  M374 82
+                  H449
+                  V132
+                  H374
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Quinta ventana lateral -->
+              <path
+                d="
+                  M454 82
+                  H524
+                  Q540 82 541 98
+                  V117
+                  Q541 132 524 132
+                  H454
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Espejo delantero unido al bus -->
+              <path
+                d="
+                  M85 97
+                  L65 97
+                  Q48 97 46 113
+                  L46 132
+                "
+                fill="none"
+                stroke="#000000"
+                stroke-width="7"
+                stroke-linecap="round"
+                stroke-linejoin="round"/>
+
+              <!-- Luz delantera -->
+              <path
+                d="
+                  M57 166
+                  H66
+                  L63 174
+                  H57
+                  Z"
+                fill="#ffffff"/>
+
+              <!-- Rueda delantera -->
+              <g class="lb__rueda">
+                <circle
+                  cx="155"
+                  cy="190"
+                  r="30"
+                  fill="#000000"
+                  stroke="#ffffff"
+                  stroke-width="5"/>
+
+                <circle
+                  cx="155"
+                  cy="190"
+                  r="19"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="4"/>
+
+                <circle
+                  cx="155"
+                  cy="190"
+                  r="10"
+                  fill="#000000"/>
+
+                <path
+                  d="M155 180 V200"
+                  stroke="#ffffff"
+                  stroke-width="3"
+                  stroke-linecap="round"/>
+              </g>
+
+              <!-- Rueda trasera -->
+              <g class="lb__rueda">
+                <circle
+                  cx="435"
+                  cy="190"
+                  r="30"
+                  fill="#000000"
+                  stroke="#ffffff"
+                  stroke-width="5"/>
+
+                <circle
+                  cx="435"
+                  cy="190"
+                  r="19"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="4"/>
+
+                <circle
+                  cx="435"
+                  cy="190"
+                  r="10"
+                  fill="#000000"/>
+
+                <path
+                  d="M435 180 V200"
+                  stroke="#ffffff"
+                  stroke-width="3"
+                  stroke-linecap="round"/>
+              </g>
+
+            </g>
           </svg>
 
           <div class="lb__carretera"></div>

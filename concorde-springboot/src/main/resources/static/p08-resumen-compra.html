@@ -78,24 +78,6 @@
             </div>
           </article>
 
-          <!-- Código de descuento -->
-          <article class="card-concorde">
-            <div class="card-header-concorde"><i class="bi bi-tag me-2" aria-hidden="true"></i>Código de descuento</div>
-            <div class="card-body">
-              <div class="row g-2 align-items-end">
-                <div class="col-8">
-                  <label class="form-label" for="codigoDesc">¿Tienes un código?</label>
-                  <input type="text" class="form-control" id="codigoDesc" placeholder="Ej: BIENVENIDO10" aria-label="Código de descuento">
-                </div>
-                <div class="col-4">
-                  <button type="button" id="btnAplicar" onclick="aplicarDescuento()" class="btn btn-concorde-primario w-100">
-                    Aplicar
-                  </button>
-                </div>
-              </div>
-              <div id="msgDescuento" class="mt-2 small d-none" role="status" aria-live="polite"></div>
-            </div>
-          </article>
         </div>
 
         <!-- Total -->
@@ -107,9 +89,6 @@
                 <tbody>
                   <tr><td id="lblTarifa">Tarifa por pasajero</td><td class="text-end" id="rsTarifa">$0</td></tr>
                   <tr><td>Pasajeros</td><td class="text-end" id="rsPasajeros">1</td></tr>
-                  <tr id="filaDescuento" class="text-success d-none">
-                    <td>Descuento 10%</td><td class="text-end" id="valorDescuento">-$0</td>
-                  </tr>
                   <tr class="table-light fw-bold">
                     <td>Total</td>
                     <td class="text-end texto-azul" id="totalFinal" aria-live="polite">$0</td>
@@ -249,38 +228,6 @@
       guardarTotal();
     }
 
-    function aplicarDescuento() {
-      const codigo = document.getElementById('codigoDesc').value.trim().toUpperCase();
-      const msg = document.getElementById('msgDescuento');
-      const fila = document.getElementById('filaDescuento');
-      const total = document.getElementById('totalFinal');
-      msg.classList.remove('d-none','text-success','text-danger');
-
-      if (codigo === 'BIENVENIDO10') {
-        const descuento = subtotal * 0.10;
-        totalActual = subtotal - descuento;
-        document.getElementById('valorDescuento').textContent = '-' + dinero(descuento);
-        fila.classList.remove('d-none');
-        total.textContent = dinero(totalActual);
-        guardarTotal();
-        msg.textContent = '✓ Descuento del 10% aplicado correctamente.';
-        msg.classList.add('text-success');
-        document.getElementById('btnAplicar').disabled = true;
-        UI.mostrarToast('¡Descuento aplicado! Ahorras ' + dinero(descuento), 'success');
-      } else if (codigo === '') {
-        msg.textContent = 'Ingresa un código de descuento.';
-        msg.classList.add('text-danger');
-      } else {
-        msg.textContent = `El código "${codigo}" no es válido o ya expiró.`;
-        msg.classList.add('text-danger');
-        UI.mostrarToast('Código no válido', 'danger');
-      }
-      msg.classList.remove('d-none');
-    }
-
-    document.getElementById('codigoDesc').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') aplicarDescuento();
-    });
   </script>
 </body>
 </html>

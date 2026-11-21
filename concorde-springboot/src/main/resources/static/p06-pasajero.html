@@ -9,6 +9,25 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Muestra el formato dentro del campo vacío sin modificar el calendario nativo. */
+    .fecha-formato-placeholder {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: #fff;
+      color: #6c757d;
+      padding: 0 5px 0 0;
+      pointer-events: none;
+      font: inherit;
+      line-height: 1.4;
+    }
+    [data-contenedor-fecha]:focus-within .fecha-formato-placeholder,
+    [data-contenedor-fecha].fecha-con-valor .fecha-formato-placeholder {
+      display: none;
+    }
+  </style>
 </head>
 <body>
   <div id="navbar-placeholder"></div>
@@ -199,7 +218,10 @@
         </div>
         <div class="col-md-4">
           <label class="form-label" for="fechaNac_${i}">Fecha de nacimiento ${star}</label>
-          <input type="date" class="form-control" id="fechaNac_${i}" data-campo="fechaNac" data-fecha ${req} autocomplete="${primero ? 'bday' : 'off'}">
+          <div class="position-relative" data-contenedor-fecha>
+            <input type="date" class="form-control" id="fechaNac_${i}" data-campo="fechaNac" data-fecha ${req} autocomplete="${primero ? 'bday' : 'off'}">
+            <span class="fecha-formato-placeholder" aria-hidden="true">DD/MM/AAAA</span>
+          </div>
           <div class="invalid-feedback">Campo requerido</div>
           <div id="edad_${i}" class="form-text" aria-live="polite"></div>
         </div>
@@ -268,6 +290,17 @@
     }
 
     contenedor.innerHTML = Array.from({ length: numPax }, (_, i) => plantilla(i)).join('');
+
+    // Mantener DD/MM/AAAA visible solo cuando la fecha está vacía.
+    function actualizarFormatoFecha() {
+      form.querySelectorAll('[data-contenedor-fecha]').forEach(contenedorFecha => {
+        const inputFecha = contenedorFecha.querySelector('[data-fecha]');
+        contenedorFecha.classList.toggle('fecha-con-valor', !!inputFecha.value);
+      });
+    }
+    form.addEventListener('input', actualizarFormatoFecha);
+    form.addEventListener('change', actualizarFormatoFecha);
+    form.addEventListener('focusout', actualizarFormatoFecha);
 
     // ===== Validación en vivo y progreso =====
     function campoValido(el) {
@@ -432,6 +465,7 @@
       } catch (e) { /* sin datos previos */ }
     })();
     actualizarProgreso();
+    actualizarFormatoFecha();
 
     // ===== Envío: valida al titular, guarda y avanza a p07 =====
     // Se escucha en "document" (fase de captura) para ejecutarse antes que main.js
